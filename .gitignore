@@ -3,3 +3,7 @@ node_modules/
 
 docker-compose.yml
 *.sql
+
+
+Volumes/*
+!Volumes/.gitkeep
