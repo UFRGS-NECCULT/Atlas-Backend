@@ -1,2 +1,9 @@
 node_modules/
 .env
+
+docker-compose.yml
+*.sql
+
+
+Volumes/*
+!Volumes/.gitkeep

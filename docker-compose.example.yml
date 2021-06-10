@@ -1,0 +1,37 @@
+version: '3.7'
+
+services:
+  app:
+    env_file: ./.env
+    container_name: atlas-backend-dev
+    build:
+        context: .
+        dockerfile: Dockerfile
+    volumes:
+        - '.:/app'
+        - '/app/node_modules'
+    ports:
+        - '8080:8080'
+    depends_on:
+        - atlas_db
+    environment:
+        - NODE_ENV=development
+
+  atlas_db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - ./Volumes:/var/lib/mysql
+      
+    environment:
+      MYSQL_ROOT_PASSWORD: atlas_root
+      MYSQL_DATABASE: atlas_db
+      MYSQL_USER: atlas_user
+      MYSQL_PASSWORD: atlas_password
+    ports:
+      - 3306:3306
+
+networks:
+  default:
+      external:
+          name: agrega-network
