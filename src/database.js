@@ -23,7 +23,7 @@ function initialize() {
  * @example query('SELECT * FROM ?? WHERE id = ? AND name = ?', ['items', 28141])
  * @returns {Promise<[*]>} The query results
  */
-function query(prepare, inserts) {
+function query(prepare, inserts = []) {
     const sql = mysql.format(prepare, inserts);
 
     return new Promise((ok, fail) => {
