@@ -1,0 +1,204 @@
+const { query } = require('../database');
+const { fail, valueOrDefault } = require('../utils');
+
+/**
+ * Queries and returns necessary data to display bar charts
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
+async function getBars(req, res) {
+    var variable = valueOrDefault(req.query.var, 0, Number);
+    var uf = valueOrDefault(req.query.uf, 0, Number);
+    var cad = valueOrDefault(req.query.cad, 0, Number);
+    var deg = valueOrDefault(req.query.deg, 0, Number);
+    var uos = valueOrDefault(req.query.uos, false, Boolean);
+
+    // FIXME: What is this doing?
+    if (deg > 0) {
+        deg = deg - 8;
+    }
+
+    if (!(deg == 0 || cad != 0 || [1, 2, 3].includes(variable))) {
+        fail(res, 'Invalid parameters!');
+        return;
+    }
+
+    var idCadeia = !uos ? cad : 1;
+
+    var result;
+    try {
+        result = await query(`SELECT * FROM Eixo_1 as ex
+            INNER JOIN UF as uf ON uf.idUF = ex.idUF
+            INNER JOIN Cadeia as cad ON cad.idCadeia = ex.idCadeia
+            INNER JOIN Porte as port ON port.idPorte = ex.idPorte
+            WHERE uf.idUF = ? AND
+            cad.idcadeia = ? AND
+            port.idPorte = ? AND
+            ex.Numero = ?`, [
+            uf,
+            idCadeia,
+            deg,
+            variable,
+        ]);
+    } catch (e) {
+        fail(res, String(e));
+        return;
+    }
+
+    var percentAux = {};
+    var resultAux = {};
+    var valueAux = {};
+
+    for (var data of result) {
+        // Initialize counters for each year
+        if (!(data.Ano in valueAux)) {
+            valueAux[data.Ano] = 0;
+        }
+        if (!(data.Ano in percentAux)) {
+            percentAux[data.Ano] = 0;
+        }
+
+        valueAux[data.Ano] += data.Valor;
+        percentAux[data.Ano] += data.Percentual;
+
+        // FIXME: Should we assign data here? Don't we need just .Valor and .Percentual?
+        resultAux[data.Ano] = data;
+        // FIXME: We are basically just summing the .Valor and .Percentual. Can't
+        // we just put that into the query?
+        resultAux[data.Ano].Valor = valueAux[data.Ano];
+        resultAux[data.Ano].Percentual = percentAux[data.Ano];
+    }
+
+    res.json(resultAux);
+}
+
+/**
+ * Gets each year's max value of a variable belonging to a Cadeia, of a specic Porte
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
+async function getMaxValueSetor(req, res) {
+    var variable = valueOrDefault(req.query.var, 0, Number);
+    var cad = valueOrDefault(req.query.cad, 0, Number);
+    var deg = valueOrDefault(req.query.deg, 0, Number);
+
+    var result;
+    try {
+        result = await query(`SELECT MAX(Valor) as Valor, Ano FROM Eixo_1
+            WHERE Numero = ? AND
+            idCadeia = ? AND
+            idPorte = ? AND
+            idUF = 0
+            GROUP BY Ano`, [
+            variable,
+            cad,
+            deg,
+        ]);
+    } catch (e) {
+        fail(res, String(e));
+        return;
+    }
+
+    res.json(result);
+}
+
+/**
+ * Gets each year's max value of a variable having a selected Porte
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
+async function getTotalBrasil(req, res) {
+    var variable = valueOrDefault(req.query.var, 0, Number);
+    var deg = valueOrDefault(req.query.deg, 0, Number);
+
+    var result;
+    try {
+        result = await query(`SELECT MAX(Valor) as Valor, Ano FROM Eixo_1
+            WHERE Numero = ? AND
+            idPorte = ? AND
+            idCadeia = 0 AND
+            idUF = 0
+            GROUP BY Ano`, [
+            variable,
+            deg,
+        ]);
+    } catch (e) {
+        fail(res, String(e));
+        return;
+    }
+
+    res.json(result);
+}
+
+/**
+ * Gets a variable's values at a selected UF
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
+async function getTotalSumPrt(req, res) {
+    var variable = valueOrDefault(req.query.var, 0, Number);
+    var uf = valueOrDefault(req.query.uf, 0, Number);
+
+    var result;
+    try {
+        result = await query(`SELECT Valor, Ano FROM Eixo_1
+            WHERE Numero = ? AND
+            idUF = ? AND
+            idPorte = 0 AND
+            idCadeia = 0`, [
+            variable,
+            uf,
+        ]);
+    } catch (e) {
+        fail(res, String(e));
+        return;
+    }
+
+    res.json(result);
+}
+
+/**
+ * Gets the latest year available for a variable
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
+ async function getAnoDefault(req, res) {
+    var variable = valueOrDefault(req.query.var, 0, Number);
+
+    var result;
+    try {
+        result = await query(`SELECT MAX(Ano) as Ano FROM Eixo_1
+            WHERE Numero = ? AND
+            idUF = 0
+            GROUP BY Numero`, [
+            variable,
+        ]);
+    } catch (e) {
+        fail(res, String(e));
+        return;
+    }
+
+    if (result.length !== 1) {
+        fail(res, 'Unexpected query results', 500)
+        return;
+    }
+
+    res.json(result[0]);
+}
+
+/**
+ * Gets the latest year available for a variable
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
+async function getterMapa(req, res) {
+
+}
+
+module.exports = {
+    getBars,
+    getMaxValueSetor,
+    getTotalBrasil,
+    getTotalSumPrt,
+    getAnoDefault,
+}
