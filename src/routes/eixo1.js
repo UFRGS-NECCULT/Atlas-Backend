@@ -13,7 +13,7 @@ async function getBars(req, res) {
     var deg = valueOrDefault(req.query.deg, 0, Number);
     var uos = valueOrDefault(req.query.uos, false, Boolean);
 
-    // FIXME: What is this doing?
+    // HACK: Adaptação ruim de segregação (Eixo2) para Eixo1
     if (deg > 0) {
         deg = deg - 8;
     }
@@ -180,31 +180,39 @@ async function getterMapa(req, res) {
     var sql;
     var params;
 
-    // FIXME: What is this doing?
+    // HACK: Adaptação ruim de segregação (Eixo2) para Eixo1
     if (deg > 0) {
         deg = deg - 8
     };
 
     if (deg == 0 || cad != 0 || [1, 2, 3].includes(variable)) {
-        sql = `SELECT * FROM Eixo_1 as ex
-            INNER JOIN UF AS uf ON uf.idUF = ex.idUF
-            INNER JOIN Atuacao AS atc ON atc.idAtuacao = ex.idAtuacao
-            INNER JOIN Cadeia AS cad ON cad.idCadeia = ex.idCadeia
-            INNER JOIN Porte AS prt ON prt.idPorte = ex.idPorte
+        sql = `SELECT
+                SUM(Valor) as Valor,
+                SUM(Percentual) as Percentual,
+                uf.idUF as ID
+            FROM Eixo_1 as ex
+                INNER JOIN UF AS uf ON uf.idUF = ex.idUF
+                INNER JOIN Atuacao AS atc ON atc.idAtuacao = ex.idAtuacao
+                INNER JOIN Cadeia AS cad ON cad.idCadeia = ex.idCadeia
+                INNER JOIN Porte AS prt ON prt.idPorte = ex.idPorte
             WHERE ex.Numero = ? AND
-            atc.idAtuacao = 0 AND
-            cad.idCadeia = ? AND
-            prt.idPorte = ?`;
+                atc.idAtuacao = 0 AND
+                cad.idCadeia = ? AND
+                prt.idPorte = ?`;
         params = [variable, cad, deg];
     } else {
-        sql = `SELECT * FROM Eixo_1 as ex
-            INNER JOIN UF AS uf ON uf.idUF = ex.idUF
-            INNER JOIN Atuacao AS atc ON atc.idAtuacao = ex.idAtuacao
-            INNER JOIN Porte AS prt ON prt.idPorte = ex.idPorte
+        sql = `SELECT
+                SUM(Valor) as Valor,
+                SUM(Percentual) as Percentual,
+                uf.idUF as ID
+            FROM Eixo_1 as ex
+                INNER JOIN UF AS uf ON uf.idUF = ex.idUF
+                INNER JOIN Atuacao AS atc ON atc.idAtuacao = ex.idAtuacao
+                INNER JOIN Porte AS prt ON prt.idPorte = ex.idPorte
             WHERE ex.Numero = ?
-            atc.idAtuacao = 0 AND
-            cad.idCadeia = ? AND
-            prt.idPorte = ?`;
+                atc.idAtuacao = 0 AND
+                cad.idCadeia = ? AND
+                prt.idPorte = ?`;
         params = [variable, deg];
     }
 
@@ -212,35 +220,10 @@ async function getterMapa(req, res) {
         sql += ' AND ex.Ano = ?'
         params.push(ano);
     }
+    // We have to concat here because of the above code
+    sql += ' GROUP BY uf.idUF';
 
-    var result = await query(sql, params);
-
-    // FIXME: This extra processing could be replaced with a SUM() in the sql, no?
-    if (deg == 0 || cad != 0 || [1, 2, 3].includes(variable)) {
-        var resultAux = {};
-        var valueAux = {};
-        var percentAux = {};
-
-        for (var data of result) {
-            // Initialize counters for each UF
-            if (!(data.idUF in valueAux)) {
-                valueAux[data.idUF] = 0;
-            }
-            if (!(data.idUF in percentAux)) {
-                percentAux[data.idUF] = 0;
-            }
-
-            valueAux[data.idUF] += data.Valor;
-            percentAux[data.idUF] += data.Percentual;
-            resultAux[data.idUF] = data;
-            resultAux[data.idUF].Valor = valueAux[data.idUF];
-            resultAux[data.idUF].Percentual = percentAux[data.idUF];
-        }
-
-        result = resultAux;
-    }
-
-    res.json(result);
+    res.json(await query(sql, params));
 }
 
 /**
