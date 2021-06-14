@@ -27,14 +27,18 @@ async function getBars(req, res) {
 
     var result;
     try {
-        result = await query(`SELECT * FROM Eixo_1 as ex
-            INNER JOIN UF as uf ON uf.idUF = ex.idUF
-            INNER JOIN Cadeia as cad ON cad.idCadeia = ex.idCadeia
-            INNER JOIN Porte as port ON port.idPorte = ex.idPorte
+        result = await query(`SELECT
+                SUM(Valor) as Valor,
+                Ano
+            FROM Eixo_1 as ex
+                INNER JOIN UF as uf ON uf.idUF = ex.idUF
+                INNER JOIN Cadeia as cad ON cad.idCadeia = ex.idCadeia
+                INNER JOIN Porte as port ON port.idPorte = ex.idPorte
             WHERE uf.idUF = ? AND
-            cad.idcadeia = ? AND
-            port.idPorte = ? AND
-            ex.Numero = ?`, [
+                cad.idcadeia = ? AND
+                port.idPorte = ? AND
+                ex.Numero = ?
+            GROUP BY Ano`, [
             uf,
             idCadeia,
             deg,
@@ -45,31 +49,7 @@ async function getBars(req, res) {
         return;
     }
 
-    var percentAux = {};
-    var resultAux = {};
-    var valueAux = {};
-
-    for (var data of result) {
-        // Initialize counters for each year
-        if (!(data.Ano in valueAux)) {
-            valueAux[data.Ano] = 0;
-        }
-        if (!(data.Ano in percentAux)) {
-            percentAux[data.Ano] = 0;
-        }
-
-        valueAux[data.Ano] += data.Valor;
-        percentAux[data.Ano] += data.Percentual;
-
-        // FIXME: Should we assign data here? Don't we need just .Valor and .Percentual?
-        resultAux[data.Ano] = data;
-        // FIXME: We are basically just summing the .Valor and .Percentual. Can't
-        // we just put that into the query?
-        resultAux[data.Ano].Valor = valueAux[data.Ano];
-        resultAux[data.Ano].Percentual = percentAux[data.Ano];
-    }
-
-    res.json(resultAux);
+    res.json(result);
 }
 
 /**
