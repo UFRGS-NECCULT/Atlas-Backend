@@ -18,6 +18,11 @@ function fail(res, error, status = 400) {
  * @example valueOrDefault(req.query.var, 0, Number)
  */
 function valueOrDefault(value, def, type) {
+    // Use the adequate array function
+    if (type === Array) {
+        type = Array.from;
+    }
+
     if (value === undefined) {
         return type(def);
     }

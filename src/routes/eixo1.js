@@ -162,7 +162,7 @@ async function getTotalSumPrt(req, res) {
  * @param {import('express').Request} req
  * @param {import('express').Response} res
  */
- async function getAnoDefault(req, res) {
+async function getAnoDefault(req, res) {
     var variable = valueOrDefault(req.query.var, 0, Number);
 
     var result;
@@ -187,13 +187,141 @@ async function getTotalSumPrt(req, res) {
 }
 
 /**
- * Gets the latest year available for a variable
+ * Gets the values of a variable in each UF
  * @param {import('express').Request} req
  * @param {import('express').Response} res
  */
 async function getterMapa(req, res) {
+    var variable = valueOrDefault(req.query.var, 0, Number);
+    var cad = valueOrDefault(req.query.cad, 0, Number);
+    var deg = valueOrDefault(req.query.deg, 0, Number);
+    var ano = valueOrDefault(req.query.ano, 0, Number);
 
+    var sql;
+    var params;
+
+    // FIXME: What is this doing?
+    if (deg > 0) {
+        deg = deg - 8
+    };
+
+    if (deg == 0 || cad != 0 || [1, 2, 3].includes(variable)) {
+        sql = `SELECT * FROM Eixo_1 as ex
+            INNER JOIN UF AS uf ON uf.idUF = ex.idUF
+            INNER JOIN Atuacao AS atc ON atc.idAtuacao = ex.idAtuacao
+            INNER JOIN Cadeia AS cad ON cad.idCadeia = ex.idCadeia
+            INNER JOIN Porte AS prt ON prt.idPorte = ex.idPorte
+            WHERE ex.Numero = ? AND
+            atc.idAtuacao = 0 AND
+            cad.idCadeia = ? AND
+            prt.idPorte = ?`;
+        params = [variable, cad, deg];
+    } else {
+        sql = `SELECT * FROM Eixo_1 as ex
+            INNER JOIN UF AS uf ON uf.idUF = ex.idUF
+            INNER JOIN Atuacao AS atc ON atc.idAtuacao = ex.idAtuacao
+            INNER JOIN Porte AS prt ON prt.idPorte = ex.idPorte
+            WHERE ex.Numero = ?
+            atc.idAtuacao = 0 AND
+            cad.idCadeia = ? AND
+            prt.idPorte = ?`;
+        params = [variable, deg];
+    }
+
+    if (ano > 0) {
+        sql += ' AND ex.Ano = ?'
+        params.push(ano);
+    }
+
+    var result = await query(sql, params);
+
+    // FIXME: This extra processing could be replaced with a SUM() in the sql, no?
+    if (deg == 0 || cad != 0 || [1, 2, 3].includes(variable)) {
+        var resultAux = {};
+        var valueAux = {};
+        var percentAux = {};
+
+        for (var data of result) {
+            // Initialize counters for each UF
+            if (!(data.idUF in valueAux)) {
+                valueAux[data.idUF] = 0;
+            }
+            if (!(data.idUF in percentAux)) {
+                percentAux[data.idUF] = 0;
+            }
+
+            valueAux[data.idUF] += data.Valor;
+            percentAux[data.idUF] += data.Percentual;
+            resultAux[data.idUF] = data;
+            resultAux[data.idUF].Valor = valueAux[data.idUF];
+            resultAux[data.idUF].Percentual = percentAux[data.idUF];
+        }
+
+        result = resultAux;
+    }
+
+    res.json(result);
 }
+
+/**
+ * Gets the values of a variable in each Region
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
+async function getterRegion(req, res) {
+    var variable = valueOrDefault(req.query.var, 0, Number);
+    var cad = valueOrDefault(req.query.cad, 0, Number);
+    var deg = valueOrDefault(req.query.deg, 0, Number);
+    var ano = valueOrDefault(req.query.ano, 0, Number);
+
+    var regions = [
+        'Sul',
+        'Sudeste',
+        'Centro-Oeste',
+        'Nordeste',
+        'Norte',
+    ];
+
+    var sql;
+    var params;
+
+    var result = {};
+
+    for (var region of regions) {
+        // FIXME: What is this expression and why does it appear so much?
+        if (deg == 0 || cad != 0 || [1, 2, 3].includes(variable)) {
+            sql = `SELECT * FROM Eixo_1 as ex
+                JOIN UF AS uf ON uf.idUF = ex.idUF
+                JOIN Cadeia AS cad ON cad.idCadeia = ex.idCadeia
+                JOIN Atuacao AS atc ON atc.idAtuacao = ex.idAtuacao
+                JOIN Porte AS prt ON prt.idPorte = ex.idPorte
+                WHERE ex.Numero = ? AND
+                uf.UFRegiao LIKE ? AND
+                cad.idCadeia = ? AND
+                atc.idAtuacao = 0 AND
+                prt.idPorte = ?`;
+            params = [variable, region, cad, deg];
+        } else {
+            sql = `SELECT * FROM Eixo_1 as ex
+                JOIN UF AS uf ON uf.idUF = ex.idUF
+                JOIN Porte AS prt ON prt.idPorte = ex.idPorte
+                WHERE ex.Numero = ? AND
+                uf.UFRegiao LIKE ? AND
+                prt.idPorte = ?`;
+            params = [variable, region, deg];
+        }
+
+        if (ano > 0) {
+            sql += ' AND ex.Ano = ?';
+            params.push(ano);
+        }
+
+        result[region] = await query(sql, params);
+    }
+
+    res.json(result);
+}
+
 
 module.exports = {
     getBars,
@@ -201,4 +329,6 @@ module.exports = {
     getTotalBrasil,
     getTotalSumPrt,
     getAnoDefault,
+    getterMapa,
+    getterRegion,
 }
