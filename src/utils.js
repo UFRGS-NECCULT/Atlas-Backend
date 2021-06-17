@@ -4,7 +4,7 @@
  * @param {String} error The error message
  * @param {*} status The http status code to send
  */
-function fail(res, error, status = 400) {
+function fail(res, error, status = 500) {
     res.status(status).json({
         error,
     });

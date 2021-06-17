@@ -1,4 +1,4 @@
-const { getBars, getMaxValueSetor, getTotalBrasil, getTotalSumPrt, getAnoDefault, getterMapa, getterRegion } = require('./routes/eixo1');
+const { getBars, getMaxValueSetor, getTotalBrasil, getTotalSumPrt, getAnoDefault, getterMapa, getterRegion, getterLinhas } = require('./routes/eixo1');
 
 /**
  * Registers the API routes to the application
@@ -6,6 +6,7 @@ const { getBars, getMaxValueSetor, getTotalBrasil, getTotalSumPrt, getAnoDefault
  */
 function registerRoutes(app) {
     app.get('/eixo/1/bars', getBars);
+    app.get('/eixo/1/lines', getterLinhas);
     app.get('/eixo/1/max-setor', getMaxValueSetor);
     app.get('/eixo/1/max-brasil', getTotalBrasil);
     app.get('/eixo/1/uf', getTotalSumPrt);

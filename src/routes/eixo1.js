@@ -19,7 +19,7 @@ async function getBars(req, res) {
     }
 
     if (!(deg == 0 || cad != 0 || [1, 2, 3].includes(variable))) {
-        fail(res, 'Invalid parameters!');
+        fail(res, 'Invalid parameters!', 400);
         return;
     }
 
@@ -29,7 +29,8 @@ async function getBars(req, res) {
     try {
         result = await query(`SELECT
                 SUM(Valor) as Valor,
-                Ano
+                Ano,
+                cad.idCadeia as ID
             FROM Eixo_1 as ex
                 INNER JOIN UF as uf ON uf.idUF = ex.idUF
                 INNER JOIN Cadeia as cad ON cad.idCadeia = ex.idCadeia
@@ -38,7 +39,8 @@ async function getBars(req, res) {
                 cad.idcadeia = ? AND
                 port.idPorte = ? AND
                 ex.Numero = ?
-            GROUP BY Ano`, [
+            GROUP BY Ano
+            ORDER BY Ano`, [
             uf,
             idCadeia,
             deg,
@@ -159,7 +161,7 @@ async function getAnoDefault(req, res) {
     }
 
     if (result.length !== 1) {
-        fail(res, 'Unexpected query results', 500)
+        fail(res, 'Unexpected query results')
         return;
     }
 
@@ -227,6 +229,65 @@ async function getterMapa(req, res) {
 }
 
 /**
+ * Gets the values of a variable each ear, grouping them by their categories
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
+ async function getterLinhas(req, res) {
+    var variable = valueOrDefault(req.query.var, 0, Number);
+    var uf = valueOrDefault(req.query.uf, 0, Number);
+    var cad = valueOrDefault(req.query.cad, 0, Number);
+    var deg = valueOrDefault(req.query.deg, 0, Number);
+
+    var sql;
+    var params;
+
+    // HACK: Adaptação ruim de segregação (Eixo2) para Eixo1
+    if (deg > 0) {
+        deg -= 8;
+    }
+
+    var sql;
+    var params;
+
+    if (variable == 3 || variable == 9) {
+        sql = `SELECT
+                Valor,
+                Ano,
+                cad.idCadeia as ID
+            FROM Eixo_1 as ex
+                JOIN UF AS uf ON uf.idUF = ex.idUF
+                JOIN Cadeia AS cad ON cad.idCadeia = ex.idCadeia
+                JOIN Porte AS prt ON prt.idPorte = ex.idPorte
+            WHERE ex.Numero = ?
+                AND uf.idUF = ?
+                AND cad.idCadeia > 0
+                AND prt.idPorte = ?
+            ORDER BY ID, Ano`;
+        params = [variable, uf, deg];
+    } else if (variable >= 10) {
+        sql = `SELECT
+                Valor,
+                Ano,
+                cad.idCadeia as ID
+            FROM Eixo_1 as ex
+                JOIN UF AS uf ON uf.idUF = ex.idUF
+                JOIN Cadeia AS cad ON cad.idCadeia = ex.idCadeia
+            WHERE ex.Numero = ?
+                AND uf.idUF = ?
+                AND cad.idCadeia = ?
+            ORDER BY ID, Ano`;
+        params = [variable, uf, cad];
+    } else {
+        fail(res, 'Invalid parameters!', 400);
+        return;
+    }
+
+    res.json(await query(sql, params));
+}
+
+
+/**
  * Gets the values of a variable in each Region
  * @param {import('express').Request} req
  * @param {import('express').Response} res
@@ -237,7 +298,7 @@ async function getterRegion(req, res) {
     var deg = valueOrDefault(req.query.deg, 0, Number);
     var ano = valueOrDefault(req.query.ano, 0, Number);
 
-    var regions = [
+    const regions = [
         'Sul',
         'Sudeste',
         'Centro-Oeste',
@@ -293,5 +354,6 @@ module.exports = {
     getTotalSumPrt,
     getAnoDefault,
     getterMapa,
+    getterLinhas,
     getterRegion,
 }
