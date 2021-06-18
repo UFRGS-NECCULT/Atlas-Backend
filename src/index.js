@@ -1,21 +1,27 @@
 // Load the environment before any other modules
-const dotenv = require('dotenv')
+import dotenv from 'dotenv';
 dotenv.config();
 
-const express = require('express');
-const { initialize } = require('./database');
-const { registerRoutes } = require('./routes');
+import express from 'express';
+import cors from 'cors';
+
+import { initialize } from './database.js';
+import routes from './routes/index.js';
 
 const app = express();
 
-(async () => {
-    await initialize()
+app.use(express.json());
+app.use(cors());
 
-    registerRoutes(app);
+app.use('/api', routes);
 
-    // TODO: Handle errors
+await initialize();
 
-    app.listen(8080).on('close', () => {
+app.listen(process.env.PORT)
+    .on('connection', () => {
+        console.log("Server on")
+    })
+    .on('close', () => {
         client.end();
     });
-})();
+

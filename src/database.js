@@ -1,13 +1,13 @@
-const mysql = require('mysql');
-const util = require('util');
+import { createConnection, format } from 'mysql';
+import util from 'util';
 
 var client = null;
 
 /**
  * Initializes the database connection
  */
-function initialize() {
-    client = mysql.createConnection({
+export const initialize = () => {
+    client = createConnection({
         host: process.env.DB_HOST,
         user: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
@@ -23,8 +23,8 @@ function initialize() {
  * @example query('SELECT * FROM ?? WHERE id = ? AND name = ?', ['items', 28141])
  * @returns {Promise<[*]>} The query results
  */
-function query(prepare, inserts = []) {
-    const sql = mysql.format(prepare, inserts);
+export const query = (prepare, inserts = []) => {
+    const sql = format(prepare, inserts);
 
     return new Promise((ok, fail) => {
         client.query(sql, (error, results, fields) => {
@@ -36,8 +36,3 @@ function query(prepare, inserts = []) {
         });
     });
 }
-
-module.exports = {
-    initialize,
-    query,
-};

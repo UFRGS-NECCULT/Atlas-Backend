@@ -4,7 +4,7 @@
  * @param {String} error The error message
  * @param {*} status The http status code to send
  */
-function fail(res, error, status = 400) {
+export const fail = (res, error, status = 400) => {
     res.status(status).json({
         error,
     });
@@ -17,7 +17,7 @@ function fail(res, error, status = 400) {
  * @param {Function} type The function to cast `value`
  * @example valueOrDefault(req.query.var, 0, Number)
  */
-function valueOrDefault(value, def, type) {
+export const valueOrDefault = (value, def, type) => {
     // Use the adequate array function
     if (type === Array) {
         type = Array.from;
@@ -27,9 +27,4 @@ function valueOrDefault(value, def, type) {
         return type(def);
     }
     return type(value);
-}
-
-module.exports = {
-    fail,
-    valueOrDefault,
 }
