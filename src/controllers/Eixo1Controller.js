@@ -51,6 +51,50 @@ class Eixo1Controller {
   }
 
   /**
+  * Queries and returns necessary data to display bar charts
+  * @param {import('express').Request} req
+  * @param {import('express').Response} res
+  */
+  async getTreemap(req, res) {
+    var variable = valueOrDefault(req.query.var, 0, Number);
+    var uf = valueOrDefault(req.query.uf, 0, Number);
+    var prt = valueOrDefault(req.query.prt, 0, Number);
+    var ano = valueOrDefault(req.query.ano, 2015, Number);
+
+    var result;
+    try {
+      result = await query(`SELECT 
+            Valor,
+            Percentual,
+            Taxa,
+            cad.idCadeia,
+            cad.CadeiaNome
+        FROM Eixo_1 as ex
+            INNER JOIN UF AS uf ON uf.idUF = ex.idUF
+            INNER JOIN Atuacao AS atc ON atc.idAtuacao = ex.idAtuacao 
+            INNER JOIN Cadeia AS cad ON cad.idCadeia = ex.idCadeia
+            INNER JOIN Porte AS prt ON prt.idPorte = ex.idPorte
+        WHERE ex.Numero = ? AND
+            atc.idAtuacao = 0 AND
+            uf.idUF = ? AND
+            cad.idCadeia != 0 AND
+            prt.idPorte = ? AND
+            ex.Ano = ?`, [
+        variable,
+        uf,
+        prt,
+        ano,
+      ]);
+
+    } catch (e) {
+      fail(res, String(e));
+      return;
+    }
+
+    res.json(result);
+  }
+
+  /**
    * Gets each year's max value of a variable belonging to a Cadeia, of a specic Porte
    * @param {import('express').Request} req
    * @param {import('express').Response} res

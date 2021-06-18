@@ -18,9 +18,6 @@ app.use('/api', routes);
 await initialize();
 
 app.listen(process.env.PORT)
-    .on('connection', () => {
-        console.log("Server on")
-    })
     .on('close', () => {
         client.end();
     });
