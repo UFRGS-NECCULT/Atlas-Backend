@@ -2,7 +2,7 @@
 
 * Caso não exista na máquina a network **atlas-network** criar com o comando `docker network create atlas-network`
 * Fazer uma copia do arquivo `docker-compose.example.yml` para `docker-compose.yml`
-* Fazer uma copia do arquivo `.env.example.yml` para `.env.yml`
+* Fazer uma copia do arquivo `.env.example` para `.env`
 * OPCIONAL Mudar as variáveis de ambiente em ambos arquivos
 * Executar o comando `docker-compose up -d --build`
 
