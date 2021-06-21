@@ -13,6 +13,8 @@ const app = express();
 
     registerRoutes(app);
 
+    // TODO: Handle errors
+
     app.listen(8080).on('close', () => {
         client.end();
     });
