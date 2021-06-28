@@ -17,7 +17,7 @@ class Eixo1Controller {
     var uos = valueOrDefault(req.query.uos, false, Boolean);
 
     if (!(prt == 0 || cad != 0 || [1, 2, 3].includes(variable))) {
-      fail(res, 'Invalid parameters!');
+      fail(res, 'Invalid parameters!', 400);
       return;
     }
 
@@ -63,7 +63,7 @@ class Eixo1Controller {
 
     var result;
     try {
-      result = await query(`SELECT 
+      result = await query(`SELECT
             Valor,
             Percentual,
             Taxa,
@@ -71,7 +71,7 @@ class Eixo1Controller {
             cad.CadeiaNome
         FROM Eixo_1 as ex
             INNER JOIN UF AS uf ON uf.idUF = ex.idUF
-            INNER JOIN Atuacao AS atc ON atc.idAtuacao = ex.idAtuacao 
+            INNER JOIN Atuacao AS atc ON atc.idAtuacao = ex.idAtuacao
             INNER JOIN Cadeia AS cad ON cad.idCadeia = ex.idCadeia
             INNER JOIN Porte AS prt ON prt.idPorte = ex.idPorte
         WHERE ex.Numero = ? AND
@@ -201,7 +201,7 @@ class Eixo1Controller {
     }
 
     if (result.length !== 1) {
-      fail(res, 'Unexpected query results', 500)
+      fail(res, 'Unexpected query results')
       return;
     }
 
