@@ -11,14 +11,6 @@ export const initialize = () => {
         user: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
         database: process.env.DB_DATABASE,
-        typeCast: (field, next) => {
-            // Converter tinyint(1) para boolean
-            if (field.type === 'TINY' && field.length === 1) {
-                return (field.string() === '1');
-            } else {
-                return next();
-            }
-        },
     });
 }
 
