@@ -63,7 +63,7 @@ class Eixo2Controller {
     var sql = `SELECT
         SUM(Valor) as Valor,
         Ano,
-        ${groupType} as Grupo
+        ${groupType} as NomeGrupo
       FROM Eixo_2 as ex
         INNER JOIN Porte as prt ON prt.idPorte = ex.idPorte
         INNER JOIN Idade as age ON age.idIdade = ex.idIdade
@@ -154,7 +154,7 @@ class Eixo2Controller {
       params.push(ano);
     }
 
-    sql += ' GROUP BY Ano, Grupo';
+    sql += ' GROUP BY Ano, NomeGrupo';
     sql += ' ORDER BY Ano';
 
     res.json(await query(sql, params));
@@ -177,7 +177,7 @@ class Eixo2Controller {
     var sql = `SELECT
         SUM(ex.Valor) as Valor,
         ex.Ano,
-        ${groupType} as Grupo
+        ${groupType} as NomeGrupo
       FROM Eixo_2 as ex
         INNER JOIN Porte as prt ON prt.idPorte = ex.idPorte
         INNER JOIN Idade as age ON age.idIdade = ex.idIdade
@@ -218,8 +218,8 @@ class Eixo2Controller {
       AND ex.Previdencia ${operator(7)} 0
       AND ex.Sindical ${operator(8)} 0`;
 
-    sql += ' GROUP BY ex.Ano, Grupo';
-    sql += ' ORDER BY Grupo, Ano';
+    sql += ' GROUP BY ex.Ano, NomeGrupo';
+    sql += ' ORDER BY NomeGrupo, Ano';
 
     res.json(await query(sql, params));
   }
@@ -293,7 +293,7 @@ class Eixo2Controller {
         SUM(Valor) as Valor,
         SUM(Taxa) as Taxa,
         SUM(Percentual) as Percentual,
-        ${groupType} as Grupo
+        ${groupType} as NomeGrupo
       FROM Eixo_2 as ex
         INNER JOIN Porte as prt ON prt.idPorte = ex.idPorte
         INNER JOIN Idade as age ON age.idIdade = ex.idIdade
@@ -330,7 +330,7 @@ class Eixo2Controller {
       params.push(ano);
     }
 
-    sql += ' GROUP BY Grupo';
+    sql += ' GROUP BY NomeGrupo';
 
     res.json(await query(sql, params));
   }
@@ -352,7 +352,7 @@ class Eixo2Controller {
         SUM(Valor) as Valor,
         SUM(Percentual) as Percentual,
         SUM(Taxa) as Taxa,
-        uf.UFRegiao as Grupo
+        uf.UFRegiao as NomeGrupo
       FROM Eixo_2 as ex
         INNER JOIN UF AS uf ON uf.idUF = ex.idUF
         INNER JOIN Cadeia AS cad ON cad.idCadeia = ex.idCadeia
@@ -400,7 +400,7 @@ class Eixo2Controller {
       params.push(ano);
     }
 
-    sql += ' GROUP BY Grupo';
+    sql += ' GROUP BY NomeGrupo';
 
     res.json(await query(sql, params));
   }

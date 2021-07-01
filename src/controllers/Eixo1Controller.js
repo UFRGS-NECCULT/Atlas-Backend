@@ -14,7 +14,7 @@ class Eixo1Controller {
     var uf = valueOrDefault(req.query.uf, 0, Number);
     var cad = valueOrDefault(req.query.cad, 0, Number);
     var prt = valueOrDefault(req.query.prt, 0, Number);
-    var uos = valueOrDefault(req.query.uos, false, Boolean);
+    var uos = valueOrDefault(req.query.uos, 0, Number);
 
     if (!(prt == 0 || cad != 0 || [1, 2, 3].includes(variable))) {
       fail(res, 'Invalid parameters!', 400);
@@ -27,7 +27,8 @@ class Eixo1Controller {
     try {
       result = await query(`SELECT
                 SUM(Valor) as Valor,
-                Ano
+                Ano,
+                cad.CadeiaNome as NomeGrupo
             FROM Eixo_1 as ex
                 INNER JOIN UF as uf ON uf.idUF = ex.idUF
                 INNER JOIN Cadeia as cad ON cad.idCadeia = ex.idCadeia
@@ -36,7 +37,7 @@ class Eixo1Controller {
                 cad.idcadeia = ? AND
                 port.idPorte = ? AND
                 ex.Numero = ?
-            GROUP BY Ano`, [
+            GROUP BY Ano, NomeGrupo`, [
         uf,
         idCadeia,
         prt,
@@ -51,7 +52,7 @@ class Eixo1Controller {
   }
 
   /**
-  * Queries and returns necessary data to display bar charts
+  * Queries and returns necessary data to display a treemap
   * @param {import('express').Request} req
   * @param {import('express').Response} res
   */
@@ -61,37 +62,29 @@ class Eixo1Controller {
     var prt = valueOrDefault(req.query.prt, 0, Number);
     var ano = valueOrDefault(req.query.ano, 2015, Number);
 
-    var result;
-    try {
-      result = await query(`SELECT
-            Valor,
-            Percentual,
-            Taxa,
-            cad.idCadeia,
-            cad.CadeiaNome
-        FROM Eixo_1 as ex
-            INNER JOIN UF AS uf ON uf.idUF = ex.idUF
-            INNER JOIN Atuacao AS atc ON atc.idAtuacao = ex.idAtuacao
-            INNER JOIN Cadeia AS cad ON cad.idCadeia = ex.idCadeia
-            INNER JOIN Porte AS prt ON prt.idPorte = ex.idPorte
-        WHERE ex.Numero = ? AND
-            atc.idAtuacao = 0 AND
-            uf.idUF = ? AND
-            cad.idCadeia != 0 AND
-            prt.idPorte = ? AND
-            ex.Ano = ?`, [
-        variable,
-        uf,
-        prt,
-        ano,
-      ]);
-
-    } catch (e) {
-      fail(res, String(e));
-      return;
-    }
-
-    res.json(result);
+    res.json(await query(`SELECT
+        SUM(Valor) as Valor,
+        SUM(Taxa) as Taxa,
+        SUM(Percentual) as Percentual,
+        cad.CadeiaNome as NomeGrupo,
+        cad.idCadeia as IDGrupo
+      FROM Eixo_1 as ex
+        INNER JOIN UF AS uf ON uf.idUF = ex.idUF
+        INNER JOIN Atuacao AS atc ON atc.idAtuacao = ex.idAtuacao
+        INNER JOIN Cadeia AS cad ON cad.idCadeia = ex.idCadeia
+        INNER JOIN Porte AS prt ON prt.idPorte = ex.idPorte
+      WHERE ex.Numero = ? AND
+        atc.idAtuacao = 0 AND
+        uf.idUF = ? AND
+        cad.idCadeia != 0 AND
+        prt.idPorte = ? AND
+        ex.Ano = ?
+      GROUP BY IDGrupo, NomeGrupo`, [
+      variable,
+      uf,
+      prt,
+      ano,
+    ]));
   }
 
   /**
@@ -102,26 +95,21 @@ class Eixo1Controller {
   async getMaxValueSetor(req, res) {
     var variable = valueOrDefault(req.query.var, 0, Number);
     var cad = valueOrDefault(req.query.cad, 0, Number);
-    var deg = valueOrDefault(req.query.deg, 0, Number);
+    var prt = valueOrDefault(req.query.prt, 0, Number);
 
-    var result;
-    try {
-      result = await query(`SELECT MAX(Valor) as Valor, Ano FROM Eixo_1
-            WHERE Numero = ? AND
-            idCadeia = ? AND
-            idPorte = ? AND
-            idUF = 0
-            GROUP BY Ano`, [
-        variable,
-        cad,
-        deg,
-      ]);
-    } catch (e) {
-      fail(res, String(e));
-      return;
-    }
-
-    res.json(result);
+    res.json(await query(`SELECT
+        MAX(Valor) as Valor,
+        Ano
+      FROM Eixo_1
+      WHERE Numero = ? AND
+        idCadeia = ? AND
+        idPorte = ? AND
+        idUF = 0
+        GROUP BY Ano`, [
+      variable,
+      cad,
+      prt,
+    ]));
   }
 
   /**
@@ -131,7 +119,7 @@ class Eixo1Controller {
    */
   async getTotalBrasil(req, res) {
     var variable = valueOrDefault(req.query.var, 0, Number);
-    var deg = valueOrDefault(req.query.deg, 0, Number);
+    var prt = valueOrDefault(req.query.prt, 0, Number);
 
     var result;
     try {
@@ -142,7 +130,7 @@ class Eixo1Controller {
             idUF = 0
             GROUP BY Ano`, [
         variable,
-        deg,
+        prt,
       ]);
     } catch (e) {
       fail(res, String(e));
@@ -222,37 +210,19 @@ class Eixo1Controller {
     var sql;
     var params;
 
-    if (prt == 0 || cad != 0 || [1, 2, 3].includes(variable)) {
-      sql = `SELECT
-                SUM(Valor) as valor,
-                SUM(Percentual) as percentual,
-                uf.idUF as uf,
-                uf.UFRegiao as regiao
-            FROM Eixo_1 as ex
-                INNER JOIN UF AS uf ON uf.idUF = ex.idUF
-                INNER JOIN Atuacao AS atc ON atc.idAtuacao = ex.idAtuacao
-                INNER JOIN Cadeia AS cad ON cad.idCadeia = ex.idCadeia
-                INNER JOIN Porte AS prt ON prt.idPorte = ex.idPorte
-            WHERE ex.Numero = ? AND
-                atc.idAtuacao = 0 AND
-                cad.idCadeia = ? AND
-                prt.idPorte = ?`;
-      params = [variable, cad, prt];
-    } else {
-      sql = `SELECT
-                SUM(Valor) as Valor,
-                SUM(Percentual) as Percentual,
-                uf.idUF as ID
-            FROM Eixo_1 as ex
-                INNER JOIN UF AS uf ON uf.idUF = ex.idUF
-                INNER JOIN Atuacao AS atc ON atc.idAtuacao = ex.idAtuacao
-                INNER JOIN Porte AS prt ON prt.idPorte = ex.idPorte
-            WHERE ex.Numero = ?
-                atc.idAtuacao = 0 AND
-                cad.idCadeia = ? AND
-                prt.idPorte = ?`;
-      params = [variable, prt];
-    }
+    sql = `SELECT
+          SUM(Valor) as valor,
+          uf.idUF as uf
+        FROM Eixo_1 as ex
+          INNER JOIN UF AS uf ON uf.idUF = ex.idUF
+          INNER JOIN Atuacao AS atc ON atc.idAtuacao = ex.idAtuacao
+          INNER JOIN Cadeia AS cad ON cad.idCadeia = ex.idCadeia
+          INNER JOIN Porte AS prt ON prt.idPorte = ex.idPorte
+        WHERE ex.Numero = ? AND
+          atc.idAtuacao = 0 AND
+          cad.idCadeia = ? AND
+          prt.idPorte = ?`;
+    params = [variable, cad, prt];
 
     if (ano > 0) {
       sql += ' AND ex.Ano = ?'
@@ -268,70 +238,56 @@ class Eixo1Controller {
    * Gets the values of a variable in each Region
    * @param {import('express').Request} req
    * @param {import('express').Response} res
-  */
+   */
   async getterLinhas(req, res) {
     var variable = valueOrDefault(req.query.var, 0, Number);
     var uf = valueOrDefault(req.query.uf, 0, Number);
     var cad = valueOrDefault(req.query.cad, 0, Number);
-    var deg = valueOrDefault(req.query.deg, 0, Number);
+    var prt = valueOrDefault(req.query.prt, 0, Number);
 
     var sql;
     var params;
 
-    // HACK: Adaptação ruim de segregação (Eixo2) para Eixo1
-    if (deg > 0) {
-      deg -= 8;
+    var group = 'cad.CadeiaNome';
+    if (variable >= 10) {
+      group = 'prt.PorteNome';
     }
 
-    var sql;
-    var params;
+    var sql = `SELECT
+          SUM(Valor) as Valor,
+          Ano,
+          ${group} as NomeGrupo
+      FROM Eixo_1 as ex
+          INNER JOIN UF AS uf ON uf.idUF = ex.idUF
+          INNER JOIN Cadeia AS cad ON cad.idCadeia = ex.idCadeia
+          INNER JOIN Porte AS prt ON prt.idPorte = ex.idPorte
+      WHERE ex.Numero = ?
+          AND uf.idUF = ?`;
+    var params = [variable, uf];
 
-    if (variable == 3 || variable == 9) {
-      sql = `SELECT
-                Valor,
-                Ano,
-                cad.idCadeia as ID
-            FROM Eixo_1 as ex
-                JOIN UF AS uf ON uf.idUF = ex.idUF
-                JOIN Cadeia AS cad ON cad.idCadeia = ex.idCadeia
-                JOIN Porte AS prt ON prt.idPorte = ex.idPorte
-            WHERE ex.Numero = ?
-                AND uf.idUF = ?
-                AND cad.idCadeia > 0
-                AND prt.idPorte = ?
-            ORDER BY ID, Ano`;
-      params = [variable, uf, deg];
-    } else if (variable >= 10) {
-      sql = `SELECT
-                Valor,
-                Ano,
-                cad.idCadeia as ID
-            FROM Eixo_1 as ex
-                JOIN UF AS uf ON uf.idUF = ex.idUF
-                JOIN Cadeia AS cad ON cad.idCadeia = ex.idCadeia
-            WHERE ex.Numero = ?
-                AND uf.idUF = ?
-                AND cad.idCadeia = ?
-            ORDER BY ID, Ano`;
-      params = [variable, uf, cad];
+    if (variable >= 10) {
+      sql += ' AND cad.idCadeia = ?';
+      params.push(cad);
     } else {
-      fail(res, 'Invalid parameters!', 400);
-      return;
+      sql += ' AND cad.idCadeia > 0 AND prt.idPorte = ?';
+      params.push(prt);
     }
+
+    sql += ' GROUP BY NomeGrupo, Ano';
+    sql += ' ORDER BY NomeGrupo, Ano';
 
     res.json(await query(sql, params));
-
   }
 
   /**
    * Gets the values of a variable in each Region
    * @param {import('express').Request} req
    * @param {import('express').Response} res
-  */
+   */
   async getterRegion(req, res) {
     var variable = valueOrDefault(req.query.var, 0, Number);
     var cad = valueOrDefault(req.query.cad, 0, Number);
-    var deg = valueOrDefault(req.query.deg, 0, Number);
+    var prt = valueOrDefault(req.query.prt, 0, Number);
     var ano = valueOrDefault(req.query.ano, 0, Number);
 
     var regions = [
@@ -349,7 +305,7 @@ class Eixo1Controller {
 
     for (var region of regions) {
       // FIXME: What is this expression and why does it appear so much?
-      if (deg == 0 || cad != 0 || [1, 2, 3].includes(variable)) {
+      if (prt == 0 || cad != 0 || [1, 2, 3].includes(variable)) {
         sql = `SELECT * FROM Eixo_1 as ex
                 JOIN UF AS uf ON uf.idUF = ex.idUF
                 JOIN Cadeia AS cad ON cad.idCadeia = ex.idCadeia
@@ -360,7 +316,7 @@ class Eixo1Controller {
                 cad.idCadeia = ? AND
                 atc.idAtuacao = 0 AND
                 prt.idPorte = ?`;
-        params = [variable, region, cad, deg];
+        params = [variable, region, cad, prt];
       } else {
         sql = `SELECT * FROM Eixo_1 as ex
                 JOIN UF AS uf ON uf.idUF = ex.idUF
@@ -368,7 +324,7 @@ class Eixo1Controller {
                 WHERE ex.Numero = ? AND
                 uf.UFRegiao LIKE ? AND
                 prt.idPorte = ?`;
-        params = [variable, region, deg];
+        params = [variable, region, prt];
       }
 
       if (ano > 0) {
