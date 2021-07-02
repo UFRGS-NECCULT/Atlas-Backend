@@ -21,25 +21,23 @@ class Eixo1Controller {
       return;
     }
 
-    var idCadeia = !uos ? cad : 1;
-
     var result;
     try {
       result = await query(`SELECT
                 SUM(Valor) as Valor,
                 Ano,
-                cad.CadeiaNome as NomeGrupo
+                cad.CadeiaNome as NomeGrupo,
+                cad.idCadeia as IDGrupo
             FROM Eixo_1 as ex
                 INNER JOIN UF as uf ON uf.idUF = ex.idUF
                 INNER JOIN Cadeia as cad ON cad.idCadeia = ex.idCadeia
                 INNER JOIN Porte as port ON port.idPorte = ex.idPorte
             WHERE uf.idUF = ? AND
-                cad.idcadeia = ? AND
+                cad.idcadeia > 0 AND
                 port.idPorte = ? AND
                 ex.Numero = ?
             GROUP BY Ano, NomeGrupo`, [
         uf,
-        idCadeia,
         prt,
         variable,
       ]);
