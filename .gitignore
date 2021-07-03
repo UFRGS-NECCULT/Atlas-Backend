@@ -3,7 +3,10 @@ node_modules/
 
 docker-compose.yml
 *.sql
-
+*.py
 
 Volumes/*
 !Volumes/.gitkeep
+
+!src/db/initdb/*
+
