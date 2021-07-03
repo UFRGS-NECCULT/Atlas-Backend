@@ -13,32 +13,43 @@ class Eixo1Controller {
     var variable = valueOrDefault(req.query.var, 0, Number);
     var uf = valueOrDefault(req.query.uf, 0, Number);
     var cad = valueOrDefault(req.query.cad, 0, Number);
-    var prt = valueOrDefault(req.query.prt, 0, Number);
+    var deg = valueOrDefault(req.query.deg, 0, Number);
     var uos = valueOrDefault(req.query.uos, 0, Number);
 
-    if (!(prt == 0 || cad != 0 || [1, 2, 3].includes(variable))) {
+    if (!(deg == 0 || cad != 0 || [1, 2, 3].includes(variable))) {
       fail(res, 'Invalid parameters!', 400);
       return;
     }
 
     var result;
     try {
-      result = await query(`SELECT
-                SUM(Valor) as Valor,
-                Ano,
-                cad.CadeiaNome as NomeGrupo,
-                cad.idCadeia as IDGrupo
-            FROM Eixo_1 as ex
-                INNER JOIN UF as uf ON uf.idUF = ex.idUF
-                INNER JOIN Cadeia as cad ON cad.idCadeia = ex.idCadeia
-                INNER JOIN Porte as port ON port.idPorte = ex.idPorte
-            WHERE uf.idUF = ? AND
-                cad.idcadeia > 0 AND
-                port.idPorte = ? AND
-                ex.Numero = ?
-            GROUP BY Ano, NomeGrupo`, [
+      result = await query(`
+        SELECT
+          SUM(valor) as valor,
+          ano,
+          atc.nome as atuacao,
+          atc.id as atuacao_id,
+          cad.id as cadeia_id,
+          cad.nome as cadeia,
+          cad.cor as cor,
+          ex.cor_primaria as cor_eixo
+        FROM eixo_1 ex1
+          INNER JOIN uf uf ON uf.id = ex1.uf_id 
+          INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id 
+          INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id 
+          INNER JOIN eixo ex ON ex.id = ex1.eixo_id
+          INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id 
+        WHERE uf.id = $1 
+          and cad.id = $2
+          and subdesag.id = $3 
+          and ex1.eixo_id = 1 
+          and ex1.variavel_id = $4
+        GROUP BY ano, ex.cor_primaria, cad.nome, cad.cor, atc.nome, atc.id, cad.id
+        order by ano ASC;
+      `, [
         uf,
-        prt,
+        cad,
+        deg,
         variable,
       ]);
     } catch (e) {
@@ -46,7 +57,7 @@ class Eixo1Controller {
       return;
     }
 
-    res.json(result);
+    res.json(result.rows);
   }
 
   /**
@@ -57,32 +68,43 @@ class Eixo1Controller {
   async getTreemap(req, res) {
     var variable = valueOrDefault(req.query.var, 0, Number);
     var uf = valueOrDefault(req.query.uf, 0, Number);
-    var prt = valueOrDefault(req.query.prt, 0, Number);
+    var deg = valueOrDefault(req.query.deg, 0, Number);
+    var atc = valueOrDefault(req.query.atc, 0, Number);
     var ano = valueOrDefault(req.query.ano, 2015, Number);
 
-    res.json(await query(`SELECT
-        SUM(Valor) as Valor,
-        SUM(Taxa) as Taxa,
-        SUM(Percentual) as Percentual,
-        cad.CadeiaNome as NomeGrupo,
-        cad.idCadeia as IDGrupo
-      FROM Eixo_1 as ex
-        INNER JOIN UF AS uf ON uf.idUF = ex.idUF
-        INNER JOIN Atuacao AS atc ON atc.idAtuacao = ex.idAtuacao
-        INNER JOIN Cadeia AS cad ON cad.idCadeia = ex.idCadeia
-        INNER JOIN Porte AS prt ON prt.idPorte = ex.idPorte
-      WHERE ex.Numero = ? AND
-        atc.idAtuacao = 0 AND
-        uf.idUF = ? AND
-        cad.idCadeia != 0 AND
-        prt.idPorte = ? AND
-        ex.Ano = ?
-      GROUP BY IDGrupo, NomeGrupo`, [
-      variable,
+    const result = await query(`
+      SELECT
+        SUM(valor) as valor,
+        SUM(taxa) as taxa,
+        SUM(percentual) as percentual,
+        ex1.ano as ano,
+        cad.nome as cadeia,
+        cad.id as cadeia_id,
+        cad.cor as cor
+      FROM eixo_1 as ex1
+        INNER JOIN uf uf ON uf.id = ex1.uf_id 
+        INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id 
+        INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id 
+        INNER JOIN eixo ex ON ex.id = ex1.eixo_id
+        INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id 
+      WHERE uf.id = $1 
+        and ex1.ano = $2
+        and atc.id = $3
+        and cad.id != 0
+        and ex1.eixo_id = 1
+        and ex1.variavel_id = $4
+        and ex1.subdesagregacao_id = $5
+      GROUP BY cad.id, cad.nome, cad.cor, ex1.ano
+      order by cadeia_id ASC;
+    `, [
       uf,
-      prt,
       ano,
-    ]));
+      atc,
+      variable,
+      deg,
+    ])
+
+    res.json(result.rows);
   }
 
   /**
@@ -93,21 +115,25 @@ class Eixo1Controller {
   async getMaxValueSetor(req, res) {
     var variable = valueOrDefault(req.query.var, 0, Number);
     var cad = valueOrDefault(req.query.cad, 0, Number);
-    var prt = valueOrDefault(req.query.prt, 0, Number);
+    var deg = valueOrDefault(req.query.deg, 0, Number);
 
-    res.json(await query(`SELECT
-        MAX(Valor) as Valor,
-        Ano
-      FROM Eixo_1
-      WHERE Numero = ? AND
-        idCadeia = ? AND
-        idPorte = ? AND
-        idUF = 0
-        GROUP BY Ano`, [
+    const result = await query(`
+      SELECT
+        MAX(valor) as valor,
+        ano
+      from eixo_1 ex1
+      WHERE ex1.variavel_id = $1 
+        and ex1.cadeia_id = $2  
+        and ex1.subdesagregacao_id = $3 
+        and ex1.uf_id = 0
+      GROUP BY ano
+      order by ano ASC`, [
       variable,
       cad,
-      prt,
-    ]));
+      deg,
+    ])
+
+    res.json(result.rows);
   }
 
   /**
@@ -117,25 +143,30 @@ class Eixo1Controller {
    */
   async getTotalBrasil(req, res) {
     var variable = valueOrDefault(req.query.var, 0, Number);
-    var prt = valueOrDefault(req.query.prt, 0, Number);
+    var deg = valueOrDefault(req.query.deg, 0, Number);
 
     var result;
     try {
-      result = await query(`SELECT MAX(Valor) as Valor, Ano FROM Eixo_1
-            WHERE Numero = ? AND
-            idPorte = ? AND
-            idCadeia = 0 AND
-            idUF = 0
-            GROUP BY Ano`, [
+      result = await query(`
+        SELECT 
+          MAX(valor) as valor, 
+          ano 
+        FROM eixo_1 ex1
+        WHERE ex1.variavel_id = $1 
+          and ex1.cadeia_id = 0 
+          and ex1.subdesagregacao_id = $2
+          and ex1.uf_id = 0
+        GROUP BY Ano
+        order by ano ASC`, [
         variable,
-        prt,
+        deg,
       ]);
     } catch (e) {
       fail(res, String(e));
       return;
     }
 
-    res.json(result);
+    res.json(result.rows);
   }
 
   /**
@@ -149,14 +180,20 @@ class Eixo1Controller {
 
     var result;
     try {
-      result = await query(`SELECT Valor, Ano FROM Eixo_1
-            WHERE Numero = ? AND
-            idUF = ? AND
-            idPorte = 0 AND
-            idCadeia = 0`, [
-        variable,
-        uf,
-      ]);
+      result = await query(`
+        SELECT 
+          valor,
+          ano
+        FROM eixo_1 ex1
+        WHERE ex1.variavel_id = $1
+          and ex1.uf_id = $2
+          and ex1.subdesagregacao_id = 0
+          and ex1.cadeia_id = 0
+        order by ano asc;`,
+        [
+          variable,
+          uf,
+        ]);
     } catch (e) {
       fail(res, String(e));
       return;
@@ -175,10 +212,13 @@ class Eixo1Controller {
 
     var result;
     try {
-      result = await query(`SELECT MAX(Ano) as Ano FROM Eixo_1
-            WHERE Numero = ? AND
-            idUF = 0
-            GROUP BY Numero`, [
+      result = await query(`
+        SELECT MAX(ano) as ano 
+        FROM eixo_1 ex1
+        WHERE ex1.variavel_id = $1 
+          and ex1.uf_id = 0
+        GROUP BY variavel_id
+      `, [
         variable,
       ]);
     } catch (e) {
@@ -191,7 +231,7 @@ class Eixo1Controller {
       return;
     }
 
-    res.json(result[0]);
+    res.json(result.rows[0]);
   }
 
   /**
@@ -202,34 +242,43 @@ class Eixo1Controller {
   async getterMapa(req, res) {
     var variable = valueOrDefault(req.query.var, 0, Number);
     var cad = valueOrDefault(req.query.cad, 0, Number);
-    var prt = valueOrDefault(req.query.prt, 0, Number);
+    var deg = valueOrDefault(req.query.deg, 0, Number);
     var ano = valueOrDefault(req.query.ano, 0, Number);
+    var atc = valueOrDefault(req.query.atc, 0, Number);
 
-    var sql;
-    var params;
+    const sql = `
+      SELECT
+        ex1.valor,
+        ex1.percentual,
+        ex1.taxa,
+        atc.nome,
+        uf.id as uf_id,
+        uf.nome as uf,
+        cad.nome as cadeia,
+        cad.id as cadeia_id,
+        cad.cor as cor,
+        ex.cor_primaria as cor_eixo
+      FROM eixo_1 as ex1
+        INNER JOIN uf uf ON uf.id = ex1.uf_id 
+        INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id 
+        INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id 
+        INNER JOIN eixo ex ON ex.id = ex1.eixo_id
+        INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id 
+      WHERE ex1.ano = $1
+        and atc.id = $2
+        and cad.id = $3
+        and uf.id != 0
+        and ex1.eixo_id = 1
+        and ex1.variavel_id = $4
+        and ex1.subdesagregacao_id = $5
+      `;
 
-    sql = `SELECT
-          SUM(Valor) as valor,
-          uf.idUF as uf
-        FROM Eixo_1 as ex
-          INNER JOIN UF AS uf ON uf.idUF = ex.idUF
-          INNER JOIN Atuacao AS atc ON atc.idAtuacao = ex.idAtuacao
-          INNER JOIN Cadeia AS cad ON cad.idCadeia = ex.idCadeia
-          INNER JOIN Porte AS prt ON prt.idPorte = ex.idPorte
-        WHERE ex.Numero = ? AND
-          atc.idAtuacao = 0 AND
-          cad.idCadeia = ? AND
-          prt.idPorte = ?`;
-    params = [variable, cad, prt];
+    const params = [ano, atc, cad, variable, deg];
 
-    if (ano > 0) {
-      sql += ' AND ex.Ano = ?'
-      params.push(ano);
-    }
-    // We have to concat here because of the above code
-    sql += ' GROUP BY uf.idUF';
+    const result = await query(sql, params);
 
-    res.json(await query(sql, params));
+
+    res.json(result.rows);
   }
 
   /**
@@ -241,28 +290,32 @@ class Eixo1Controller {
     var variable = valueOrDefault(req.query.var, 0, Number);
     var uf = valueOrDefault(req.query.uf, 0, Number);
     var cad = valueOrDefault(req.query.cad, 0, Number);
-    var prt = valueOrDefault(req.query.prt, 0, Number);
+    var deg = valueOrDefault(req.query.deg, 0, Number);
 
-    var sql;
-    var params;
+    const sql = `
+      SELECT
+        ex1.valor as valor,
+        ex1.percentual as percentual,
+        ex1.taxa as taxa,
+        ano,
+        cad.nome as cadeia,
+        cad.cor as cor
+      FROM EIXO_1 as ex1
+        INNER JOIN uf uf ON uf.id = ex1.uf_id 
+        INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id 
+        INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id 
+        INNER JOIN eixo ex ON ex.id = ex1.eixo_id
+        INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id 
+      WHERE ex1.variavel_id = $1
+        AND ex1.uf_id = $2
+        and ex1.subdesagregacao_id = $3
+        and ex1.cadeia_id != 0
+      order by cad.id, ano asc
+    `;
 
-    var group = 'cad.CadeiaNome';
-    if (variable >= 10) {
-      group = 'prt.PorteNome';
-    }
+    const params = [variable, uf, deg];
 
-    var sql = `SELECT
-          SUM(Valor) as Valor,
-          Ano,
-          ${group} as NomeGrupo
-      FROM Eixo_1 as ex
-          INNER JOIN UF AS uf ON uf.idUF = ex.idUF
-          INNER JOIN Cadeia AS cad ON cad.idCadeia = ex.idCadeia
-          INNER JOIN Porte AS prt ON prt.idPorte = ex.idPorte
-      WHERE ex.Numero = ?
-          AND uf.idUF = ?`;
-    var params = [variable, uf];
-
+    /* Esse if precisa ser tratado de um jeito diferente... talvez fazer um outro endpoint para as variaveis 10, 11, 12 e 13?
     if (variable >= 10) {
       sql += ' AND cad.idCadeia = ?';
       params.push(cad);
@@ -270,11 +323,11 @@ class Eixo1Controller {
       sql += ' AND cad.idCadeia > 0 AND prt.idPorte = ?';
       params.push(prt);
     }
+    */
 
-    sql += ' GROUP BY NomeGrupo, Ano';
-    sql += ' ORDER BY NomeGrupo, Ano';
+    const result = await query(sql, params);
 
-    res.json(await query(sql, params));
+    res.json(result.rows);
   }
 
   /**
