@@ -17,19 +17,16 @@ services:
     environment:
         - NODE_ENV=development
 
-  atlas_db:
-    image: mysql
-    command: --default-authentication-plugin=mysql_native_password
-    volumes:
-      - ./Volumes:/var/lib/mysql
-      
+  atlas_db_pg:
+    image: postgres:13
     environment:
-      MYSQL_ROOT_PASSWORD: atlas_root
-      MYSQL_DATABASE: atlas_db
-      MYSQL_USER: atlas_user
-      MYSQL_PASSWORD: atlas_password
+      POSTGRES_DB: atlas_db_pg
+      POSTGRES_USER: atlas_user
+      POSTGRES_PASSWORD: atlas_password
     ports:
-      - 3306:3306
+      - 5432:5432
+    volumes:
+      - ./src/db/initdb:/docker-entrypoint-initdb.d
 
 networks:
   default:
