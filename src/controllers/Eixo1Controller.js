@@ -13,40 +13,25 @@ class Eixo1Controller {
     var variable = valueOrDefault(req.query.var, 0, Number);
     var uf = valueOrDefault(req.query.uf, 0, Number);
     var cad = valueOrDefault(req.query.cad, 0, Number);
-    var prt = valueOrDefault(req.query.prt, 0, Number);
-    var uos = valueOrDefault(req.query.uos, 0, Number);
 
-    if (!(prt == 0 || cad != 0 || [1, 2, 3].includes(variable))) {
-      fail(res, 'Invalid parameters!', 400);
-      return;
-    }
-
-    var result;
-    try {
-      result = await query(`SELECT
-                SUM(Valor) as Valor,
-                Ano,
-                cad.CadeiaNome as NomeGrupo,
-                cad.idCadeia as IDGrupo
-            FROM Eixo_1 as ex
-                INNER JOIN UF as uf ON uf.idUF = ex.idUF
-                INNER JOIN Cadeia as cad ON cad.idCadeia = ex.idCadeia
-                INNER JOIN Porte as port ON port.idPorte = ex.idPorte
-            WHERE uf.idUF = ? AND
-                cad.idcadeia > 0 AND
-                port.idPorte = ? AND
-                ex.Numero = ?
-            GROUP BY Ano, NomeGrupo`, [
-        uf,
-        prt,
-        variable,
-      ]);
-    } catch (e) {
-      fail(res, String(e));
-      return;
-    }
-
-    res.json(result);
+    res.json(await query(`SELECT
+          SUM(Valor) as Valor,
+          Ano,
+          prt.PorteNome as NomeGrupo,
+          prt.idPorte as IDGrupo
+      FROM Eixo_1 as ex
+          INNER JOIN UF as uf ON uf.idUF = ex.idUF
+          INNER JOIN Cadeia as cad ON cad.idCadeia = ex.idCadeia
+          INNER JOIN Porte as prt ON prt.idPorte = ex.idPorte
+      WHERE uf.idUF = ? AND
+          cad.idcadeia = ? AND
+          prt.idPorte > 0 AND
+          ex.Numero = ?
+      GROUP BY Ano, NomeGrupo, IDGrupo`, [
+      uf,
+      cad,
+      variable,
+    ]));
   }
 
   /**
