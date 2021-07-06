@@ -60,6 +60,77 @@ class Eixo1Controller {
     res.json(result.rows);
   }
 
+  async getStackedBars(req, res) {
+    var variable = valueOrDefault(req.query.var, 0, Number);
+    var uf = valueOrDefault(req.query.uf, 0, Number);
+    var cad = valueOrDefault(req.query.cad, 0, Number);
+    var deg = valueOrDefault(req.query.deg, 0, Number);
+
+    if (!(deg == 0 || cad != 0 || [1, 2, 3].includes(variable))) {
+      fail(res, 'Invalid parameters!', 400);
+      return;
+    }
+
+    var result;
+
+    try {
+      result = await query(`
+      select 
+        ex1.valor,
+        ex1.percentual,
+        ex1.taxa,
+        ex1.variavel_id,
+        ano,
+        atc.nome as ocupacao,
+        uf.nome as uf, 
+        cad.nome as cadeia,
+        cad.cor as cor,
+        ex.cor_primaria as cor_eixo,
+        filter_subdeg.nome as desagregacao,
+        filter_subdeg.id as desagregacao_id,
+        ex1.subdesagregacao_id as sdg_id,
+        agg_sdg.cor as sdg_cor,
+        agg_sdg.nome as sdg_nome
+      from eixo_1 ex1 
+        INNER JOIN eixo ex ON ex.id = ex1.eixo_id 
+        INNER JOIN uf uf ON uf.id = ex1.uf_id 
+        INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id 
+        INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id  
+        inner join subdesagregacao sdg ON sdg.id = ex1.subdesagregacao_id
+        inner join (
+          select s2.*, d2.nome from subdesagregacao s2
+          inner join desagregacao d2 on s2.desagregacao_id = d2.id
+          where s2.id = $1
+        ) as filter_subdeg on filter_subdeg.desagregacao_id = sdg.desagregacao_id
+        inner join (
+          select 
+            s.id as sdg_id,
+            d.nome as dg_nome,
+            prt.nome as nome,
+            prt.cor as cor
+          from subdesagregacao s 
+          inner join desagregacao d on d.id = s.desagregacao_id
+            left  join porte prt on s.subdesagregacao_id = prt.id and s.desagregacao_id = 1
+          ) as agg_sdg on sdg.id  = agg_sdg.sdg_id 
+      WHERE uf.id = $2 
+        and cad.id = $3
+        and ex1.eixo_id = 1
+        and ex1.variavel_id = $4
+      order by ano, sdg_id;
+      `, [
+        deg,
+        uf,
+        cad,
+        variable,
+      ]);
+    } catch (e) {
+      fail(res, String(e));
+      return;
+    }
+
+    res.json(result.rows);
+  }
+
   /**
   * Queries and returns necessary data to display a treemap
   * @param {import('express').Request} req

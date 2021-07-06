@@ -60,104 +60,62 @@ class Eixo2Controller {
 
     const [groupField, groupType] = getGrupo(deg, cad, ocp);
 
-    var sql = `SELECT
-        SUM(Valor) as Valor,
-        Ano,
-        ${groupType} as NomeGrupo
-      FROM Eixo_2 as ex
-        INNER JOIN Porte as prt ON prt.idPorte = ex.idPorte
-        INNER JOIN Idade as age ON age.idIdade = ex.idIdade
-        INNER JOIN Escolaridade as esc ON esc.idEscolaridade = ex.idEscolaridade
-        INNER JOIN Etinia as eti ON eti.idEtinia = ex.idEtinia
-        INNER JOIN Cadeia as cad ON cad.idCadeia = ex.idCadeia
-        INNER JOIN Ocupacao as ocp ON ocp.idOcupacao = ex.idOcupacao
-      WHERE Numero = ? AND ex.idUF = ?`;
-    var params = [groupField, variable, uf];
+    var sql = `
+      select 
+        ex2.valor,
+        ex2.percentual,
+        ex2.taxa,
+        ex2.variavel_id,
+          ano,
+          ocp.nome as ocupacao,
+          uf.nome as uf, 
+          cad.nome as cadeia,
+          cad.cor as cor,
+          ex.cor_primaria as cor_eixo,
+          filter_subdeg.nome as desagregacao,
+          filter_subdeg.id as desagregacao_id,
+          ex2.subdesagregacao_id as sdg_id,
+          agg_sdg.cor as sdg_cor,
+          agg_sdg.nome as sdg_nome
+      from eixo_2 ex2 
+          INNER JOIN eixo ex ON ex.id = ex2.eixo_id 
+          INNER JOIN uf uf ON uf.id = ex2.uf_id 
+          INNER JOIN ocupacao ocp ON ocp.id = ex2.ocupacao_id 
+          INNER JOIN cadeia cad ON cad.id = ex2.cadeia_id  
+          inner join subdesagregacao sdg ON sdg.id = ex2.subdesagregacao_id
+          inner join (
+            select s2.*, d2.nome from subdesagregacao s2
+            inner join desagregacao d2 on s2.desagregacao_id = d2.id
+            where s2.id = $1
+          ) as filter_subdeg on filter_subdeg.desagregacao_id = sdg.desagregacao_id
+          inner join (
+            select 
+            s.id as sdg_id,
+            d.nome as dg_nome,
+            coalesce (prt.nome, esc.nome, etn.nome, snd.nome, idd.nome, prv.nome, frm.nome, sex.nome) as nome,
+            coalesce (prt.cor, esc.cor, etn.cor, snd.cor, idd.cor, prv.cor, frm.cor, sex.cor) as cor
+          from subdesagregacao s 
+          inner join desagregacao d on d.id = s.desagregacao_id
+            left  join porte prt on s.subdesagregacao_id = prt.id and s.desagregacao_id = 1
+            left  join escolaridade esc on s.subdesagregacao_id = esc.id and s.desagregacao_id = 2
+            left  join etinia etn on s.subdesagregacao_id = etn.id and s.desagregacao_id = 3
+            left  join sindicato snd on s.subdesagregacao_id = snd.id and s.desagregacao_id = 4
+            left  join idade idd on s.subdesagregacao_id = idd.id and s.desagregacao_id = 5
+            left  join previdencia prv on s.subdesagregacao_id = prv.id and s.desagregacao_id = 6
+            left  join formalidade frm on s.subdesagregacao_id = frm.id and s.desagregacao_id = 7
+            left  join sexo sex on s.subdesagregacao_id = sex.id and s.desagregacao_id = 8
+          ) as agg_sdg on sdg.id  = agg_sdg.sdg_id 
+      WHERE uf.id = $2 
+          and cad.id = $3
+          and ex2.eixo_id = 2
+          and ex2.variavel_id = $4;
+    `;
 
-    if (ocp === 0) {
-      if (variable > 11) {
-        sql += ' AND ex.idCadeia = ?';
-        params.push(uos);
-      } else if (deg !== 0 && cad === 0) {
-        sql += ' AND ex.idCadeia != 0';
-      } else {
-        if (uos === 1 && variable === 6 && deg === 0) {
-          sql += ' AND ex.idCadeia != 0';
-        } else {
-          sql += ' AND ex.idCadeia = ?';
-          params.push(cad);
-        }
-      }
-      sql += ' AND ex.idOcupacao = 0';
-    } else if (variable === 6 && ocp !== 0) {
-      sql += ' AND (ex.idOcupacao = 1 OR ex.idOcupacao = 2)';
-    } else if (ocp == 1) {
-      sql += ' AND ex.idOcupacao = 1';
-    } else if (ocp === 2) {
-      sql += ' AND ex.idOcupacao = 2';
-    } else if (ocp === 3) {
-      // Os índices IHH e C4 da ocupação são definidos pelo uos
-      if (variable > 11) {
-        if (uos === 0) {
-          sql += ' AND ex.idOcupacao = 1';
-        } else {
-          sql += ' AND ex.idOcupacao = 2';
-        }
-      } else {
-        sql += ' AND (ex.idOcupacao = 1 OR ex.idOcupacao = 2)';
-      }
-    }
+    const params = [deg, uf, cad, variable,];
 
-    if ([4, 5].includes(variable) || (variable === 6 && uos === 0)) {
-      if (deg === 2 && subdeg >= 0) {
-        sql += ' AND ex.Sexo = ?';
-        params.push(subdeg);
-      } else {
-        sql += ' AND ex.Sexo IS NULL';
-      }
+    const result = await query(sql, params);
 
-      sql += ` AND ex.idPorte = ?
-        AND ex.idIdade = ?
-        AND ex.idEscolaridade = ?
-        AND ex.idEtinia = ?
-        AND ex.Formalidade = ?
-        AND ex.Previdencia = ?
-        AND ex.Sindical = ?`;
-      params.push(
-        deg === 1 ? subdeg : 0,
-        deg === 3 ? subdeg : 0,
-        deg === 4 ? subdeg : 0,
-        deg === 5 ? subdeg : 0,
-        deg === 6 ? subdeg : 0,
-        deg === 7 ? subdeg : 0,
-        deg === 8 ? subdeg : 0,
-      );
-    } else {
-      if (deg === 2) {
-        sql += ' AND (Sexo = 1 OR Sexo = 0)';
-      } else {
-        sql += ' AND Sexo IS NULL';
-      }
-
-      const operator = (id) => deg == id ? '>' : '=';
-      sql += ` AND ex.idPorte ${operator(1)} 0
-        AND ex.idIdade ${operator(3)} 0
-        AND ex.idEscolaridade ${operator(4)} 0
-        AND ex.idEtinia ${operator(5)} 0
-        AND ex.Formalidade ${operator(6)} 0
-        AND ex.Previdencia ${operator(7)} 0
-        AND ex.Sindical ${operator(8)} 0`;
-    }
-
-    if (uos === 1 && variable === 6) {
-      sql += ' AND Ano = ?';
-      params.push(ano);
-    }
-
-    sql += ' GROUP BY Ano, NomeGrupo';
-    sql += ' ORDER BY Ano';
-
-    res.json(await query(sql, params));
+    res.json(result.rows);
   }
 
   /**
