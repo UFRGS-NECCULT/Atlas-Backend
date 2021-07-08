@@ -10,6 +10,7 @@ eixo1Router.get('/stacked-bars', eixo1Controller.getStackedBars)
 eixo1Router.get('/lines', eixo1Controller.getterLinhas)
 eixo1Router.get('/map', eixo1Controller.getterMapa)
 eixo1Router.get('/treemap', eixo1Controller.getTreemap)
+eixo1Router.get('/info', eixo1Controller.getInfo)
 
 // FIXME: Esses endpoints sequer são usados pelo front?
 eixo1Router.get('/uf', eixo1Controller.getTotalSumPrt)

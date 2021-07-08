@@ -34,15 +34,15 @@ class Eixo1Controller {
           cad.cor as cor,
           ex.cor_primaria as cor_eixo
         FROM eixo_1 ex1
-          INNER JOIN uf uf ON uf.id = ex1.uf_id 
-          INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id 
-          INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id 
+          INNER JOIN uf uf ON uf.id = ex1.uf_id
+          INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id
+          INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id
           INNER JOIN eixo ex ON ex.id = ex1.eixo_id
-          INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id 
-        WHERE uf.id = $1 
+          INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id
+        WHERE uf.id = $1
           and cad.id = $2
-          and subdesag.id = $3 
-          and ex1.eixo_id = 1 
+          and subdesag.id = $3
+          and ex1.eixo_id = 1
           and ex1.variavel_id = $4
         GROUP BY ano, ex.cor_primaria, cad.nome, cad.cor, atc.nome, atc.id, cad.id
         order by ano ASC;
@@ -75,14 +75,14 @@ class Eixo1Controller {
 
     try {
       result = await query(`
-      select 
+      select
         ex1.valor,
         ex1.percentual,
         ex1.taxa,
         ex1.variavel_id,
         ano,
         atc.nome as ocupacao,
-        uf.nome as uf, 
+        uf.nome as uf,
         cad.nome as cadeia,
         cad.cor as cor,
         ex.cor_primaria as cor_eixo,
@@ -91,11 +91,11 @@ class Eixo1Controller {
         ex1.subdesagregacao_id as sdg_id,
         agg_sdg.cor as sdg_cor,
         agg_sdg.nome as sdg_nome
-      from eixo_1 ex1 
-        INNER JOIN eixo ex ON ex.id = ex1.eixo_id 
-        INNER JOIN uf uf ON uf.id = ex1.uf_id 
-        INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id 
-        INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id  
+      from eixo_1 ex1
+        INNER JOIN eixo ex ON ex.id = ex1.eixo_id
+        INNER JOIN uf uf ON uf.id = ex1.uf_id
+        INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id
+        INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id
         inner join subdesagregacao sdg ON sdg.id = ex1.subdesagregacao_id
         inner join (
           select s2.*, d2.nome from subdesagregacao s2
@@ -103,16 +103,16 @@ class Eixo1Controller {
           where s2.id = $1
         ) as filter_subdeg on filter_subdeg.desagregacao_id = sdg.desagregacao_id
         inner join (
-          select 
+          select
             s.id as sdg_id,
             d.nome as dg_nome,
             prt.nome as nome,
             prt.cor as cor
-          from subdesagregacao s 
+          from subdesagregacao s
           inner join desagregacao d on d.id = s.desagregacao_id
             left  join porte prt on s.subdesagregacao_id = prt.id and s.desagregacao_id = 1
-          ) as agg_sdg on sdg.id  = agg_sdg.sdg_id 
-      WHERE uf.id = $2 
+          ) as agg_sdg on sdg.id  = agg_sdg.sdg_id
+      WHERE uf.id = $2
         and cad.id = $3
         and ex1.eixo_id = 1
         and ex1.variavel_id = $4
@@ -153,12 +153,12 @@ class Eixo1Controller {
         cad.id as cadeia_id,
         cad.cor as cor
       FROM eixo_1 as ex1
-        INNER JOIN uf uf ON uf.id = ex1.uf_id 
-        INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id 
-        INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id 
+        INNER JOIN uf uf ON uf.id = ex1.uf_id
+        INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id
+        INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id
         INNER JOIN eixo ex ON ex.id = ex1.eixo_id
-        INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id 
-      WHERE uf.id = $1 
+        INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id
+      WHERE uf.id = $1
         and ex1.ano = $2
         and atc.id = $3
         and cad.id != 0
@@ -193,9 +193,9 @@ class Eixo1Controller {
         MAX(valor) as valor,
         ano
       from eixo_1 ex1
-      WHERE ex1.variavel_id = $1 
-        and ex1.cadeia_id = $2  
-        and ex1.subdesagregacao_id = $3 
+      WHERE ex1.variavel_id = $1
+        and ex1.cadeia_id = $2
+        and ex1.subdesagregacao_id = $3
         and ex1.uf_id = 0
       GROUP BY ano
       order by ano ASC`, [
@@ -219,12 +219,12 @@ class Eixo1Controller {
     var result;
     try {
       result = await query(`
-        SELECT 
-          MAX(valor) as valor, 
-          ano 
+        SELECT
+          MAX(valor) as valor,
+          ano
         FROM eixo_1 ex1
-        WHERE ex1.variavel_id = $1 
-          and ex1.cadeia_id = 0 
+        WHERE ex1.variavel_id = $1
+          and ex1.cadeia_id = 0
           and ex1.subdesagregacao_id = $2
           and ex1.uf_id = 0
         GROUP BY Ano
@@ -252,7 +252,7 @@ class Eixo1Controller {
     var result;
     try {
       result = await query(`
-        SELECT 
+        SELECT
           valor,
           ano
         FROM eixo_1 ex1
@@ -284,9 +284,9 @@ class Eixo1Controller {
     var result;
     try {
       result = await query(`
-        SELECT MAX(ano) as ano 
+        SELECT MAX(ano) as ano
         FROM eixo_1 ex1
-        WHERE ex1.variavel_id = $1 
+        WHERE ex1.variavel_id = $1
           and ex1.uf_id = 0
         GROUP BY variavel_id
       `, [
@@ -330,11 +330,11 @@ class Eixo1Controller {
         cad.cor as cor,
         ex.cor_primaria as cor_eixo
       FROM eixo_1 as ex1
-        INNER JOIN uf uf ON uf.id = ex1.uf_id 
-        INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id 
-        INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id 
+        INNER JOIN uf uf ON uf.id = ex1.uf_id
+        INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id
+        INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id
         INNER JOIN eixo ex ON ex.id = ex1.eixo_id
-        INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id 
+        INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id
       WHERE ex1.ano = $1
         and atc.id = $2
         and cad.id = $3
@@ -372,11 +372,11 @@ class Eixo1Controller {
         cad.nome as cadeia,
         cad.cor as cor
       FROM EIXO_1 as ex1
-        INNER JOIN uf uf ON uf.id = ex1.uf_id 
-        INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id 
-        INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id 
+        INNER JOIN uf uf ON uf.id = ex1.uf_id
+        INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id
+        INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id
         INNER JOIN eixo ex ON ex.id = ex1.eixo_id
-        INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id 
+        INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id
       WHERE ex1.variavel_id = $1
         AND ex1.uf_id = $2
         and ex1.subdesagregacao_id = $3
@@ -458,6 +458,94 @@ class Eixo1Controller {
     }
 
     res.json(result);
+  }
+
+  /**
+   * Gets the values of a variable in each Region
+   * @param {import('express').Request} req
+   * @param {import('express').Response} res
+   */
+  async getInfo(req, res) {
+    const variable = valueOrDefault(req.query.var, 0, Number);
+    const uf = valueOrDefault(req.query.uf, 0, Number);
+    const cad = valueOrDefault(req.query.cad, 0, Number);
+    const ano = valueOrDefault(req.query.ano, 0, Number);
+    const deg = valueOrDefault(req.query.deg, 0, Number);
+
+    const mainQuery = query(`SELECT
+        valor as val1,
+        percentual as percentual_nacional,
+        uf.nome as uf,
+        cad.nome as cadeia,
+        cad.cor as cor,
+        prt.nome as desag
+      FROM eixo_1 ex1
+        INNER JOIN eixo ex ON ex.id = ex1.eixo_id
+        INNER JOIN uf uf ON uf.id = ex1.uf_id
+        INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id
+        INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id
+        LEFT JOIN porte prt ON prt.subdesagregacao_id = subdesag.id
+      WHERE uf.id = $1
+        and cad.id = $2
+        and subdesag.id = $3
+        and ex.id = 1
+        and ex1.variavel_id = $4
+        and ex1.ano = $5;`, [
+      uf,
+      cad,
+      deg,
+      variable,
+      ano
+    ]);
+
+    // Pegar o total do estado
+    const stateQuery = query(`SELECT
+        valor
+      FROM eixo_1 as ex1
+      WHERE ex1.eixo_id = 1
+        and ex1.variavel_id = $1
+        and ex1.uf_id = $2
+        and ex1.ano = $3
+        and ex1.subdesagregacao_id = $4
+        and ex1.cadeia_id = 0;`, [
+      variable,
+      uf,
+      ano,
+      deg
+    ]);
+
+    // Pegar o total do país
+    const countryQuery = query(`SELECT
+        valor
+      FROM eixo_1 as ex1
+      WHERE ex1.eixo_id = 1
+        and ex1.variavel_id = $1
+        and ex1.ano = $2
+        and ex1.cadeia_id = $3
+        and ex1.subdesagregacao_id = $4
+        and ex1.uf_id = 0;`, [
+      variable,
+      ano,
+      cad,
+      deg
+    ]);
+
+    const queries = await Promise.all([mainQuery, stateQuery, countryQuery]);
+
+    // Testa se alguma das queries não retornou exatamente um item
+    if (queries.map(q => q.rows.length).reduce((l, r) => l || r !== 1, false)) {
+      fail(res, 'Unexpected query results!');
+      return;
+    }
+
+    const [main, state, country] = queries.map(q => q.rows[0]);
+
+    // Percentual do estado
+    main.val2 = main.val1 / state.valor;
+    // Percentual do país
+    main.val3 = main.val1 / country.valor;
+
+    res.json(main);
   }
 }
 
