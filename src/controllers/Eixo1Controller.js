@@ -474,6 +474,7 @@ class Eixo1Controller {
 
     const mainQuery = query(`SELECT
         valor as val1,
+        'none' as tipo_val1, -- TODO: var.format
         percentual as percentual_nacional,
         uf.nome as uf,
         cad.nome as cadeia,
@@ -481,6 +482,7 @@ class Eixo1Controller {
         prt.nome as desag
       FROM eixo_1 ex1
         INNER JOIN eixo ex ON ex.id = ex1.eixo_id
+        INNER JOIN variavel var on var.variavel = ex1.variavel_id and var.eixo = ex.id
         INNER JOIN uf uf ON uf.id = ex1.uf_id
         INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id
         INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id
@@ -489,7 +491,7 @@ class Eixo1Controller {
         and cad.id = $2
         and subdesag.id = $3
         and ex.id = 1
-        and ex1.variavel_id = $4
+        and var.variavel = $4
         and ex1.ano = $5;`, [
       uf,
       cad,
@@ -534,6 +536,7 @@ class Eixo1Controller {
 
     // Testa se alguma das queries não retornou exatamente um item
     if (queries.map(q => q.rows.length).reduce((l, r) => l || r !== 1, false)) {
+      console.log(queries);
       fail(res, 'Unexpected query results!');
       return;
     }
@@ -542,8 +545,10 @@ class Eixo1Controller {
 
     // Percentual do estado
     main.val2 = main.val1 / state.valor;
+    main.tipo_val2 = 'percent';
     // Percentual do país
     main.val3 = main.val1 / country.valor;
+    main.tipo_val3 = 'percent';
 
     res.json(main);
   }
