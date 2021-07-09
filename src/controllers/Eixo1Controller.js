@@ -474,7 +474,7 @@ class Eixo1Controller {
 
     const mainQuery = query(`SELECT
         valor as val1,
-        'none' as tipo_val1, -- TODO: var.format
+        var.format as tipo_val1,
         percentual as percentual_nacional,
         uf.nome as uf,
         cad.nome as cadeia,
@@ -536,7 +536,6 @@ class Eixo1Controller {
 
     // Testa se alguma das queries não retornou exatamente um item
     if (queries.map(q => q.rows.length).reduce((l, r) => l || r !== 1, false)) {
-      console.log(queries);
       fail(res, 'Unexpected query results!');
       return;
     }
