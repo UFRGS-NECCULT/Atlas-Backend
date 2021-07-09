@@ -1,17 +1,20 @@
-import { createConnection, format } from 'mysql';
+import pg from 'pg';
 
-var client = null;
+let client = null;
 
 /**
  * Initializes the database connection
  */
 export const initialize = () => {
-    client = createConnection({
+
+    client = new pg.Client({
         host: process.env.DB_HOST,
         user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
         database: process.env.DB_DATABASE,
+        password: process.env.DB_PASSWORD
     });
+
+    client.connect();
 }
 
 /**
@@ -22,11 +25,9 @@ export const initialize = () => {
  * @example query('SELECT * FROM ?? WHERE id = ? AND name = ?', ['items', 28141])
  * @returns {Promise<[*]>} The query results
  */
-export const query = (prepare, inserts = []) => {
-    const sql = format(prepare, inserts);
-
+export const query = (text, values = []) => {
     return new Promise((ok, fail) => {
-        client.query(sql, (error, results, fields) => {
+        client.query(text, values, (error, results) => {
             if (error) {
                 fail(error);
             } else {
