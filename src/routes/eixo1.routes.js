@@ -1,21 +1,22 @@
 import { Router } from "express";
-
-export const eixo1Router = Router();
-
 import Eixo1Controller from '../controllers/Eixo1Controller.js';
+
+export const router = Router();
+
 const eixo1Controller = new Eixo1Controller();
 
-eixo1Router.get('/bars', eixo1Controller.getBars)
-eixo1Router.get('/stacked-bars', eixo1Controller.getStackedBars)
-eixo1Router.get('/lines', eixo1Controller.getterLinhas)
-eixo1Router.get('/map', eixo1Controller.getterMapa)
-eixo1Router.get('/treemap', eixo1Controller.getTreemap)
+router.get('/bars', eixo1Controller.getBars)
+router.get('/lines', eixo1Controller.getterLinhas)
+router.get('/map', eixo1Controller.getterMapa)
+router.get('/treemap', eixo1Controller.getTreemap)
+router.get('/donut', eixo1Controller.getterDonut)
+router.get('/breadcrumb', eixo1Controller.getBreadcrumb)
 
 // FIXME: Esses endpoints sequer são usados pelo front?
-eixo1Router.get('/uf', eixo1Controller.getTotalSumPrt)
-eixo1Router.get('/year', eixo1Controller.getAnoDefault)
-eixo1Router.get('/max-setor', eixo1Controller.getMaxValueSetor)
-eixo1Router.get('/regions', eixo1Controller.getterRegion)
-eixo1Router.get('/max-brasil', eixo1Controller.getTotalBrasil)
+router.get('/uf', eixo1Controller.getTotalSumPrt)
+router.get('/year', eixo1Controller.getAnoDefault)
+router.get('/max-setor', eixo1Controller.getMaxValueSetor)
+router.get('/regions', eixo1Controller.getterRegion)
+router.get('/max-brasil', eixo1Controller.getTotalBrasil)
 
-export default eixo1Router;
+export default router;

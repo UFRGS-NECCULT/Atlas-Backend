@@ -4,17 +4,11 @@ import { query } from '../database.js';
 
 class Eixo1Controller {
 
-  /**
-   * Queries and returns necessary data to display bar charts
-   * @param {import('express').Request} req
-   * @param {import('express').Response} res
-   */
   async getBars(req, res) {
     var variable = valueOrDefault(req.query.var, 0, Number);
     var uf = valueOrDefault(req.query.uf, 0, Number);
     var cad = valueOrDefault(req.query.cad, 0, Number);
     var deg = valueOrDefault(req.query.deg, 0, Number);
-    var uos = valueOrDefault(req.query.uos, 0, Number);
 
     if (!(deg == 0 || cad != 0 || [1, 2, 3].includes(variable))) {
       fail(res, 'Invalid parameters!', 400);
@@ -24,99 +18,38 @@ class Eixo1Controller {
     var result;
     try {
       result = await query(`
-        SELECT
-          SUM(valor) as valor,
+        select 
+          ex1.valor,
+          ex1.percentual,
+          ex1.taxa,
+          ex1.variavel_id,
           ano,
           atc.nome as atuacao,
-          atc.id as atuacao_id,
-          cad.id as cadeia_id,
+          uf.nome as uf, 
+          uf.id as uf_id, 
           cad.nome as cadeia,
           cad.cor as cor,
-          ex.cor_primaria as cor_eixo
-        FROM eixo_1 ex1
+          ex.cor_primaria as cor_eixo,
+          sdg.id as sdg_id,
+          sdg.subdesagregacao_nome as sdg_nome,
+          sdg.subdesagregacao_cor as sdg_cor,
+          sdg.subdesagregacao_id as sdg_sub_id
+        from eixo_1 ex1 
+          INNER JOIN eixo ex ON ex.id = ex1.eixo_id 
           INNER JOIN uf uf ON uf.id = ex1.uf_id 
           INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id 
-          INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id 
-          INNER JOIN eixo ex ON ex.id = ex1.eixo_id
-          INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id 
-        WHERE uf.id = $1 
-          and cad.id = $2
-          and subdesag.id = $3 
-          and ex1.eixo_id = 1 
-          and ex1.variavel_id = $4
-        GROUP BY ano, ex.cor_primaria, cad.nome, cad.cor, atc.nome, atc.id, cad.id
-        order by ano ASC;
-      `, [
-        uf,
-        cad,
-        deg,
-        variable,
-      ]);
-    } catch (e) {
-      fail(res, String(e));
-      return;
-    }
-
-    res.json(result.rows);
-  }
-
-  async getStackedBars(req, res) {
-    var variable = valueOrDefault(req.query.var, 0, Number);
-    var uf = valueOrDefault(req.query.uf, 0, Number);
-    var cad = valueOrDefault(req.query.cad, 0, Number);
-    var deg = valueOrDefault(req.query.deg, 0, Number);
-
-    if (!(deg == 0 || cad != 0 || [1, 2, 3].includes(variable))) {
-      fail(res, 'Invalid parameters!', 400);
-      return;
-    }
-
-    var result;
-
-    try {
-      result = await query(`
-      select 
-        ex1.valor,
-        ex1.percentual,
-        ex1.taxa,
-        ex1.variavel_id,
-        ano,
-        atc.nome as ocupacao,
-        uf.nome as uf, 
-        cad.nome as cadeia,
-        cad.cor as cor,
-        ex.cor_primaria as cor_eixo,
-        filter_subdeg.nome as desagregacao,
-        filter_subdeg.id as desagregacao_id,
-        ex1.subdesagregacao_id as sdg_id,
-        agg_sdg.cor as sdg_cor,
-        agg_sdg.nome as sdg_nome
-      from eixo_1 ex1 
-        INNER JOIN eixo ex ON ex.id = ex1.eixo_id 
-        INNER JOIN uf uf ON uf.id = ex1.uf_id 
-        INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id 
-        INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id  
-        inner join subdesagregacao sdg ON sdg.id = ex1.subdesagregacao_id
-        inner join (
-          select s2.*, d2.nome from subdesagregacao s2
-          inner join desagregacao d2 on s2.desagregacao_id = d2.id
-          where s2.id = $1
-        ) as filter_subdeg on filter_subdeg.desagregacao_id = sdg.desagregacao_id
-        inner join (
-          select 
-            s.id as sdg_id,
-            d.nome as dg_nome,
-            prt.nome as nome,
-            prt.cor as cor
-          from subdesagregacao s 
-          inner join desagregacao d on d.id = s.desagregacao_id
-            left  join porte prt on s.subdesagregacao_id = prt.id and s.desagregacao_id = 1
-          ) as agg_sdg on sdg.id  = agg_sdg.sdg_id 
-      WHERE uf.id = $2 
-        and cad.id = $3
-        and ex1.eixo_id = 1
-        and ex1.variavel_id = $4
-      order by ano, sdg_id;
+          INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id  
+          inner join subdesagregacao sdg ON sdg.id = ex1.subdesagregacao_id
+          inner join (
+            select d2.id as desagregacao_id from subdesagregacao s2
+              inner join desagregacao d2 on s2.desagregacao_id = d2.id
+            where s2.id = $1
+          ) as filter_deg on filter_deg.desagregacao_id = sdg.desagregacao_id
+        WHERE uf.id = $2 
+            and cad.id = $3
+            and ex1.eixo_id = 1
+            and ex1.variavel_id = $4
+        order by ano, sdg_id;
       `, [
         deg,
         uf,
@@ -406,6 +339,57 @@ class Eixo1Controller {
    * @param {import('express').Request} req
    * @param {import('express').Response} res
    */
+  async getterDonut(req, res) {
+    var variable = valueOrDefault(req.query.var, 0, Number);
+    var uf = valueOrDefault(req.query.uf, 0, Number);
+    var ano = valueOrDefault(req.query.ano, 2015, Number);
+    var deg = valueOrDefault(req.query.deg, 0, Number);
+
+    const sql = `
+      SELECT
+        ex1.valor as valor,
+        ex1.percentual as percentual,
+        ex1.taxa as taxa,
+        ano,
+        cad.nome as cadeia,
+        cad.id as cadeia_id,
+        cad.cor as cor
+      FROM EIXO_1 as ex1
+        INNER JOIN uf uf ON uf.id = ex1.uf_id 
+        INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id 
+        INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id 
+        INNER JOIN eixo ex ON ex.id = ex1.eixo_id
+        INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id 
+      WHERE ex1.variavel_id = $1
+        AND ex1.uf_id = $2
+        and ex1.subdesagregacao_id = $3
+        and ex1.cadeia_id != 0
+        and ex1.ano = $4
+      order by cad.id, ano asc
+    `;
+
+    const params = [variable, uf, deg, ano];
+
+    /* Esse if precisa ser tratado de um jeito diferente... talvez fazer um outro endpoint para as variaveis 10, 11, 12 e 13?
+    if (variable >= 10) {
+      sql += ' AND cad.idCadeia = ?';
+      params.push(cad);
+    } else {
+      sql += ' AND cad.idCadeia > 0 AND prt.idPorte = ?';
+      params.push(prt);
+    }
+    */
+
+    const result = await query(sql, params);
+
+    res.json(result.rows);
+  }
+
+  /**
+   * Gets the values of a variable in each Region
+   * @param {import('express').Request} req
+   * @param {import('express').Response} res
+   */
   async getterRegion(req, res) {
     var variable = valueOrDefault(req.query.var, 0, Number);
     var cad = valueOrDefault(req.query.cad, 0, Number);
@@ -458,6 +442,73 @@ class Eixo1Controller {
     }
 
     res.json(result);
+  }
+
+  async getBreadcrumb(req, res) {
+    const variable = valueOrDefault(req.query.var, 1, Number);
+
+
+
+    const sql_eixo = `select id, nome from eixo ex;`
+    const sql_var = `select variavel as id, titulo as nome from variavel v where eixo = 1;`
+    const sql_uf = `select distinct(uf_id) as id, uf.nome as nome
+                      from eixo_1 ex1
+                      inner join uf on uf.id = ex1.uf_id
+                      where variavel_id = ${variable}
+                      order by uf_id asc;`
+
+    const sql_ano = `select distinct(ano) as id, ano as nome from eixo_1 e1 where variavel_id = ${variable} order by ano ASC;`
+
+
+
+    const sql_cad = `select distinct(cadeia_id) as id, c.nome as nome
+                      from eixo_1 ex1
+                      inner join cadeia c on c.id = ex1.cadeia_id
+                      where variavel_id = ${variable}
+                      order by cadeia_id asc;`
+
+    const sql_deg = `select distinct(ex1.subdesagregacao_id) as id, s.subdesagregacao_nome as nome from eixo_1 ex1
+                      inner join subdesagregacao s on s.id = ex1.subdesagregacao_id 
+                    where ex1.variavel_id = ${variable}
+                    order by ex1.subdesagregacao_id asc;`
+
+    let breadcrumbs = [
+      {
+        id: 'eixo',
+        label: 'Eixo',
+        options: await query(sql_eixo),
+      },
+      {
+        id: 'var',
+        label: 'Variável',
+        options: await query(sql_var),
+      },
+      {
+        id: 'uf',
+        label: 'UF',
+        options: await query(sql_uf),
+      },
+      {
+        id: 'ano',
+        label: 'Ano',
+        options: await query(sql_ano),
+      },
+      {
+        id: 'cad',
+        label: 'Setor',
+        options: await query(sql_cad),
+      },
+      {
+        id: 'deg',
+        label: 'Porte',
+        options: await query(sql_deg),
+      }
+    ]
+
+    await Promise.all(breadcrumbs.map(b => b.options))
+
+    breadcrumbs = breadcrumbs.map(b => { return { ...b, options: b.options.rows } })
+    res.json(breadcrumbs);
   }
 }
 
