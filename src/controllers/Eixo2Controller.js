@@ -2,44 +2,45 @@ import { query } from '../database.js';
 import { valueOrDefault } from '../utils.js';
 
 const degs = {
-  1: 'prt.PorteNome',
-  2: 'ex.Sexo',
-  3: 'age.IdadeNome',
-  4: 'esc.EscolaridadeNome',
-  5: 'eti.EtiniaNome',
-  6: 'ex.Formalidade',
-  7: 'ex.Previdencia',
-  8: 'ex.Sindical',
+  1: ['prt.PorteNome', 'prt.idPorte'],
+  2: ['ex.Sexo', 'ex.Sexo'],
+  3: ['age.IdadeNome', 'age.idIdade'],
+  4: ['esc.EscolaridadeNome', 'esc.idEscolaridade'],
+  5: ['eti.EtiniaNome', 'eti.idEtinia'],
+  6: ['ex.Formalidade', 'ex.Formalidade'],
+  7: ['ex.Previdencia', 'ex.Previdencia'],
+  8: ['ex.Sindical', 'ex.Sindical'],
 }
 
 /**
- * Retorna dois valores:
+ * Retorna três valores:
  *  - O nome ou valor do campo de agrupamento (desagregação).
- *    Caso nenhum dos parâmetros resulte em uma desagregação, o grupo será NULL.
+ *    Caso nenhum dos parâmetros resulte em uma desagregação, seu valor será null.
+ *  - O nome ou valor do campo de ID da desagregação
  *  - O tipo do nome retornado. ?? quando foi retornado o nome de uma coluna,
  *    ? quando foi retornado um valor
  *
  * @param {number} deg A desagregação desejada (0 = nenhuma)
  * @param {number} cad A cadeia desejada (0 = todas)
  * @param {number} ocp A ocupação desejada (3 = todas)
- * @returns {[string, ('?'|'??')]}
+ * @returns {[string, string, ('?'|'??')]}
  */
 function getGrupo(deg, cad, ocp) {
   if (Object.keys(degs).includes(deg.toString())) {
-    return [degs[deg], '??'];
+    return [...degs[deg], '??'];
   }
 
   if (ocp === 3) {
-    return ['ocp.OcupacaoNome', '??'];
+    return ['ocp.OcupacaoNome', 'ocp.idOcupacao', '??'];
   }
 
   if (cad === 0) {
-    return ['cad.CadeiaNome', '??'];
+    return ['cad.CadeiaNome', 'cad.idCadeia', '??'];
   }
 
   // Caso nenhum dos critérios acima
   // sejam cumpridos, não existem grupos
-  return [null, '?'];
+  return [null, null, '?'];
 }
 
 class Eixo2Controller {
@@ -58,7 +59,7 @@ class Eixo2Controller {
     const subdeg = valueOrDefault(req.query.subdeg, 0, Number);
     const ano = valueOrDefault(req.query.ano, 0, Number);
 
-    const [groupField, groupType] = getGrupo(deg, cad, ocp);
+    const [groupNameField, groupIDField, groupType] = getGrupo(deg, cad, ocp);
 
     var sql = `
       select 
@@ -114,12 +115,13 @@ class Eixo2Controller {
     const ocp = valueOrDefault(req.query.ocp, 0, Number);
     const deg = valueOrDefault(req.query.deg, 0, Number);
 
-    const [groupField, groupType] = getGrupo(deg, cad, ocp);
+    const [groupNameField, groupIDField, groupType] = getGrupo(deg, cad, ocp);
 
     var sql = `SELECT
         SUM(ex.Valor) as Valor,
         ex.Ano,
-        ${groupType} as NomeGrupo
+        ${groupType} as NomeGrupo,
+        ${groupType} as IDGrupo
       FROM Eixo_2 as ex
         INNER JOIN Porte as prt ON prt.idPorte = ex.idPorte
         INNER JOIN Idade as age ON age.idIdade = ex.idIdade
@@ -128,7 +130,7 @@ class Eixo2Controller {
         INNER JOIN Cadeia as cad ON cad.idCadeia = ex.idCadeia
         INNER JOIN Ocupacao as ocp ON ocp.idOcupacao = ex.idOcupacao
       WHERE Numero = ? AND idUF = ?`;
-    var params = [groupField, variable, uf];
+    var params = [groupNameField, groupIDField, variable, uf];
 
     if (ocp === 0) {
       if (cad === 0) {
@@ -160,7 +162,7 @@ class Eixo2Controller {
       AND ex.Previdencia ${operator(7)} 0
       AND ex.Sindical ${operator(8)} 0`;
 
-    sql += ' GROUP BY ex.Ano, NomeGrupo';
+    sql += ' GROUP BY ex.Ano, NomeGrupo, IDGrupo';
     sql += ' ORDER BY NomeGrupo, Ano';
 
     res.json(await query(sql, params));
@@ -229,13 +231,14 @@ class Eixo2Controller {
     const deg = valueOrDefault(req.query.deg, 0, Number);
     const ano = valueOrDefault(req.query.ano, 0, Number);
 
-    const [groupField, groupType] = getGrupo(deg, 0, ocp !== 0 ? 3 : 0);
+    const [groupNameField, groupIDField, groupType] = getGrupo(deg, 0, ocp !== 0 ? 3 : 0);
 
     var sql = `SELECT
         SUM(Valor) as Valor,
         SUM(Taxa) as Taxa,
         SUM(Percentual) as Percentual,
-        ${groupType} as NomeGrupo
+        ${groupType} as NomeGrupo,
+        ${groupType} as IDGrupo
       FROM Eixo_2 as ex
         INNER JOIN Porte as prt ON prt.idPorte = ex.idPorte
         INNER JOIN Idade as age ON age.idIdade = ex.idIdade
@@ -245,7 +248,7 @@ class Eixo2Controller {
         INNER JOIN Ocupacao as ocp ON ocp.idOcupacao = ex.idOcupacao
       WHERE ex.Numero = ? AND
         ex.idUF = ?`;
-    var params = [groupField, variable, uf];
+    var params = [groupNameField, groupIDField, variable, uf];
 
     if (ocp === 0) {
       sql += ' AND ex.idCadeia > 0 AND ex.idOcupacao = 0';
@@ -272,7 +275,7 @@ class Eixo2Controller {
       params.push(ano);
     }
 
-    sql += ' GROUP BY NomeGrupo';
+    sql += ' GROUP BY NomeGrupo, IDGrupo';
 
     res.json(await query(sql, params));
   }
