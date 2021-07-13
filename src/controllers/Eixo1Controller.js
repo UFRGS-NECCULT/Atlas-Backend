@@ -125,37 +125,39 @@ class Eixo1Controller {
     var result;
     try {
       result = await query(`
-        select 
+        select
           ex1.valor,
           ex1.percentual,
           ex1.taxa,
           ex1.variavel_id,
           ano,
           atc.nome as atuacao,
-          uf.nome as uf, 
-          uf.id as uf_id, 
+          uf.nome as uf,
+          uf.id as uf_id,
           cad.nome as cadeia,
           cad.cor as cor,
           ex.cor_primaria as cor_eixo,
           sdg.id as sdg_id,
           sdg.subdesagregacao_nome as sdg_nome,
           sdg.subdesagregacao_cor as sdg_cor,
-          sdg.subdesagregacao_id as sdg_sub_id
-        from eixo_1 ex1 
-          INNER JOIN eixo ex ON ex.id = ex1.eixo_id 
-          INNER JOIN uf uf ON uf.id = ex1.uf_id 
-          INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id 
-          INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id  
+          sdg.subdesagregacao_id as sdg_sub_id,
+          var.format as formato
+        from eixo_1 ex1
+          INNER JOIN eixo ex ON ex.id = ex1.eixo_id
+          INNER JOIN uf uf ON uf.id = ex1.uf_id
+          INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id
+          INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id
           inner join subdesagregacao sdg ON sdg.id = ex1.subdesagregacao_id
+          INNER JOIN variavel var ON var.variavel = ex1.variavel_id and var.eixo = ex1.eixo_id
           inner join (
             select d2.id as desagregacao_id from subdesagregacao s2
               inner join desagregacao d2 on s2.desagregacao_id = d2.id
             where s2.id = $1
           ) as filter_deg on filter_deg.desagregacao_id = sdg.desagregacao_id
-        WHERE uf.id = $2 
+        WHERE uf.id = $2
             and cad.id = $3
             and ex1.eixo_id = 1
-            and ex1.variavel_id = $4
+            and var.variavel = $4
         order by ano, sdg_id;
       `, [
         deg,
@@ -191,21 +193,23 @@ class Eixo1Controller {
         ex1.ano as ano,
         cad.nome as cadeia,
         cad.id as cadeia_id,
-        cad.cor as cor
+        cad.cor as cor,
+        var.format as formato
       FROM eixo_1 as ex1
         INNER JOIN uf uf ON uf.id = ex1.uf_id
         INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id
         INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id
         INNER JOIN eixo ex ON ex.id = ex1.eixo_id
         INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id
+        INNER JOIN variavel var ON var.variavel = ex1.variavel_id and var.eixo = ex1.eixo_id
       WHERE uf.id = $1
         and ex1.ano = $2
         and atc.id = $3
         and cad.id != 0
+        and var.variavel = $4
         and ex1.eixo_id = 1
-        and ex1.variavel_id = $4
         and ex1.subdesagregacao_id = $5
-      GROUP BY cad.id, cad.nome, cad.cor, ex1.ano
+      GROUP BY cad.id, cad.nome, cad.cor, ex1.ano, var.format
       order by cadeia_id ASC;
     `, [
       uf,
@@ -368,19 +372,21 @@ class Eixo1Controller {
         cad.nome as cadeia,
         cad.id as cadeia_id,
         cad.cor as cor,
-        ex.cor_primaria as cor_eixo
+        ex.cor_primaria as cor_eixo,
+        var.format as formato
       FROM eixo_1 as ex1
         INNER JOIN uf uf ON uf.id = ex1.uf_id
         INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id
         INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id
         INNER JOIN eixo ex ON ex.id = ex1.eixo_id
         INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id
+        INNER JOIN variavel var ON var.variavel = ex1.variavel_id and var.eixo = ex1.eixo_id
       WHERE ex1.ano = $1
         and atc.id = $2
         and cad.id = $3
         and uf.id != 0
+        and var.variavel = $4
         and ex1.eixo_id = 1
-        and ex1.variavel_id = $4
         and ex1.subdesagregacao_id = $5
       `;
 
@@ -410,14 +416,16 @@ class Eixo1Controller {
         ex1.taxa as taxa,
         ano,
         cad.nome as cadeia,
-        cad.cor as cor
+        cad.cor as cor,
+        var.format as formato
       FROM EIXO_1 as ex1
         INNER JOIN uf uf ON uf.id = ex1.uf_id
         INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id
         INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id
         INNER JOIN eixo ex ON ex.id = ex1.eixo_id
         INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id
-      WHERE ex1.variavel_id = $1
+        INNER JOIN variavel var ON var.variavel = ex1.variavel_id and var.eixo = ex1.eixo_id
+      WHERE var.variavel = $1
         AND ex1.uf_id = $2
         and ex1.subdesagregacao_id = $3
         and ex1.cadeia_id != 0
@@ -460,14 +468,16 @@ class Eixo1Controller {
         ano,
         cad.nome as cadeia,
         cad.id as cadeia_id,
-        cad.cor as cor
+        cad.cor as cor,
+        var.format as formato
       FROM EIXO_1 as ex1
-        INNER JOIN uf uf ON uf.id = ex1.uf_id 
-        INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id 
-        INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id 
+        INNER JOIN uf uf ON uf.id = ex1.uf_id
+        INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id
+        INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id
         INNER JOIN eixo ex ON ex.id = ex1.eixo_id
-        INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id 
-      WHERE ex1.variavel_id = $1
+        INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id
+        INNER JOIN variavel var ON var.variavel = ex1.variavel_id and var.eixo = ex1.eixo_id
+      WHERE var.variavel = $1
         AND ex1.uf_id = $2
         and ex1.subdesagregacao_id = $3
         and ex1.cadeia_id != 0
@@ -575,7 +585,7 @@ class Eixo1Controller {
                       order by cadeia_id asc;`
 
     const sql_deg = `select distinct(ex1.subdesagregacao_id) as id, s.subdesagregacao_nome as nome from eixo_1 ex1
-                      inner join subdesagregacao s on s.id = ex1.subdesagregacao_id 
+                      inner join subdesagregacao s on s.id = ex1.subdesagregacao_id
                     where ex1.variavel_id = ${variable}
                     order by ex1.subdesagregacao_id asc;`
 
@@ -633,10 +643,12 @@ class Eixo1Controller {
     const mainQuery = query(`SELECT
         valor as val1,
         var.format as tipo_val1,
+        var.fonte as fonte,
         percentual as percentual_nacional,
         uf.nome as uf,
         cad.nome as cadeia,
-        cad.cor as cor
+        cad.cor as cor,
+        subdesag.subdesagregacao_nome as desag
       FROM eixo_1 ex1
         INNER JOIN eixo ex ON ex.id = ex1.eixo_id
         INNER JOIN variavel var on var.variavel = ex1.variavel_id and var.eixo = ex.id
