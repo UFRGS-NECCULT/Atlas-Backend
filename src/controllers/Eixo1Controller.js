@@ -536,6 +536,7 @@ class Eixo1Controller {
     const mainQuery = query(`SELECT
         valor as val1,
         var.format as tipo_val1,
+        var.fonte as fonte,
         percentual as percentual_nacional,
         uf.nome as uf,
         cad.nome as cadeia,
