@@ -1,8 +1,115 @@
 
 import { fail, valueOrDefault } from '../utils.js';
 import { query } from '../database.js';
+import { response } from 'express';
 
 class Eixo1Controller {
+
+  async getVisualization(req, res) {
+    const variable = valueOrDefault(req.query.var, 1, Number);
+    const box = valueOrDefault(req.query.box, 1, Number);
+
+    const visualizations = [
+      {
+        variable: 1,
+        boxes: [
+          {
+            box: 1,
+            data: {
+              display: 'map',
+              charts: [
+                {
+                  id: "map",
+                  label: "Mapa",
+                },
+                {
+                  id: "bars",
+                  label: "Barra",
+                  constants: {
+                    cad: 5
+                  }
+                }
+              ]
+            }
+          },
+          {
+            box: 2,
+            data: {
+              display: 'bars',
+              charts: [
+                {
+                  id: "bars",
+                  label: "Barras",
+                }
+              ]
+            }
+          },
+          {
+            box: 3,
+            data: {
+              display: 'treemap_scc',
+              charts: [
+                {
+                  id: "treemap_scc",
+                  label: "Treemap",
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        variable: 3,
+        boxes: [
+          {
+            box: 1,
+            data: {
+              display: 'map',
+              charts: [
+                {
+                  id: "map",
+                  label: "Mapa",
+                }
+              ]
+            }
+          },
+          {
+            box: 2,
+            data: {
+              display: 'lines',
+              charts: [
+                {
+                  id: "lines",
+                  label: "Linhas",
+                }
+              ]
+            }
+          },
+          {
+            box: 3,
+            data: {
+              display: 'treemap_scc',
+              charts: [
+                {
+                  id: "treemap_scc",
+                  label: "Treemap",
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+
+    const variableData = visualizations.find(visualization => visualization.variable === variable)
+
+    if (!variableData) res.sendStatus(404);
+
+    const boxData = variableData.boxes.find(variable_box => variable_box.box === box);
+    if (!boxData) res.sendStatus(404);
+
+    return res.json(boxData.data)
+  }
 
   async getBars(req, res) {
     var variable = valueOrDefault(req.query.var, 0, Number);
@@ -529,15 +636,13 @@ class Eixo1Controller {
         percentual as percentual_nacional,
         uf.nome as uf,
         cad.nome as cadeia,
-        cad.cor as cor,
-        prt.nome as desag
+        cad.cor as cor
       FROM eixo_1 ex1
         INNER JOIN eixo ex ON ex.id = ex1.eixo_id
         INNER JOIN variavel var on var.variavel = ex1.variavel_id and var.eixo = ex.id
         INNER JOIN uf uf ON uf.id = ex1.uf_id
         INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id
         INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id
-        LEFT JOIN porte prt ON prt.subdesagregacao_id = subdesag.id
       WHERE uf.id = $1
         and cad.id = $2
         and subdesag.id = $3
