@@ -62,15 +62,16 @@ class Eixo2Controller {
     const [groupNameField, groupIDField, groupType] = getGrupo(deg, cad, ocp);
 
     var sql = `
-      select 
+      select
         ex2.valor,
         ex2.percentual,
         ex2.taxa,
         ex2.variavel_id,
+        var.format as formato,
         ano,
         ocp.nome as ocupacao,
-        uf.nome as uf, 
-        uf.id as uf_id, 
+        uf.nome as uf,
+        uf.id as uf_id,
         cad.nome as cadeia,
         cad.cor as cor,
         ex.cor_primaria as cor_eixo,
@@ -78,11 +79,12 @@ class Eixo2Controller {
         sdg.subdesagregacao_nome as sdg_nome,
         sdg.subdesagregacao_cor as sdg_cor,
         sdg.subdesagregacao_id as sdg_sub_id
-      from eixo_2 ex2 
-          INNER JOIN eixo ex ON ex.id = ex2.eixo_id 
-          INNER JOIN uf uf ON uf.id = ex2.uf_id 
-          INNER JOIN ocupacao ocp ON ocp.id = ex2.ocupacao_id 
-          INNER JOIN cadeia cad ON cad.id = ex2.cadeia_id  
+      from eixo_2 ex2
+          INNER JOIN eixo ex ON ex.id = ex2.eixo_id
+          INNER JOIN uf uf ON uf.id = ex2.uf_id
+          INNER JOIN ocupacao ocp ON ocp.id = ex2.ocupacao_id
+          INNER JOIN cadeia cad ON cad.id = ex2.cadeia_id
+          INNER JOIN variavel var ON var.variavel = ex2.variavel_id and var.eixo = ex.id
           inner join subdesagregacao sdg ON sdg.id = ex2.subdesagregacao_id
           inner join (
             select d2.id as desagregacao_id from subdesagregacao s2
@@ -92,7 +94,7 @@ class Eixo2Controller {
       WHERE uf.id = $2
           and cad.id = $3
           and ex2.eixo_id = 2
-          and ex2.variavel_id = $4
+          and var.variavel = $4
       order by ano, sdg_id;
     `;
 
