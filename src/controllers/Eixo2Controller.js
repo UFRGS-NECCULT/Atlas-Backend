@@ -413,6 +413,7 @@ class Eixo2Controller {
     const cad = valueOrDefault(req.query.cad, 0, Number);
     const ano = valueOrDefault(req.query.ano, 0, Number);
     const deg = valueOrDefault(req.query.deg, 0, Number);
+    const ocp = valueOrDefault(req.query.ocp, 0, Number);
 
     const mainQuery = query(`SELECT
         ex2.valor,
@@ -425,13 +426,16 @@ class Eixo2Controller {
         cad.nome as nome_cad,
         cad.cor as cor,
         subdeg.id as id_subdeg,
-        subdeg.subdesagregacao_nome as nome_subdeg
+        subdeg.subdesagregacao_nome as nome_subdeg,
+        ocp.id as id_ocupacao,
+        ocp.nome as nome_ocupacao
       FROM eixo_2 ex2
         INNER JOIN eixo ex ON ex.id = ex2.eixo_id
         INNER JOIN variavel var on var.variavel = ex2.variavel_id and var.eixo = ex.id
         INNER JOIN uf uf ON uf.id = ex2.uf_id
         INNER JOIN cadeia cad ON cad.id = ex2.cadeia_id
         INNER JOIN subdesagregacao subdeg ON subdeg.id = ex2.subdesagregacao_id
+        INNER JOIN ocupacao ocp ON ocp.id = ex2.ocupacao_id
 
       -- O front precisa de alguns valores totais para calcular certos
       -- valores, por isso o "or ... = 0"
@@ -440,12 +444,14 @@ class Eixo2Controller {
         and (subdeg.id = $3 or subdeg.id = 0)
         and ex.id = 2
         and var.variavel = $4
-        and ex2.ano = $5;`, [
+        and ex2.ano = $5
+        and (ocp.id = $6 or ocp.id = 0);`, [
       uf,
       cad,
       deg,
       variable,
-      ano
+      ano,
+      ocp
     ]);
 
     res.json((await mainQuery).rows);
