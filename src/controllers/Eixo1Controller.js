@@ -534,23 +534,29 @@ class Eixo1Controller {
     const deg = valueOrDefault(req.query.deg, 0, Number);
 
     const mainQuery = query(`SELECT
-        valor as val1,
-        var.format as tipo_val1,
-        var.fonte as fonte,
-        percentual as percentual_nacional,
-        uf.nome as uf,
-        cad.nome as cadeia,
+        ex1.valor,
+        ex1.ano,
+        var.format as formato,
+        var.fonte,
+        uf.id as id_uf,
+        uf.nome as nome_uf,
+        cad.id as id_cad,
+        cad.nome as nome_cad,
         cad.cor as cor,
-        subdesag.subdesagregacao_nome as desag
+        subdeg.id as id_subdeg,
+        subdeg.subdesagregacao_nome as nome_subdeg
       FROM eixo_1 ex1
         INNER JOIN eixo ex ON ex.id = ex1.eixo_id
         INNER JOIN variavel var on var.variavel = ex1.variavel_id and var.eixo = ex.id
         INNER JOIN uf uf ON uf.id = ex1.uf_id
         INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id
-        INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id
-      WHERE uf.id = $1
-        and cad.id = $2
-        and subdesag.id = $3
+        INNER JOIN subdesagregacao subdeg ON subdeg.id = ex1.subdesagregacao_id
+
+      -- O front precisa de alguns valores totais para calcular certos
+      -- valores, por isso o "or ... = 0"
+      WHERE (uf.id = $1 or uf.id = 0)
+        and (cad.id = $2 or cad.id = 0)
+        and (subdeg.id = $3 or subdeg.id = 0)
         and ex.id = 1
         and var.variavel = $4
         and ex1.ano = $5;`, [
@@ -561,56 +567,7 @@ class Eixo1Controller {
       ano
     ]);
 
-    // Pegar o total do estado
-    const stateQuery = query(`SELECT
-        valor
-      FROM eixo_1 as ex1
-      WHERE ex1.eixo_id = 1
-        and ex1.variavel_id = $1
-        and ex1.uf_id = $2
-        and ex1.ano = $3
-        and ex1.subdesagregacao_id = $4
-        and ex1.cadeia_id = 0;`, [
-      variable,
-      uf,
-      ano,
-      deg
-    ]);
-
-    // Pegar o total do país
-    const countryQuery = query(`SELECT
-        valor
-      FROM eixo_1 as ex1
-      WHERE ex1.eixo_id = 1
-        and ex1.variavel_id = $1
-        and ex1.ano = $2
-        and ex1.cadeia_id = $3
-        and ex1.subdesagregacao_id = $4
-        and ex1.uf_id = 0;`, [
-      variable,
-      ano,
-      cad,
-      deg
-    ]);
-
-    const queries = await Promise.all([mainQuery, stateQuery, countryQuery]);
-
-    // Testa se alguma das queries não retornou exatamente um item
-    if (queries.map(q => q.rows.length).reduce((l, r) => l || r !== 1, false)) {
-      fail(res, 'Unexpected query results!');
-      return;
-    }
-
-    const [main, state, country] = queries.map(q => q.rows[0]);
-
-    // Percentual do estado
-    main.val2 = main.val1 / state.valor;
-    main.tipo_val2 = 'percent';
-    // Percentual do país
-    main.val3 = main.val1 / country.valor;
-    main.tipo_val3 = 'percent';
-
-    res.json(main);
+    res.json((await mainQuery).rows);
   }
 }
 
