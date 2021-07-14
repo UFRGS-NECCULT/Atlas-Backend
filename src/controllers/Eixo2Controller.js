@@ -401,6 +401,54 @@ class Eixo2Controller {
     res.json(result.rows);
   }
 
+  /**
+   * @param {import('express').Request} req
+   * @param {import('express').Response} res
+   */
+  async getInfo(req, res) {
+    const variable = valueOrDefault(req.query.var, 0, Number);
+    const uf = valueOrDefault(req.query.uf, 0, Number);
+    const cad = valueOrDefault(req.query.cad, 0, Number);
+    const ano = valueOrDefault(req.query.ano, 0, Number);
+    const deg = valueOrDefault(req.query.deg, 0, Number);
+
+    const mainQuery = query(`SELECT
+        ex2.valor,
+        ex2.ano,
+        var.format as formato,
+        var.fonte,
+        uf.id as id_uf,
+        uf.nome as nome_uf,
+        cad.id as id_cad,
+        cad.nome as nome_cad,
+        cad.cor as cor,
+        subdeg.id as id_subdeg,
+        subdeg.subdesagregacao_nome as nome_subdeg
+      FROM eixo_2 ex2
+        INNER JOIN eixo ex ON ex.id = ex2.eixo_id
+        INNER JOIN variavel var on var.variavel = ex2.variavel_id and var.eixo = ex.id
+        INNER JOIN uf uf ON uf.id = ex2.uf_id
+        INNER JOIN cadeia cad ON cad.id = ex2.cadeia_id
+        INNER JOIN subdesagregacao subdeg ON subdeg.id = ex2.subdesagregacao_id
+
+      -- O front precisa de alguns valores totais para calcular certos
+      -- valores, por isso o "or ... = 0"
+      WHERE (uf.id = $1 or uf.id = 0)
+        and (cad.id = $2 or cad.id = 0)
+        and (subdeg.id = $3 or subdeg.id = 0)
+        and ex.id = 2
+        and var.variavel = $4
+        and ex2.ano = $5;`, [
+      uf,
+      cad,
+      deg,
+      variable,
+      ano
+    ]);
+
+    res.json((await mainQuery).rows);
+  }
+
   async getBreadcrumb(req, res) {
     const variable = valueOrDefault(req.query.var, 1, Number);
 
