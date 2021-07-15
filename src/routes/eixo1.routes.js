@@ -12,6 +12,7 @@ router.get('/treemap', controller.getTreemap)
 router.get('/donut', controller.getterDonut)
 router.get('/breadcrumb', controller.getBreadcrumb)
 router.get('/info', controller.getInfo)
+router.get('/visualization', controller.getVisualization)
 
 // FIXME: Esses endpoints sequer são usados pelo front?
 router.get('/uf', controller.getTotalSumPrt)

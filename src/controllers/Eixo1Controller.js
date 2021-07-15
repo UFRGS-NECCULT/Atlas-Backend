@@ -2,7 +2,23 @@
 import { fail, valueOrDefault } from '../utils.js';
 import { query } from '../database.js';
 
+import views from '../json/Eixo1Views.js'
+
 class Eixo1Controller {
+
+  async getVisualization(req, res) {
+    const variable = valueOrDefault(req.query.var, 1, Number);
+    const box = valueOrDefault(req.query.box, 1, Number);
+
+    const variableData = views.find(visualization => visualization.variable === variable)
+
+    if (!variableData) res.sendStatus(404);
+
+    const boxData = variableData.boxes.find(variable_box => variable_box.box === box);
+    if (!boxData) res.sendStatus(404);
+
+    return res.json(boxData.data)
+  }
 
   async getBars(req, res) {
     var variable = valueOrDefault(req.query.var, 0, Number);
@@ -321,7 +337,7 @@ class Eixo1Controller {
       WHERE var.variavel = $1
         AND ex1.uf_id = $2
         and ex1.subdesagregacao_id = $3
-        and ex1.cadeia_id != 0
+        ${variable >= 10 ? '' : 'and ex1.cadeia_id != 0'}
       order by cad.id, ano asc
     `;
 
@@ -486,32 +502,32 @@ class Eixo1Controller {
       {
         id: 'eixo',
         label: 'Eixo',
-        options: query(sql_eixo),
+        options: await query(sql_eixo),
       },
       {
         id: 'var',
         label: 'Variável',
-        options: query(sql_var),
+        options: await query(sql_var),
       },
       {
         id: 'uf',
         label: 'UF',
-        options: query(sql_uf),
+        options: await query(sql_uf),
       },
       {
         id: 'ano',
         label: 'Ano',
-        options: query(sql_ano),
+        options: await query(sql_ano),
       },
       {
         id: 'cad',
         label: 'Setor',
-        options: query(sql_cad),
+        options: await query(sql_cad),
       },
       {
         id: 'deg',
         label: 'Porte',
-        options: query(sql_deg),
+        options: await query(sql_deg),
       }
     ]
 

@@ -241,7 +241,7 @@ for (let variavel = 1; variavel <= 13; variavel++) {
       const taxa_cad = taxa_cad_cell ? taxa_cad_cell.v : 0;
 
       const atuacao = 0;
-      const uf = states[0];
+      const uf = 0;
       const porte = portes[0]
       const ano = years[A]
       const percentual = 0
