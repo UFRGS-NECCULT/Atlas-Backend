@@ -486,32 +486,32 @@ class Eixo1Controller {
       {
         id: 'eixo',
         label: 'Eixo',
-        options: await query(sql_eixo),
+        options: query(sql_eixo),
       },
       {
         id: 'var',
         label: 'Variável',
-        options: await query(sql_var),
+        options: query(sql_var),
       },
       {
         id: 'uf',
         label: 'UF',
-        options: await query(sql_uf),
+        options: query(sql_uf),
       },
       {
         id: 'ano',
         label: 'Ano',
-        options: await query(sql_ano),
+        options: query(sql_ano),
       },
       {
         id: 'cad',
         label: 'Setor',
-        options: await query(sql_cad),
+        options: query(sql_cad),
       },
       {
         id: 'deg',
         label: 'Porte',
-        options: await query(sql_deg),
+        options: query(sql_deg),
       }
     ]
 

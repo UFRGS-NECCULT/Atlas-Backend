@@ -373,11 +373,11 @@ class Eixo2Controller {
         cad.id as cadeia_id,
         cad.cor as cor
       FROM EIXO_1 as ex1
-        INNER JOIN uf uf ON uf.id = ex1.uf_id 
-        INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id 
-        INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id 
+        INNER JOIN uf uf ON uf.id = ex1.uf_id
+        INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id
+        INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id
         INNER JOIN eixo ex ON ex.id = ex1.eixo_id
-        INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id 
+        INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id
       WHERE ex1.variavel_id = $1
         AND ex1.uf_id = $2
         and ex1.subdesagregacao_id = $3
@@ -485,8 +485,8 @@ class Eixo2Controller {
                       order by ocupacao_id asc;`
 
     const sql_deg = `select distinct(ex2.subdesagregacao_id) as id, d.nome as grupo, s.subdesagregacao_nome as nome from eixo_2 ex2
-                      inner join subdesagregacao s on s.id = ex2.subdesagregacao_id 
-                      inner join desagregacao d on d.id = s.desagregacao_id 
+                      inner join subdesagregacao s on s.id = ex2.subdesagregacao_id
+                      inner join desagregacao d on d.id = s.desagregacao_id
                     where ex2.variavel_id = ${variable}
                     order by ex2.subdesagregacao_id asc;`
 
@@ -494,37 +494,37 @@ class Eixo2Controller {
       {
         id: 'eixo',
         label: 'Eixo',
-        options: await query(sql_eixo),
+        options: query(sql_eixo),
       },
       {
         id: 'var',
         label: 'Variável',
-        options: await query(sql_var),
+        options: query(sql_var),
       },
       {
         id: 'uf',
         label: 'UF',
-        options: await query(sql_uf),
+        options: query(sql_uf),
       },
       {
         id: 'ano',
         label: 'Ano',
-        options: await query(sql_ano),
+        options: query(sql_ano),
       },
       {
         id: 'cad',
         label: 'Setor',
-        options: await query(sql_cad),
+        options: query(sql_cad),
       },
       {
         id: 'ocp',
         label: 'Ocupação',
-        options: await query(sql_ocp),
+        options: query(sql_ocp),
       },
       {
         id: 'deg',
         label: 'Desagregação',
-        options: await query(sql_deg),
+        options: query(sql_deg),
       }
     ]
 
