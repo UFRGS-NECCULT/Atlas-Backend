@@ -1,7 +1,8 @@
 
 import { fail, valueOrDefault } from '../utils.js';
 import { query } from '../database.js';
-import { response } from 'express';
+
+import views from '../json/Eixo1Views.js'
 
 class Eixo1Controller {
 
@@ -9,104 +10,14 @@ class Eixo1Controller {
     const variable = valueOrDefault(req.query.var, 1, Number);
     const box = valueOrDefault(req.query.box, 1, Number);
 
-    const visualizations = [
-      {
-        variable: 1,
-        boxes: [
-          {
-            box: 1,
-            data: {
-              display: 'map',
-              charts: [
-                {
-                  id: "map",
-                  label: "Mapa",
-                },
-                {
-                  id: "bars",
-                  label: "Barra",
-                  constants: {
-                    cad: 5
-                  }
-                }
-              ]
-            }
-          },
-          {
-            box: 2,
-            data: {
-              display: 'bars',
-              charts: [
-                {
-                  id: "bars",
-                  label: "Barras",
-                }
-              ]
-            }
-          },
-          {
-            box: 3,
-            data: {
-              display: 'treemap_scc',
-              charts: [
-                {
-                  id: "treemap_scc",
-                  label: "Treemap",
-                }
-              ]
-            }
-          }
-        ]
-      },
-      {
-        variable: 3,
-        boxes: [
-          {
-            box: 1,
-            data: {
-              display: 'map',
-              charts: [
-                {
-                  id: "map",
-                  label: "Mapa",
-                }
-              ]
-            }
-          },
-          {
-            box: 2,
-            data: {
-              display: 'lines',
-              charts: [
-                {
-                  id: "lines",
-                  label: "Linhas",
-                }
-              ]
-            }
-          },
-          {
-            box: 3,
-            data: {
-              display: 'treemap_scc',
-              charts: [
-                {
-                  id: "treemap_scc",
-                  label: "Treemap",
-                }
-              ]
-            }
-          }
-        ]
-      }
-    ]
-
-    const variableData = visualizations.find(visualization => visualization.variable === variable)
+    const variableData = views.find(visualization => visualization.variable === variable)
 
     if (!variableData) res.sendStatus(404);
 
     const boxData = variableData.boxes.find(variable_box => variable_box.box === box);
     if (!boxData) res.sendStatus(404);
+
+    console.log(boxData)
 
     return res.json(boxData.data)
   }
@@ -428,7 +339,7 @@ class Eixo1Controller {
       WHERE var.variavel = $1
         AND ex1.uf_id = $2
         and ex1.subdesagregacao_id = $3
-        and ex1.cadeia_id != 0
+        ${variable >= 10 ? '' : 'and ex1.cadeia_id != 0'}
       order by cad.id, ano asc
     `;
 
