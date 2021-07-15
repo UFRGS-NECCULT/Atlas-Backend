@@ -17,8 +17,6 @@ class Eixo1Controller {
     const boxData = variableData.boxes.find(variable_box => variable_box.box === box);
     if (!boxData) res.sendStatus(404);
 
-    console.log(boxData)
-
     return res.json(boxData.data)
   }
 
@@ -504,32 +502,32 @@ class Eixo1Controller {
       {
         id: 'eixo',
         label: 'Eixo',
-        options: query(sql_eixo),
+        options: await query(sql_eixo),
       },
       {
         id: 'var',
         label: 'Variável',
-        options: query(sql_var),
+        options: await query(sql_var),
       },
       {
         id: 'uf',
         label: 'UF',
-        options: query(sql_uf),
+        options: await query(sql_uf),
       },
       {
         id: 'ano',
         label: 'Ano',
-        options: query(sql_ano),
+        options: await query(sql_ano),
       },
       {
         id: 'cad',
         label: 'Setor',
-        options: query(sql_cad),
+        options: await query(sql_cad),
       },
       {
         id: 'deg',
         label: 'Porte',
-        options: query(sql_deg),
+        options: await query(sql_deg),
       }
     ]
 

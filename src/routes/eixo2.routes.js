@@ -13,6 +13,7 @@ router.get('/treemap-region', controller.getTreemapRegion);
 router.get('/donut', controller.getterDonut);
 router.get('/breadcrumb', controller.getBreadcrumb);
 router.get('/info', controller.getInfo);
+router.get('/visualization', controller.getVisualization)
 
 
 export default router;

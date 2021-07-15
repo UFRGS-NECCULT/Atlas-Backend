@@ -1,7 +1,7 @@
 export default
   [
     {
-      variable: 1, //TODO
+      variable: 1,
       boxes: [
         {
           box: 1,
@@ -56,10 +56,6 @@ export default
               {
                 id: "map",
                 label: "Mapa",
-              },
-              {
-                id: "treemap_uf",
-                label: "Treemap UF"
               }
             ]
           }
@@ -91,7 +87,7 @@ export default
       ]
     },
     {
-      variable: 3,
+      variable: 4,
       boxes: [
         {
           box: 1,
@@ -109,51 +105,6 @@ export default
           box: 2,
           data: {
             display: 'lines',
-            charts: [
-              {
-                id: "lines",
-                label: "Linhas",
-              }
-            ]
-          }
-        },
-        {
-          box: 3,
-          data: {
-            display: 'treemap_scc',
-            charts: [
-              {
-                id: "treemap_scc",
-                label: "Treemap",
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
-      variable: 4,
-      boxes: [
-        {
-          box: 1,
-          data: {
-            display: 'map',
-            charts: [
-              {
-                id: "map",
-                label: "Mapa",
-              },
-              {
-                id: "treemap_uf",
-                label: "Treemap UF"
-              }
-            ]
-          }
-        },
-        {
-          box: 2,
-          data: {
-            display: 'bars',
             charts: [
               {
                 id: "bars",
@@ -187,10 +138,6 @@ export default
               {
                 id: "map",
                 label: "Mapa",
-              },
-              {
-                id: "treemap_uf",
-                label: "Treemap UF"
               }
             ]
           }
@@ -232,10 +179,6 @@ export default
               {
                 id: "map",
                 label: "Mapa",
-              },
-              {
-                id: "treemap_uf",
-                label: "Treemap UF"
               }
             ]
           }
@@ -277,10 +220,6 @@ export default
               {
                 id: "map",
                 label: "Mapa",
-              },
-              {
-                id: "treemap_uf",
-                label: "Treemap UF"
               }
             ]
           }
@@ -322,55 +261,6 @@ export default
               {
                 id: "map",
                 label: "Mapa",
-              },
-              {
-                id: "treemap_uf",
-                label: "Treemap UF"
-              }
-            ]
-          }
-        },
-        {
-          box: 2,
-          data: {
-            display: 'bars',
-            charts: [
-              {
-                id: "bars",
-                label: "Barras",
-              }
-            ]
-          }
-        },
-        {
-          box: 3,
-          data: {
-            display: 'treemap_scc',
-            charts: [
-              {
-                id: "treemap_scc",
-                label: "Treemap",
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
-      variable: 8,
-      boxes: [
-        {
-          box: 1,
-          data: {
-            display: 'map',
-            charts: [
-              {
-                id: "map",
-                label: "Mapa",
-              },
-              {
-                id: "treemap_uf",
-                label: "Treemap UF"
               }
             ]
           }
@@ -412,10 +302,6 @@ export default
               {
                 id: "map",
                 label: "Mapa",
-              },
-              {
-                id: "treemap_uf",
-                label: "Treemap UF"
               }
             ]
           }
@@ -447,66 +333,16 @@ export default
       ]
     },
     {
-      variable: 10,
-      boxes: [
-        {
-          box: 1,
-          data: {
-            display: 'bars',
-            charts: [
-              {
-                id: "bars",
-                label: "Barras",
-                constants: {
-                  cad: 0
-                }
-              }
-            ]
-          }
-        },
-        {
-          box: 2,
-          data: {
-            display: 'bars',
-            charts: [
-              {
-                id: "bars",
-                label: "Barras",
-                constants: {
-                  cad: 1
-                }
-              }
-            ]
-          }
-        },
-        {
-          box: 3,
-          data: {
-            display: 'lines',
-            charts: [
-              {
-                id: "lines",
-                label: "Linhas",
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
       variable: 11,
       boxes: [
         {
           box: 1,
           data: {
-            display: 'bars',
+            display: 'map',
             charts: [
               {
-                id: "bars",
-                label: "Barras",
-                constants: {
-                  cad: 0
-                }
+                id: "map",
+                label: "Mapa",
               }
             ]
           }
@@ -519,9 +355,6 @@ export default
               {
                 id: "bars",
                 label: "Barras",
-                constants: {
-                  cad: 1
-                }
               }
             ]
           }
@@ -529,11 +362,11 @@ export default
         {
           box: 3,
           data: {
-            display: 'lines',
+            display: 'treemap_scc',
             charts: [
               {
-                id: "lines",
-                label: "Linhas",
+                id: "treemap_scc",
+                label: "Treemap",
               }
             ]
           }
@@ -589,6 +422,100 @@ export default
     },
     {
       variable: 13,
+      boxes: [
+        {
+          box: 1,
+          data: {
+            display: 'bars',
+            charts: [
+              {
+                id: "bars",
+                label: "Barras",
+                constants: {
+                  cad: 0
+                }
+              }
+            ]
+          }
+        },
+        {
+          box: 2,
+          data: {
+            display: 'bars',
+            charts: [
+              {
+                id: "bars",
+                label: "Barras",
+                constants: {
+                  cad: 1
+                }
+              }
+            ]
+          }
+        },
+        {
+          box: 3,
+          data: {
+            display: 'lines',
+            charts: [
+              {
+                id: "lines",
+                label: "Linhas",
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      variable: 14,
+      boxes: [
+        {
+          box: 1,
+          data: {
+            display: 'bars',
+            charts: [
+              {
+                id: "bars",
+                label: "Barras",
+                constants: {
+                  cad: 0
+                }
+              }
+            ]
+          }
+        },
+        {
+          box: 2,
+          data: {
+            display: 'bars',
+            charts: [
+              {
+                id: "bars",
+                label: "Barras",
+                constants: {
+                  cad: 1
+                }
+              }
+            ]
+          }
+        },
+        {
+          box: 3,
+          data: {
+            display: 'lines',
+            charts: [
+              {
+                id: "lines",
+                label: "Linhas",
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      variable: 15,
       boxes: [
         {
           box: 1,

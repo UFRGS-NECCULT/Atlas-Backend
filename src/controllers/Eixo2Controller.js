@@ -1,6 +1,8 @@
 import { query } from '../database.js';
 import { valueOrDefault } from '../utils.js';
 
+import views from '../json/Eixo2Views.js'
+
 const degs = {
   1: ['prt.PorteNome', 'prt.idPorte'],
   2: ['ex.Sexo', 'ex.Sexo'],
@@ -44,6 +46,22 @@ function getGrupo(deg, cad, ocp) {
 }
 
 class Eixo2Controller {
+
+  async getVisualization(req, res) {
+    const variable = valueOrDefault(req.query.var, 1, Number);
+    const box = valueOrDefault(req.query.box, 1, Number);
+
+    const variableData = views.find(visualization => visualization.variable === variable)
+
+    if (!variableData) res.sendStatus(404);
+
+    const boxData = variableData.boxes.find(variable_box => variable_box.box === box);
+    if (!boxData) res.sendStatus(404);
+
+    return res.json(boxData.data)
+  }
+
+
   /**
    * Retorna os dados necessários para a montagem de um gráfico em barras
    * @param {import('express').Request} req
@@ -450,37 +468,37 @@ class Eixo2Controller {
       {
         id: 'eixo',
         label: 'Eixo',
-        options: query(sql_eixo),
+        options: await query(sql_eixo),
       },
       {
         id: 'var',
         label: 'Variável',
-        options: query(sql_var),
+        options: await query(sql_var),
       },
       {
         id: 'uf',
         label: 'UF',
-        options: query(sql_uf),
+        options: await query(sql_uf),
       },
       {
         id: 'ano',
         label: 'Ano',
-        options: query(sql_ano),
+        options: await query(sql_ano),
       },
       {
         id: 'cad',
         label: 'Setor',
-        options: query(sql_cad),
+        options: await query(sql_cad),
       },
       {
         id: 'ocp',
         label: 'Ocupação',
-        options: query(sql_ocp),
+        options: await query(sql_ocp),
       },
       {
         id: 'deg',
         label: 'Desagregação',
-        options: query(sql_deg),
+        options: await query(sql_deg),
       }
     ]
 
