@@ -10,8 +10,9 @@ router.get('/lines', controller.getLines);
 router.get('/map', controller.getMap);
 router.get('/treemap', controller.getTreemapSCC);
 router.get('/treemap-region', controller.getTreemapRegion);
-router.get('/donut', controller.getterDonut)
-router.get('/breadcrumb', controller.getBreadcrumb)
+router.get('/donut', controller.getterDonut);
+router.get('/breadcrumb', controller.getBreadcrumb);
+router.get('/info', controller.getInfo);
 
 
 export default router;
