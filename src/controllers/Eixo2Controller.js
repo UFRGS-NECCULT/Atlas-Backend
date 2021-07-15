@@ -416,6 +416,7 @@ class Eixo2Controller {
     const ocp = valueOrDefault(req.query.ocp, 0, Number);
 
     const mainQuery = query(`SELECT
+        ex.cor_primaria as cor,
         ex2.valor,
         ex2.ano,
         var.format as formato,
@@ -424,7 +425,6 @@ class Eixo2Controller {
         uf.nome as nome_uf,
         cad.id as id_cad,
         cad.nome as nome_cad,
-        cad.cor as cor,
         subdeg.id as id_subdeg,
         subdeg.subdesagregacao_nome as nome_subdeg,
         ocp.id as id_ocupacao,

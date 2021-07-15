@@ -534,6 +534,7 @@ class Eixo1Controller {
     const deg = valueOrDefault(req.query.deg, 0, Number);
 
     const mainQuery = query(`SELECT
+        ex.cor_primaria as cor,
         ex1.valor,
         ex1.ano,
         var.format as formato,
@@ -542,7 +543,6 @@ class Eixo1Controller {
         uf.nome as nome_uf,
         cad.id as id_cad,
         cad.nome as nome_cad,
-        cad.cor as cor,
         subdeg.id as id_subdeg,
         subdeg.subdesagregacao_nome as nome_subdeg
       FROM eixo_1 ex1
