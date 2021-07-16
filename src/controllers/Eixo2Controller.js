@@ -3,48 +3,6 @@ import { valueOrDefault } from '../utils.js';
 
 import views from '../json/Eixo2Views.js'
 
-const degs = {
-  1: ['prt.PorteNome', 'prt.idPorte'],
-  2: ['ex.Sexo', 'ex.Sexo'],
-  3: ['age.IdadeNome', 'age.idIdade'],
-  4: ['esc.EscolaridadeNome', 'esc.idEscolaridade'],
-  5: ['eti.EtiniaNome', 'eti.idEtinia'],
-  6: ['ex.Formalidade', 'ex.Formalidade'],
-  7: ['ex.Previdencia', 'ex.Previdencia'],
-  8: ['ex.Sindical', 'ex.Sindical'],
-}
-
-/**
- * Retorna três valores:
- *  - O nome ou valor do campo de agrupamento (desagregação).
- *    Caso nenhum dos parâmetros resulte em uma desagregação, seu valor será null.
- *  - O nome ou valor do campo de ID da desagregação
- *  - O tipo do nome retornado. ?? quando foi retornado o nome de uma coluna,
- *    ? quando foi retornado um valor
- *
- * @param {number} deg A desagregação desejada (0 = nenhuma)
- * @param {number} cad A cadeia desejada (0 = todas)
- * @param {number} ocp A ocupação desejada (3 = todas)
- * @returns {[string, string, ('?'|'??')]}
- */
-function getGrupo(deg, cad, ocp) {
-  if (Object.keys(degs).includes(deg.toString())) {
-    return [...degs[deg], '??'];
-  }
-
-  if (ocp === 3) {
-    return ['ocp.OcupacaoNome', 'ocp.idOcupacao', '??'];
-  }
-
-  if (cad === 0) {
-    return ['cad.CadeiaNome', 'cad.idCadeia', '??'];
-  }
-
-  // Caso nenhum dos critérios acima
-  // sejam cumpridos, não existem grupos
-  return [null, null, '?'];
-}
-
 class Eixo2Controller {
 
   async getVisualization(req, res) {
@@ -76,8 +34,6 @@ class Eixo2Controller {
     const deg = valueOrDefault(req.query.deg, 0, Number);
     const subdeg = valueOrDefault(req.query.subdeg, 0, Number);
     const ano = valueOrDefault(req.query.ano, 0, Number);
-
-    const [groupNameField, groupIDField, groupType] = getGrupo(deg, cad, ocp);
 
     var sql = `
       select
@@ -134,8 +90,6 @@ class Eixo2Controller {
     const cad = valueOrDefault(req.query.cad, 0, Number);
     const ocp = valueOrDefault(req.query.ocp, 0, Number);
     const deg = valueOrDefault(req.query.deg, 0, Number);
-
-    const [groupNameField, groupIDField, groupType] = getGrupo(deg, cad, ocp);
 
     var sql = `
       SELECT
@@ -230,13 +184,13 @@ class Eixo2Controller {
         cad.cor as cor,
         var.format as formato
       FROM eixo_2 as ex2
-        INNER JOIN uf uf ON uf.id = ex2.uf_id 
-          INNER JOIN ocupacao ocp ON ocp.id = ex2.ocupacao_id 
-          INNER JOIN cadeia cad ON cad.id = ex2.cadeia_id 
+        INNER JOIN uf uf ON uf.id = ex2.uf_id
+          INNER JOIN ocupacao ocp ON ocp.id = ex2.ocupacao_id
+          INNER JOIN cadeia cad ON cad.id = ex2.cadeia_id
           INNER JOIN eixo ex ON ex.id = ex2.eixo_id
-          INNER JOIN subdesagregacao subdesag ON subdesag.id = ex2.subdesagregacao_id 
+          INNER JOIN subdesagregacao subdesag ON subdesag.id = ex2.subdesagregacao_id
           INNER JOIN variavel var ON var.variavel = ex2.variavel_id and var.eixo = ex2.eixo_id
-        WHERE uf.id = $1 
+        WHERE uf.id = $1
           and ex2.ano = $2
           and ocp.id = $3
           and cad.id != 0
@@ -347,11 +301,11 @@ class Eixo2Controller {
         cad.id as cadeia_id,
         cad.cor as cor
       FROM EIXO_2 as ex2
-        INNER JOIN uf uf ON uf.id = ex2.uf_id 
-        INNER JOIN atuacao atc ON atc.id = ex2.atuacao_id 
-        INNER JOIN cadeia cad ON cad.id = ex2.cadeia_id 
+        INNER JOIN uf uf ON uf.id = ex2.uf_id
+        INNER JOIN atuacao atc ON atc.id = ex2.atuacao_id
+        INNER JOIN cadeia cad ON cad.id = ex2.cadeia_id
         INNER JOIN eixo ex ON ex.id = ex2.eixo_id
-        INNER JOIN subdesagregacao subdesag ON subdesag.id = ex2.subdesagregacao_id 
+        INNER JOIN subdesagregacao subdesag ON subdesag.id = ex2.subdesagregacao_id
       WHERE ex2.variavel_id = $1
         AND ex2.uf_id = $2
         and ex2.subdesagregacao_id = $3
