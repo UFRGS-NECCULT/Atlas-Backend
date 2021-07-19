@@ -557,6 +557,7 @@ class Eixo1Controller {
         var.fonte,
         uf.id as id_uf,
         uf.nome as nome_uf,
+        uf.preposicao as preposicao_uf,
         cad.id as id_cad,
         cad.nome as nome_cad,
         subdeg.id as id_subdeg,
