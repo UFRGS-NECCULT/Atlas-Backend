@@ -17,6 +17,7 @@ CREATE TABLE eixo_1 (
 	cadeia_id integer not null references cadeia(id) ON DELETE restrict,
 	atuacao_id integer not null references atuacao(id) ON DELETE restrict,
 	subdesagregacao_id integer not null references subdesagregacao(id) ON DELETE restrict,
+	concentracao smallint null,
 	ano smallint not null,
 	valor double precision null,
 	percentual double precision null,
@@ -24,6 +25,6 @@ CREATE TABLE eixo_1 (
 	
 	FOREIGN KEY (eixo_id, variavel_id) REFERENCES variavel (eixo, variavel),
 
-	unique (variavel_id, uf_id, cadeia_id, atuacao_id, subdesagregacao_id, ano)
+	unique (variavel_id, uf_id, cadeia_id, atuacao_id, subdesagregacao_id, concentracao, ano)
 );
 

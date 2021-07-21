@@ -24,7 +24,7 @@ import fs from 'fs';
 */
 
 const sheets_dir = path.resolve('src', 'data', 'sheets');
-const insert = 'insert into eixo_1 (variavel_id, uf_id, cadeia_id, atuacao_id, subdesagregacao_id, ano, valor, percentual, taxa) values \n'
+const insert = 'insert into eixo_1 (variavel_id, uf_id, cadeia_id, atuacao_id, subdesagregacao_id, concentracao, ano, valor, percentual, taxa) values \n'
 
 const eixo_1_sheets = [
   'E01V01 - NUMERO TOTAL DE EMPRESAS',
@@ -190,7 +190,7 @@ for (let variavel = 1; variavel <= 13; variavel++) {
             const taxa = A > 0 ? getTaxa(workbook, sheet_name_var, taxa_cell_ref) : 0;
             // const taxa = 0;
 
-            const entry = `\t(${variavel}, ${uf}, ${cadeia}, ${atuacao_id}, ${subdesag}, ${ano}, ${valor}, ${percentual}, ${taxa})`;
+            const entry = `\t(${variavel}, ${uf}, ${cadeia}, ${atuacao_id}, ${subdesag}, null, ${ano}, ${valor}, ${percentual}, ${taxa})`;
             data.push(entry)
 
             cadeias_index++
@@ -245,13 +245,14 @@ for (let variavel = 1; variavel <= 13; variavel++) {
       const porte = portes[0]
       const ano = years[A]
       const percentual = 0
+      const cadeia = 0
 
-      let cadeia = 0
-      const entry_uf = `\t(${variavel}, ${uf}, ${cadeia}, ${atuacao}, ${porte}, ${ano}, ${value_uf}, ${percentual}, ${taxa_uf})`;
+      let concentracao = 0
+      const entry_uf = `\t(${variavel}, ${uf}, ${cadeia}, ${atuacao}, ${porte}, ${concentracao}, ${ano}, ${value_uf}, ${percentual}, ${taxa_uf})`;
       data.push(entry_uf)
 
-      cadeia = 1
-      const entry_cad = `\t(${variavel}, ${uf}, ${cadeia}, ${atuacao}, ${porte}, ${ano}, ${value_cad}, ${percentual}, ${taxa_cad})`;
+      concentracao = 1
+      const entry_cad = `\t(${variavel}, ${uf}, ${cadeia}, ${atuacao}, ${porte}, ${concentracao}, ${ano}, ${value_cad}, ${percentual}, ${taxa_cad})`;
       data.push(entry_cad)
 
     }

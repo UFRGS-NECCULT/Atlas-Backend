@@ -2,7 +2,7 @@ import xlsx from 'xlsx';
 import path from 'path';
 import fs from 'fs';
 
-const insert = 'insert into eixo_2 (variavel_id, uf_id, cadeia_id, ocupacao_id, subdesagregacao_id, ano, valor, percentual, taxa) values \n'
+const insert = 'insert into eixo_2 (variavel_id, uf_id, cadeia_id, ocupacao_id, subdesagregacao_id, concentracao, ano, valor, percentual, taxa) values \n'
 
 const sheets_dir = path.resolve('src', 'data', 'sheets');
 
@@ -260,7 +260,7 @@ for (let variavel_index = 0; variavel_index < variaveis.length; variavel_index++
             const percentual = percent_cell && percent_cell.w !== '#DIV/0!' ? percent_cell.v : 0;
             const taxa = A > 0 ? getTaxa(worksheet_tax, taxa_cell_ref) : 0;
 
-            const entry = `\t(${variavel}, ${uf}, ${cadeia}, ${ocupacao}, ${subdeg_id}, ${ano}, ${valor}, ${percentual}, ${taxa})`;
+            const entry = `\t(${variavel}, ${uf}, ${cadeia}, ${ocupacao}, ${subdeg_id}, null, ${ano}, ${valor}, ${percentual}, ${taxa})`;
             data.push(entry)
             cadeias_index++
           }
@@ -314,13 +314,14 @@ for (let variavel_index = 0; variavel_index < variaveis.length; variavel_index++
       const ano = years[A]
       const percentual = 0
       const subdeg_id = 0
+      const cadeia = 0
 
-      let cadeia = 0
-      const entry_uf = `\t(${variavel}, ${uf}, ${cadeia}, ${ocupacao}, ${subdeg_id}, ${ano}, ${value_uf}, ${percentual}, ${taxa_uf})`;
+      let concentracao = 0
+      const entry_uf = `\t(${variavel}, ${uf}, ${cadeia}, ${ocupacao}, ${subdeg_id}, ${concentracao}, ${ano}, ${value_uf}, ${percentual}, ${taxa_uf})`;
       data.push(entry_uf)
 
-      cadeia = 1
-      const entry_cad = `\t(${variavel}, ${uf}, ${cadeia}, ${ocupacao}, ${subdeg_id}, ${ano}, ${value_cad}, ${percentual}, ${taxa_cad})`;
+      concentracao = 1
+      const entry_cad = `\t(${variavel}, ${uf}, ${cadeia}, ${ocupacao}, ${subdeg_id}, ${concentracao}, ${ano}, ${value_cad}, ${percentual}, ${taxa_cad})`;
       data.push(entry_cad)
     }
 
