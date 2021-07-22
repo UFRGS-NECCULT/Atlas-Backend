@@ -26,7 +26,7 @@ class Eixo1Controller {
     var prc = valueOrDefault(req.query.prc, 0, Number);
     var cns = valueOrDefault(req.query.cns, 0, Number);
     var tpo = valueOrDefault(req.query.tpo, 1, Number);
-    var variable = valueOrDefault(req.query.variable, 0, Number);
+    var variable = valueOrDefault(req.query.variable, 1, Number);
 
     var result;
     try {
@@ -64,7 +64,7 @@ class Eixo1Controller {
           and tpo.id = $5
           and ex4.eixo_id = 4
           and var.variavel = $6
-        order by ano;;
+        order by ano;
       `, [
         uf,
         cad,
@@ -77,6 +77,8 @@ class Eixo1Controller {
       fail(res, String(e));
       return;
     }
+
+    console.log(result.rows)
 
     res.json(result.rows);
   }
@@ -236,8 +238,9 @@ class Eixo1Controller {
     var uf = valueOrDefault(req.query.uf, 0, Number);
     var ano = valueOrDefault(req.query.ano, 2015, Number);
     var prc = valueOrDefault(req.query.prc, 0, Number);
-    var tpo = valueOrDefault(req.query.tpo, 1, Number);
     var prc = valueOrDefault(req.query.prc, 0, Number);
+    var cns = valueOrDefault(req.query.cns, 0, Number);
+    var cad = valueOrDefault(req.query.cad, 0, Number);
 
     const sql = `
       SELECT
@@ -247,10 +250,13 @@ class Eixo1Controller {
         ano,
         prc.nome as parceiro,
         cns.nome as consumo,
-        tpo.nome as tipo,
-        cad.nome as cadeia,
+        tpo.nome as cadeia, 
+        tpo.id as tipo_id,
         cad.id as cadeia_id,
-        cad.cor as cor,
+        CASE 
+          WHEN tpo.id = 1 THEN ex.cor_primaria
+          WHEN tpo.id = 2 THEN ex.cor_secundaria 
+        end cor,
         var.format as formato
       FROM eixo_4 as ex4
         INNER JOIN uf uf ON uf.id = ex4.uf_id
@@ -263,14 +269,14 @@ class Eixo1Controller {
       WHERE var.variavel = $1
         AND ex4.uf_id = $2
         and ex4.parceiro_id = $3
-        and ex4.tipo_id = $4
-        and ex4.consumo_id = $5
-        and ex4.cadeia_id != 0
+        and ex4.tipo_id in (1, 2)
+        and ex4.consumo_id = $4
+        and ex4.cadeia_id = $5
         and ex4.ano = $6
-      order by cad.id, ano asc;
+      order by tpo.id, ano asc;
     `;
 
-    const params = [variable, uf, prc, tpo, cns, ano];
+    const params = [variable, uf, prc, cns, cad, ano];
 
     const result = await query(sql, params);
 
@@ -279,31 +285,39 @@ class Eixo1Controller {
 
   async getBreadcrumb(req, res) {
     const variable = valueOrDefault(req.query.var, 1, Number);
-
-
-
     const sql_eixo = `select id, nome from eixo ex;`
-    const sql_var = `select variavel as id, titulo as nome from variavel v where eixo = 1;`
+    const sql_var = `select variavel as id, titulo as nome from variavel v where eixo = 4;`
     const sql_uf = `select distinct(uf_id) as id, uf.nome as nome
-                      from eixo_1 ex1
-                      inner join uf on uf.id = ex1.uf_id
+                      from eixo_4 ex4
+                      inner join uf on uf.id = ex4.uf_id
                       where variavel_id = ${variable}
                       order by uf_id asc;`
 
-    const sql_ano = `select distinct(ano) as id, ano as nome from eixo_1 e1 where variavel_id = ${variable} order by ano ASC;`
-
-
+    const sql_ano = `select distinct(ano) as id, ano as nome from eixo_4 e1 where variavel_id = ${variable} order by ano ASC;`
 
     const sql_cad = `select distinct(cadeia_id) as id, c.nome as nome
-                      from eixo_1 ex1
-                      inner join cadeia c on c.id = ex1.cadeia_id
+                      from eixo_4 ex4
+                      inner join cadeia c on c.id = ex4.cadeia_id
                       where variavel_id = ${variable}
                       order by cadeia_id asc;`
 
-    const sql_deg = `select distinct(ex1.subdesagregacao_id) as id, s.subdesagregacao_nome as nome from eixo_1 ex1
-                      inner join subdesagregacao s on s.id = ex1.subdesagregacao_id
-                    where ex1.variavel_id = ${variable}
-                    order by ex1.subdesagregacao_id asc;`
+    const sql_tpo = `select distinct(tipo_id) as id, t.nome as nome
+                      from eixo_4 ex4
+                      inner join tipo t on t.id = ex4.tipo_id
+                      where variavel_id = ${variable}
+                      order by tipo_id asc;`
+
+    const sql_cns = `select distinct(consumo_id) as id, c.nome as nome
+                      from eixo_4 ex4
+                      inner join consumo c on c.id = ex4.consumo_id
+                      where variavel_id = ${variable}
+                      order by consumo_id asc;`
+
+    const sql_prc = `select distinct(parceiro_id) as id, p.nome as nome
+                      from eixo_4 ex4
+                      inner join parceiro p on p.id = ex4.parceiro_id
+                      where variavel_id = ${variable}
+                      order by parceiro_id asc;`
 
     let breadcrumbs = [
       {
@@ -322,6 +336,21 @@ class Eixo1Controller {
         options: await query(sql_uf),
       },
       {
+        id: 'prc',
+        label: 'Parceiro',
+        options: await query(sql_prc),
+      },
+      {
+        id: 'tpo',
+        label: 'Tipo',
+        options: await query(sql_tpo),
+      },
+      {
+        id: 'cns',
+        label: 'Consumo',
+        options: await query(sql_cns),
+      },
+      {
         id: 'ano',
         label: 'Ano',
         options: await query(sql_ano),
@@ -330,11 +359,6 @@ class Eixo1Controller {
         id: 'cad',
         label: 'Setor',
         options: await query(sql_cad),
-      },
-      {
-        id: 'deg',
-        label: 'Porte',
-        options: await query(sql_deg),
       }
     ]
 
@@ -349,39 +373,30 @@ class Eixo1Controller {
     const uf = valueOrDefault(req.query.uf, 0, Number);
     const cad = valueOrDefault(req.query.cad, 0, Number);
     const ano = valueOrDefault(req.query.ano, 0, Number);
-    const deg = valueOrDefault(req.query.deg, 0, Number);
 
     const mainQuery = query(`SELECT
         ex.cor_primaria as cor,
-        ex1.valor,
-        ex1.ano,
+        ex4.valor,
+        ex4.ano,
         var.format as formato,
         var.fonte,
         uf.id as id_uf,
         uf.nome as nome_uf,
         uf.preposicao as preposicao_uf,
         cad.id as id_cad,
-        cad.nome as nome_cad,
-        subdeg.id as id_subdeg,
-        subdeg.subdesagregacao_nome as nome_subdeg
-      FROM eixo_1 ex1
-        INNER JOIN eixo ex ON ex.id = ex1.eixo_id
-        INNER JOIN variavel var on var.variavel = ex1.variavel_id and var.eixo = ex.id
-        INNER JOIN uf uf ON uf.id = ex1.uf_id
-        INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id
-        INNER JOIN subdesagregacao subdeg ON subdeg.id = ex1.subdesagregacao_id
-
-      -- O front precisa de alguns valores totais para calcular certos
-      -- valores, por isso o "or ... = 0"
+        cad.nome as nome_cad
+      FROM eixo_4 ex4
+        INNER JOIN eixo ex ON ex.id = ex4.eixo_id
+        INNER JOIN variavel var on var.variavel = ex4.variavel_id and var.eixo = ex.id
+        INNER JOIN uf uf ON uf.id = ex4.uf_id
+        INNER JOIN cadeia cad ON cad.id = ex4.cadeia_id
       WHERE (uf.id = $1 or uf.id = 0)
         and (cad.id = $2 or cad.id = 0)
-        and (subdeg.id = $3 or subdeg.id = 0)
-        and ex.id = 1
-        and var.variavel = $4
-        and ex1.ano = $5;`, [
+        and ex.id = 4
+        and var.variavel = $3
+        and ex4.ano = $4;`, [
       uf,
       cad,
-      deg,
       variable,
       ano
     ]);
