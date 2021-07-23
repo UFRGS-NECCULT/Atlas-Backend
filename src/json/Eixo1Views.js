@@ -6,7 +6,6 @@ export default
         {
           box: 1,
           data: {
-            display: 'map',
             charts: [
               {
                 id: "map",
@@ -22,7 +21,6 @@ export default
         {
           box: 2,
           data: {
-            display: 'bars',
             charts: [
               {
                 id: "bars",
@@ -34,7 +32,6 @@ export default
         {
           box: 3,
           data: {
-            display: 'treemap_scc',
             charts: [
               {
                 id: "treemap_scc",
@@ -51,7 +48,6 @@ export default
         {
           box: 1,
           data: {
-            display: 'map',
             charts: [
               {
                 id: "map",
@@ -67,7 +63,6 @@ export default
         {
           box: 2,
           data: {
-            display: 'bars',
             charts: [
               {
                 id: "bars",
@@ -79,7 +74,6 @@ export default
         {
           box: 3,
           data: {
-            display: 'treemap_scc',
             charts: [
               {
                 id: "treemap_scc",
@@ -96,7 +90,6 @@ export default
         {
           box: 1,
           data: {
-            display: 'map',
             charts: [
               {
                 id: "map",
@@ -108,7 +101,6 @@ export default
         {
           box: 2,
           data: {
-            display: 'lines',
             charts: [
               {
                 id: "lines",
@@ -120,7 +112,6 @@ export default
         {
           box: 3,
           data: {
-            display: 'treemap_scc',
             charts: [
               {
                 id: "treemap_scc",
@@ -137,7 +128,6 @@ export default
         {
           box: 1,
           data: {
-            display: 'map',
             charts: [
               {
                 id: "map",
@@ -153,7 +143,6 @@ export default
         {
           box: 2,
           data: {
-            display: 'bars',
             charts: [
               {
                 id: "bars",
@@ -165,7 +154,6 @@ export default
         {
           box: 3,
           data: {
-            display: 'treemap_scc',
             charts: [
               {
                 id: "treemap_scc",
@@ -182,7 +170,6 @@ export default
         {
           box: 1,
           data: {
-            display: 'map',
             charts: [
               {
                 id: "map",
@@ -198,7 +185,6 @@ export default
         {
           box: 2,
           data: {
-            display: 'bars',
             charts: [
               {
                 id: "bars",
@@ -210,7 +196,6 @@ export default
         {
           box: 3,
           data: {
-            display: 'treemap_scc',
             charts: [
               {
                 id: "treemap_scc",
@@ -227,7 +212,6 @@ export default
         {
           box: 1,
           data: {
-            display: 'map',
             charts: [
               {
                 id: "map",
@@ -243,7 +227,6 @@ export default
         {
           box: 2,
           data: {
-            display: 'bars',
             charts: [
               {
                 id: "bars",
@@ -255,7 +238,6 @@ export default
         {
           box: 3,
           data: {
-            display: 'treemap_scc',
             charts: [
               {
                 id: "treemap_scc",
@@ -272,7 +254,6 @@ export default
         {
           box: 1,
           data: {
-            display: 'map',
             charts: [
               {
                 id: "map",
@@ -288,7 +269,6 @@ export default
         {
           box: 2,
           data: {
-            display: 'bars',
             charts: [
               {
                 id: "bars",
@@ -300,7 +280,6 @@ export default
         {
           box: 3,
           data: {
-            display: 'treemap_scc',
             charts: [
               {
                 id: "treemap_scc",
@@ -317,7 +296,6 @@ export default
         {
           box: 1,
           data: {
-            display: 'map',
             charts: [
               {
                 id: "map",
@@ -333,7 +311,6 @@ export default
         {
           box: 2,
           data: {
-            display: 'bars',
             charts: [
               {
                 id: "bars",
@@ -345,7 +322,6 @@ export default
         {
           box: 3,
           data: {
-            display: 'treemap_scc',
             charts: [
               {
                 id: "treemap_scc",
@@ -362,7 +338,6 @@ export default
         {
           box: 1,
           data: {
-            display: 'map',
             charts: [
               {
                 id: "map",
@@ -378,7 +353,6 @@ export default
         {
           box: 2,
           data: {
-            display: 'bars',
             charts: [
               {
                 id: "bars",
@@ -390,7 +364,6 @@ export default
         {
           box: 3,
           data: {
-            display: 'treemap_scc',
             charts: [
               {
                 id: "treemap_scc",
@@ -407,7 +380,6 @@ export default
         {
           box: 1,
           data: {
-            display: 'map',
             charts: [
               {
                 id: "map",
@@ -423,7 +395,6 @@ export default
         {
           box: 2,
           data: {
-            display: 'bars',
             charts: [
               {
                 id: "bars",
@@ -435,7 +406,6 @@ export default
         {
           box: 3,
           data: {
-            display: 'treemap_scc',
             charts: [
               {
                 id: "treemap_scc",
@@ -452,7 +422,6 @@ export default
         {
           box: 1,
           data: {
-            display: 'bars',
             charts: [
               {
                 id: "bars",
@@ -467,7 +436,6 @@ export default
         {
           box: 2,
           data: {
-            display: 'bars',
             charts: [
               {
                 id: "bars",
@@ -482,7 +450,6 @@ export default
         {
           box: 3,
           data: {
-            display: 'lines',
             charts: [
               {
                 id: "lines",
@@ -499,7 +466,6 @@ export default
         {
           box: 1,
           data: {
-            display: 'bars',
             charts: [
               {
                 id: "bars",
@@ -514,7 +480,6 @@ export default
         {
           box: 2,
           data: {
-            display: 'bars',
             charts: [
               {
                 id: "bars",
@@ -529,7 +494,6 @@ export default
         {
           box: 3,
           data: {
-            display: 'lines',
             charts: [
               {
                 id: "lines",
@@ -546,7 +510,6 @@ export default
         {
           box: 1,
           data: {
-            display: 'bars',
             charts: [
               {
                 id: "bars",
@@ -561,7 +524,6 @@ export default
         {
           box: 2,
           data: {
-            display: 'bars',
             charts: [
               {
                 id: "bars",
@@ -576,7 +538,6 @@ export default
         {
           box: 3,
           data: {
-            display: 'lines',
             charts: [
               {
                 id: "lines",
@@ -593,7 +554,6 @@ export default
         {
           box: 1,
           data: {
-            display: 'bars',
             charts: [
               {
                 id: "bars",
@@ -608,7 +568,6 @@ export default
         {
           box: 2,
           data: {
-            display: 'bars',
             charts: [
               {
                 id: "bars",
@@ -623,7 +582,6 @@ export default
         {
           box: 3,
           data: {
-            display: 'lines',
             charts: [
               {
                 id: "lines",

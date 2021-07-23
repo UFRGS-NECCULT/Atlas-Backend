@@ -5,7 +5,6 @@ export default [
       {
         box: 1,
         data: {
-          display: 'world',
           charts: [
             {
               id: "world",
@@ -21,7 +20,6 @@ export default [
       {
         box: 2,
         data: {
-          display: 'donut',
           charts: [
             {
               id: "donut",
@@ -33,7 +31,6 @@ export default [
       {
         box: 3,
         data: {
-          display: 'bars',
           charts: [
             {
               id: "bars",
@@ -50,7 +47,6 @@ export default [
       {
         box: 1,
         data: {
-          display: 'world',
           charts: [
             {
               id: "world",
@@ -66,7 +62,6 @@ export default [
       {
         box: 2,
         data: {
-          display: 'donut',
           charts: [
             {
               id: "donut",
@@ -78,7 +73,6 @@ export default [
       {
         box: 3,
         data: {
-          display: 'bars',
           charts: [
             {
               id: "bars",
@@ -95,7 +89,6 @@ export default [
       {
         box: 1,
         data: {
-          display: 'world',
           charts: [
             {
               id: "world",
@@ -111,7 +104,6 @@ export default [
       {
         box: 2,
         data: {
-          display: 'donut',
           charts: [
             {
               id: "donut",
@@ -123,7 +115,6 @@ export default [
       {
         box: 3,
         data: {
-          display: 'bars',
           charts: [
             {
               id: "bars",
@@ -140,7 +131,6 @@ export default [
       {
         box: 1,
         data: {
-          display: 'bars',
           charts: [
             {
               id: "bars",
@@ -152,7 +142,6 @@ export default [
       {
         box: 2,
         data: {
-          display: 'bars',
           charts: [
             {
               id: "bars",
@@ -164,7 +153,6 @@ export default [
       {
         box: 3,
         data: {
-          display: 'bars',
           charts: [
             {
               id: "bars",
@@ -181,7 +169,6 @@ export default [
       {
         box: 1,
         data: {
-          display: 'bars',
           charts: [
             {
               id: "bars",
@@ -193,7 +180,6 @@ export default [
       {
         box: 2,
         data: {
-          display: 'bars',
           charts: [
             {
               id: "bars",
@@ -205,7 +191,6 @@ export default [
       {
         box: 3,
         data: {
-          display: 'bars',
           charts: [
             {
               id: "bars",
@@ -222,7 +207,6 @@ export default [
       {
         box: 1,
         data: {
-          display: 'treemap_uf', //É NENHUMA VISUALIZAÇÃO!!
           charts: [
             {
               id: "treemap_uf",
@@ -234,7 +218,6 @@ export default [
       {
         box: 2,
         data: {
-          display: 'bars',
           charts: [
             {
               id: "bars",
@@ -246,7 +229,6 @@ export default [
       {
         box: 3,
         data: {
-          display: 'treemap_scc',
           charts: [
             {
               id: "treemap_scc",
@@ -263,7 +245,6 @@ export default [
       {
         box: 1,
         data: {
-          display: 'treemap_uf', //É NENHUMA VISUALIZAÇÃO!!
           charts: [
             {
               id: "treemap_uf",
@@ -275,7 +256,6 @@ export default [
       {
         box: 2,
         data: {
-          display: 'donut',
           charts: [
             {
               id: "donut",
@@ -287,7 +267,6 @@ export default [
       {
         box: 3,
         data: {
-          display: 'bars',
           charts: [
             {
               id: "bars",
@@ -304,7 +283,6 @@ export default [
       {
         box: 1,
         data: {
-          display: 'world',
           charts: [
             {
               id: "world",
@@ -320,7 +298,6 @@ export default [
       {
         box: 2,
         data: {
-          display: 'donut',
           charts: [
             {
               id: "donut",
@@ -332,7 +309,6 @@ export default [
       {
         box: 3,
         data: {
-          display: 'bars',
           charts: [
             {
               id: "bars",
@@ -349,7 +325,6 @@ export default [
       {
         box: 2,
         data: {
-          display: 'bars',
           charts: [
             {
               id: "bars",
