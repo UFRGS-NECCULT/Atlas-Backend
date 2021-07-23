@@ -11,6 +11,16 @@ export function fail(res, error, status = 500) {
 }
 
 /**
+ * Encapsula uma função assíncrona para que o express possa
+ * detectar throws dentro dela (ao invés de desligar o servidor)
+ */
+export const asyncHandler = fn => (...args) => {
+  const fnReturn = fn(...args);
+  const next = args[args.length-1];
+  return Promise.resolve(fnReturn).catch(next);
+}
+
+/**
  * Returns the value or in case it is undefined, a default value
  * @param {any} value The value to be returned
  * @param {any} def The default value in case `value` is undefined
