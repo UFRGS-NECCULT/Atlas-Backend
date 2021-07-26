@@ -46,7 +46,10 @@ class Eixo1Controller {
           tpo.nome as tipo,
           tpo.id as tipo_id,
           cad.nome as cadeia,
+          cad.id as cadeia_id,
           cad.cor as cor,
+          cad.gradiente_inferior as cor_inferior,
+          cad.gradiente_superior as cor_superior,
           ex.cor_primaria as cor_eixo,
           var.format as formato
         from eixo_4 ex4
@@ -77,8 +80,6 @@ class Eixo1Controller {
       fail(res, String(e));
       return;
     }
-
-    console.log(result.rows)
 
     res.json(result.rows);
   }
@@ -197,7 +198,7 @@ class Eixo1Controller {
       ex4.taxa,
       ex4.ano,
       prc.nome as parceiro,
-      prc.id as prc_id,
+      prc.id as parceiro_id,
       cns.nome as consumo,
       tpo.nome as tipo,
       uf.id as uf_id,
@@ -205,6 +206,8 @@ class Eixo1Controller {
       cad.nome as cadeia,
       cad.id as cadeia_id,
       cad.cor as cor,
+      cad.gradiente_inferior as cor_inferior,
+      cad.gradiente_superior as cor_superior,
       ex.cor_primaria as cor_eixo,
       var.format as formato
     FROM eixo_4 as ex4
@@ -373,35 +376,56 @@ class Eixo1Controller {
     const uf = valueOrDefault(req.query.uf, 0, Number);
     const cad = valueOrDefault(req.query.cad, 0, Number);
     const ano = valueOrDefault(req.query.ano, 0, Number);
+    const prc = valueOrDefault(req.query.prc, 0, Number);
+    const cns = valueOrDefault(req.query.cns, 0, Number);
+    const tpo = valueOrDefault(req.query.tpo, 1, Number);
 
     const mainQuery = query(`SELECT
-        ex.cor_primaria as cor,
-        ex4.valor,
-        ex4.ano,
-        var.format as formato,
-        var.fonte,
-        uf.id as id_uf,
-        uf.nome as nome_uf,
-        uf.preposicao as preposicao_uf,
-        cad.id as id_cad,
-        cad.nome as nome_cad
-      FROM eixo_4 ex4
-        INNER JOIN eixo ex ON ex.id = ex4.eixo_id
-        INNER JOIN variavel var on var.variavel = ex4.variavel_id and var.eixo = ex.id
-        INNER JOIN uf uf ON uf.id = ex4.uf_id
-        INNER JOIN cadeia cad ON cad.id = ex4.cadeia_id
-      WHERE (uf.id = $1 or uf.id = 0)
-        and (cad.id = $2 or cad.id = 0)
-        and ex.id = 4
-        and var.variavel = $3
-        and ex4.ano = $4;`, [
+      ex.cor_primaria as cor,
+      ex4.valor,
+      ex4.ano,
+      var.format as formato,
+      var.fonte,
+      uf.id as id_uf,
+      uf.nome as nome_uf,
+      uf.preposicao as preposicao_uf,
+      cad.id as id_cad,
+      cad.nome as nome_cad,
+      prc.id as id_parceiro,
+      prc.nome as parceiro,
+      cns.id as id_consumo,
+      cns.nome as consumo,
+      tpo.id as id_tipo,
+      tpo.nome as tipo
+    FROM eixo_4 ex4
+      INNER JOIN eixo ex ON ex.id = ex4.eixo_id
+      INNER JOIN variavel var on var.variavel = ex4.variavel_id and var.eixo = ex.id
+      INNER JOIN uf uf ON uf.id = ex4.uf_id
+      INNER JOIN cadeia cad ON cad.id = ex4.cadeia_id
+      INNER JOIN parceiro prc ON prc.id = ex4.parceiro_id
+      INNER JOIN consumo cns ON cns.id = ex4.consumo_id
+      INNER JOIN tipo tpo ON tpo.id = ex4.tipo_id
+    WHERE (uf.id = $1 or uf.id = 0)
+      and (cad.id = $2 or cad.id = 0)
+      and (tpo.id = $3 or tpo.id = 1)
+      and (prc.id = $4 or prc.id = 0)
+      and (cns.id = $5 or cns.id = 0)
+      and ex.id = 4
+      and var.variavel = $6
+      and ex4.ano = $7;`, [
       uf,
       cad,
+      tpo,
+      prc,
+      cns,
       variable,
       ano
     ]);
 
-    res.json((await mainQuery).rows);
+    const rows = (await mainQuery).rows
+    console.log(rows)
+
+    res.json(rows);
   }
 }
 
