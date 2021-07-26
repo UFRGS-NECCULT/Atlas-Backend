@@ -356,6 +356,7 @@ class Eixo2Controller {
         cad.nome as nome_cad,
         subdeg.id as id_subdeg,
         subdeg.subdesagregacao_nome as nome_subdeg,
+        subdeg.display as display_subdeg,
         ocp.id as id_ocupacao,
         ocp.nome as nome_ocupacao
       FROM eixo_2 ex2

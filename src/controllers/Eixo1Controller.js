@@ -561,7 +561,8 @@ class Eixo1Controller {
         cad.id as id_cad,
         cad.nome as nome_cad,
         subdeg.id as id_subdeg,
-        subdeg.subdesagregacao_nome as nome_subdeg
+        subdeg.subdesagregacao_nome as nome_subdeg,
+        subdeg.display as display_subdeg
       FROM eixo_1 ex1
         INNER JOIN eixo ex ON ex.id = ex1.eixo_id
         INNER JOIN variavel var on var.variavel = ex1.variavel_id and var.eixo = ex.id
