@@ -333,48 +333,6 @@ export default
       ]
     },
     {
-      variable: 8,
-      boxes: [
-        {
-          box: 1,
-          data: {
-            charts: [
-              {
-                id: "map",
-                label: "Mapa",
-              },
-              {
-                id: "treemap_uf",
-                label: "Treemap UF"
-              }
-            ]
-          }
-        },
-        {
-          box: 2,
-          data: {
-            charts: [
-              {
-                id: "bars",
-                label: "Barras",
-              }
-            ]
-          }
-        },
-        {
-          box: 3,
-          data: {
-            charts: [
-              {
-                id: "treemap_scc",
-                label: "Treemap",
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
       variable: 9,
       boxes: [
         {
@@ -427,7 +385,7 @@ export default
                 id: "bars",
                 label: "Barras",
                 constants: {
-                  cad: 0
+                  concentracao: '1'
                 }
               }
             ]
@@ -441,7 +399,7 @@ export default
                 id: "bars",
                 label: "Barras",
                 constants: {
-                  cad: 1
+                  concentracao: '0'
                 }
               }
             ]
@@ -471,7 +429,7 @@ export default
                 id: "bars",
                 label: "Barras",
                 constants: {
-                  cad: 0
+                  concentracao: '0'
                 }
               }
             ]
@@ -485,7 +443,7 @@ export default
                 id: "bars",
                 label: "Barras",
                 constants: {
-                  cad: 1
+                  concentracao: '1'
                 }
               }
             ]
@@ -515,7 +473,7 @@ export default
                 id: "bars",
                 label: "Barras",
                 constants: {
-                  cad: 0
+                  concentracao: '0'
                 }
               }
             ]
@@ -529,7 +487,7 @@ export default
                 id: "bars",
                 label: "Barras",
                 constants: {
-                  cad: 1
+                  concentracao: '1'
                 }
               }
             ]
@@ -559,7 +517,7 @@ export default
                 id: "bars",
                 label: "Barras",
                 constants: {
-                  cad: 0
+                  concentracao: '0'
                 }
               }
             ]
@@ -573,7 +531,7 @@ export default
                 id: "bars",
                 label: "Barras",
                 constants: {
-                  cad: 1
+                  concentracao: '1'
                 }
               }
             ]
