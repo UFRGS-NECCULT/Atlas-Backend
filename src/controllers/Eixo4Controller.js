@@ -6,6 +6,18 @@ import views from '../json/Eixo4Views.js'
 
 class Eixo1Controller {
 
+  async getVariable(req, res) {
+    const variable = valueOrDefault(req.query.var, 1, Number);
+    try {
+      const result = await query(`select format as formato, titulo, descricao, fonte from variavel v where v.eixo = 4 and v.variavel = $1;`, [variable]);
+      const [data] = result.rows;
+      return res.json(data)
+    } catch (e) {
+      fail(res, String(e));
+      return;
+    }
+  }
+
   async getVisualization(req, res) {
     const variable = valueOrDefault(req.query.var, 1, Number);
     const box = valueOrDefault(req.query.box, 1, Number);

@@ -6,6 +6,19 @@ import views from '../json/Eixo1Views.js'
 
 class Eixo1Controller {
 
+  async getVariable(req, res) {
+    const variable = valueOrDefault(req.query.var, 1, Number);
+    try {
+      const result = await query(`select format as formato, titulo, descricao, fonte from variavel v where v.eixo = 1 and v.variavel = $1;`, [variable]);
+      const [data] = result.rows;
+      return res.json(data)
+    } catch (e) {
+      fail(res, String(e));
+      return;
+    }
+  }
+
+
   async getVisualization(req, res) {
     const variable = valueOrDefault(req.query.var, 1, Number);
     const box = valueOrDefault(req.query.box, 1, Number);
@@ -25,11 +38,21 @@ class Eixo1Controller {
     var uf = valueOrDefault(req.query.uf, 0, Number);
     var cad = valueOrDefault(req.query.cad, 0, Number);
     var deg = valueOrDefault(req.query.deg, 0, Number);
+    var concentracao = valueOrDefault(req.query.concentracao, -1, Number);
 
     if (!(deg == 0 || cad != 0 || [1, 2, 3].includes(variable))) {
       fail(res, 'Invalid parameters!', 400);
       return;
     }
+
+    const params = [
+      deg,
+      uf,
+      cad,
+      variable,
+    ]
+
+    if (concentracao >= 0) params.push(concentracao)
 
     var result;
     try {
@@ -67,13 +90,9 @@ class Eixo1Controller {
             and cad.id = $3
             and ex1.eixo_id = 1
             and var.variavel = $4
+            ${concentracao >= 0 ? "and concentracao = $5" : ''}
         order by ano, sdg_id;
-      `, [
-        deg,
-        uf,
-        cad,
-        variable,
-      ]);
+      `, params);
     } catch (e) {
       fail(res, String(e));
       return;
@@ -324,8 +343,16 @@ class Eixo1Controller {
         ex1.percentual as percentual,
         ex1.taxa as taxa,
         ano,
-        cad.nome as cadeia,
-        cad.cor as cor,
+        ${variable >= 10 ? `
+        CASE 
+          WHEN concentracao = 0 THEN 'Por UF'
+          WHEN concentracao = 1 THEN 'Por SCC'
+        end` : 'cad.nome as'} grupo,
+        ${variable >= 10 ? `
+        CASE 
+          WHEN concentracao = 0 THEN ex.cor_primaria
+          WHEN concentracao = 1 THEN ex.cor_secundaria 
+        end ` : 'cad.cor as'} cor,
         var.format as formato
       FROM EIXO_1 as ex1
         INNER JOIN uf uf ON uf.id = ex1.uf_id
@@ -337,9 +364,10 @@ class Eixo1Controller {
       WHERE var.variavel = $1
         AND ex1.uf_id = $2
         and ex1.subdesagregacao_id = $3
-        ${variable >= 10 ? '' : 'and ex1.cadeia_id != 0'}
-      order by cad.id, ano asc
+        ${variable >= 10 ? 'and ex1.concentracao IS NOT NULL' : 'and ex1.cadeia_id != 0'}
+        order by cad.id, ano, concentracao asc;
     `;
+
 
     const params = [variable, uf, deg];
 

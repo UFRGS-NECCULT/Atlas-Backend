@@ -14,6 +14,7 @@ router.get('/donut', asyncHandler(controller.getterDonut));
 router.get('/breadcrumb', asyncHandler(controller.getBreadcrumb));
 router.get('/info', asyncHandler(controller.getInfo));
 router.get('/visualization', asyncHandler(controller.getVisualization));
+router.get('/variable', asyncHandler(controller.getVariable));
 
 // FIXME: Esses endpoints sequer são usados pelo front?
 router.get('/uf', asyncHandler(controller.getTotalSumPrt));
