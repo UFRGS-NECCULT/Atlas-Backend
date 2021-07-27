@@ -3,7 +3,17 @@ import qs from "query-string";
 
 export class PageDownloadController {
     constructor() {
-        this.browser = puppeteer.launch();
+        this.browser = puppeteer.launch({
+            headless: true,
+            executablePath: '/usr/bin/chromium-browser',
+            args: [
+                '--no-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-gpu',
+                '--single-process',
+                '--no-zygote',
+            ],
+        });
 
         this.downloadPNG = this.downloadPNG.bind(this);
     }
