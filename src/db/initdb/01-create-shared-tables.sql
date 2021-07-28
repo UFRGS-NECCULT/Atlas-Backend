@@ -1,41 +1,57 @@
+create table regiao (
+	id integer NOT null primary KEY,
+	nome varchar(12) UNIQUE,
+	cor varchar(7)
+);
+
+INSERT INTO regiao (id, cor, nome) VALUES
+	(0, '#ff0000', 'Todas'),
+	(1, '#ff9800', 'Norte'),
+	(2, '#ffc107', 'Nordeste'),
+	(3, '#cddc39', 'Sudeste'),
+	(4, '#8bc34a', 'Sul'),
+	(5, '#ffeb3b', 'Centro-Oeste'),
+	(10, '#ff0000', 'Outros');
+
 create table uf (
 	id integer NOT null primary KEY,
 	nome varchar(32) UNIQUE,
 	sigla varchar(2) UNIQUE,
+	regiao_id integer not null references regiao(id) ON DELETE restrict,
 	regiao varchar(20),
 	preposicao varchar(3) NOT null
 );
 
-INSERT INTO uf (id, sigla, preposicao, nome, regiao) VALUES
-	( 0, 'TD', 'do', 'Todos', 'Todas'),
-	(11, 'RO', 'de', 'Rondônia', 'Norte'),
-	(12, 'AC', 'do', 'Acre', 'Norte'),
-	(13, 'AM', 'do', 'Amazonas', 'Norte'),
-	(14, 'RR', 'de', 'Roraima', 'Norte'),
-	(15, 'PA', 'do', 'Pará', 'Norte'),
-	(16, 'AP', 'do', 'Amapá', 'Norte'),
-	(17, 'TO', 'do', 'Tocantins', 'Norte'),
-	(21, 'MA', 'do', 'Maranhão', 'Nordeste'),
-	(22, 'PI', 'do', 'Piauí', 'Nordeste'),
-	(23, 'CE', 'do', 'Ceará', 'Nordeste'),
-	(24, 'RN', 'do', 'Rio Grande Do Norte', 'Nordeste'),
-	(25, 'PB', 'da', 'Paraíba', 'Nordeste'),
-	(26, 'PE', 'de', 'Pernambuco', 'Nordeste'),
-	(27, 'AL', 'de', 'Alagoas', 'Nordeste'),
-	(28, 'SE', 'de', 'Sergipe', 'Nordeste'),
-	(29, 'BA', 'da', 'Bahia', 'Nordeste'),
-	(31, 'MG', 'de', 'Minas Gerais', 'Sudeste'),
-	(32, 'ES', 'do', 'Espírito Santo', 'Sudeste'),
-	(33, 'RJ', 'do', 'Rio De Janeiro', 'Sudeste'),
-	(35, 'SP', 'de', 'São Paulo', 'Sudeste'),
-	(41, 'PR', 'do', 'Paraná', 'Sul'),
-	(42, 'SC', 'de', 'Santa Catarina', 'Sul'),
-	(43, 'RS', 'do', 'Rio Grande Do Sul', 'Sul'),
-	(50, 'MS', 'de', 'Mato Grosso Do Sul', 'Centro-Oeste'),
-	(51, 'MT', 'de', 'Mato Grosso', 'Centro-Oeste'),
-	(52, 'GO', 'de', 'Goiás', 'Centro-Oeste'),
-	(53, 'DF', 'do', 'Distrito Federal', 'Centro-Oeste'),
-	(99, 'OT', 'do', 'Outros', 'Outros');
+INSERT INTO uf (id, sigla, preposicao, regiao_id, nome, regiao) VALUES
+	( 0, 'TD', 'do', 0, 'Todos', 'Todas'),
+	(11, 'RO', 'de', 1, 'Rondônia', 'Norte'),
+	(12, 'AC', 'do', 1, 'Acre', 'Norte'),
+	(13, 'AM', 'do', 1, 'Amazonas', 'Norte'),
+	(14, 'RR', 'de', 1, 'Roraima', 'Norte'),
+	(15, 'PA', 'do', 1, 'Pará', 'Norte'),
+	(16, 'AP', 'do', 1, 'Amapá', 'Norte'),
+	(17, 'TO', 'do', 1, 'Tocantins', 'Norte'),
+	(21, 'MA', 'do', 2, 'Maranhão', 'Nordeste'),
+	(22, 'PI', 'do', 2, 'Piauí', 'Nordeste'),
+	(23, 'CE', 'do', 2, 'Ceará', 'Nordeste'),
+	(24, 'RN', 'do', 2, 'Rio Grande Do Norte', 'Nordeste'),
+	(25, 'PB', 'da', 2, 'Paraíba', 'Nordeste'),
+	(26, 'PE', 'de', 2, 'Pernambuco', 'Nordeste'),
+	(27, 'AL', 'de', 2, 'Alagoas', 'Nordeste'),
+	(28, 'SE', 'de', 2, 'Sergipe', 'Nordeste'),
+	(29, 'BA', 'da', 2, 'Bahia', 'Nordeste'),
+	(31, 'MG', 'de', 3, 'Minas Gerais', 'Sudeste'),
+	(32, 'ES', 'do', 3, 'Espírito Santo', 'Sudeste'),
+	(33, 'RJ', 'do', 3, 'Rio De Janeiro', 'Sudeste'),
+	(35, 'SP', 'de', 3, 'São Paulo', 'Sudeste'),
+	(41, 'PR', 'do', 4, 'Paraná', 'Sul'),
+	(42, 'SC', 'de', 4, 'Santa Catarina', 'Sul'),
+	(43, 'RS', 'do', 4, 'Rio Grande Do Sul', 'Sul'),
+	(50, 'MS', 'de', 5, 'Mato Grosso Do Sul', 'Centro-Oeste'),
+	(51, 'MT', 'de', 5, 'Mato Grosso', 'Centro-Oeste'),
+	(52, 'GO', 'de', 5, 'Goiás', 'Centro-Oeste'),
+	(53, 'DF', 'do', 5, 'Distrito Federal', 'Centro-Oeste'),
+	(99, 'OT', 'do', 10, 'Outros', 'Outros');
 
 create table cadeia (
 	id integer NOT null primary KEY,

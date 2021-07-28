@@ -87,7 +87,7 @@ class Eixo1Controller {
   * @param {import('express').Request} req
   * @param {import('express').Response} res
   */
-  async getTreemap(req, res) {
+   async getTreemapCad(req, res) {
     var variable = valueOrDefault(req.query.var, 0, Number);
     var uf = valueOrDefault(req.query.uf, 0, Number);
     var deg = valueOrDefault(req.query.deg, 0, Number);
@@ -96,12 +96,14 @@ class Eixo1Controller {
 
     const result = await query(`
       SELECT
-        SUM(valor) as valor,
-        SUM(taxa) as taxa,
-        SUM(percentual) as percentual,
+        valor,
+        taxa,
+        percentual,
         ex1.ano as ano,
-        cad.nome as cadeia,
-        cad.id as cadeia_id,
+        cad.id as grupo_id,
+        cad.nome as grupo_nome,
+        cad.nome as item_nome,
+        cad.id as item_id,
         cad.cor as cor,
         var.format as formato
       FROM eixo_1 as ex1
@@ -117,13 +119,61 @@ class Eixo1Controller {
         and cad.id != 0
         and var.variavel = $4
         and ex1.eixo_id = 1
-        and ex1.subdesagregacao_id = $5
-      GROUP BY cad.id, cad.nome, cad.cor, ex1.ano, var.format
-      order by cadeia_id ASC;
+        and ex1.subdesagregacao_id = $5;
     `, [
       uf,
       ano,
       atc,
+      variable,
+      deg,
+    ])
+
+    res.json(result.rows);
+  }
+
+  /**
+  * Busca dados necessários para mostrar um treemap de estados agrupados
+  * por região
+  * @param {import('express').Request} req
+  * @param {import('express').Response} res
+  */
+   async getTreemapUF(req, res) {
+    var variable = valueOrDefault(req.query.var, 0, Number);
+    var deg = valueOrDefault(req.query.deg, 0, Number);
+    var cad = valueOrDefault(req.query.cad, 0, Number);
+    var atc = valueOrDefault(req.query.atc, 0, Number);
+    var ano = valueOrDefault(req.query.ano, 2015, Number);
+
+    const result = await query(`
+      SELECT
+        valor,
+        taxa,
+        percentual,
+        ex1.ano as ano,
+        regiao.id as grupo_id,
+        regiao.nome as grupo_nome,
+        uf.nome as item_nome,
+        uf.id as item_id,
+        regiao.cor as cor,
+        var.format as formato
+      FROM eixo_1 as ex1
+        INNER JOIN uf uf ON uf.id = ex1.uf_id
+        INNER JOIN regiao ON regiao.id = uf.regiao_id
+        INNER JOIN atuacao atc ON atc.id = ex1.atuacao_id
+        INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id
+        INNER JOIN eixo ex ON ex.id = ex1.eixo_id
+        INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id
+        INNER JOIN variavel var ON var.variavel = ex1.variavel_id and var.eixo = ex1.eixo_id
+      WHERE uf.regiao_id != 0
+        and ex1.ano = $1
+        and atc.id = $2
+        and cad.id = $3
+        and var.variavel = $4
+        and ex1.subdesagregacao_id = $5;
+    `, [
+      ano,
+      atc,
+      cad,
       variable,
       deg,
     ])
@@ -409,65 +459,6 @@ class Eixo1Controller {
     const result = await query(sql, params);
 
     res.json(result.rows);
-  }
-
-  /**
-   * Gets the values of a variable in each Region
-   * @param {import('express').Request} req
-   * @param {import('express').Response} res
-   */
-  async getterRegion(req, res) {
-    var variable = valueOrDefault(req.query.var, 0, Number);
-    var cad = valueOrDefault(req.query.cad, 0, Number);
-    var prt = valueOrDefault(req.query.prt, 0, Number);
-    var ano = valueOrDefault(req.query.ano, 0, Number);
-
-    var regions = [
-      'Sul',
-      'Sudeste',
-      'Centro-Oeste',
-      'Nordeste',
-      'Norte',
-    ];
-
-    var sql;
-    var params;
-
-    var result = {};
-
-    for (var region of regions) {
-      // FIXME: What is this expression and why does it appear so much?
-      if (prt == 0 || cad != 0 || [1, 2, 3].includes(variable)) {
-        sql = `SELECT * FROM Eixo_1 as ex
-                JOIN UF AS uf ON uf.idUF = ex.idUF
-                JOIN Cadeia AS cad ON cad.idCadeia = ex.idCadeia
-                JOIN Atuacao AS atc ON atc.idAtuacao = ex.idAtuacao
-                JOIN Porte AS prt ON prt.idPorte = ex.idPorte
-                WHERE ex.Numero = ? AND
-                uf.UFRegiao LIKE ? AND
-                cad.idCadeia = ? AND
-                atc.idAtuacao = 0 AND
-                prt.idPorte = ?`;
-        params = [variable, region, cad, prt];
-      } else {
-        sql = `SELECT * FROM Eixo_1 as ex
-                JOIN UF AS uf ON uf.idUF = ex.idUF
-                JOIN Porte AS prt ON prt.idPorte = ex.idPorte
-                WHERE ex.Numero = ? AND
-                uf.UFRegiao LIKE ? AND
-                prt.idPorte = ?`;
-        params = [variable, region, prt];
-      }
-
-      if (ano > 0) {
-        sql += ' AND ex.Ano = ?';
-        params.push(ano);
-      }
-
-      result[region] = await query(sql, params);
-    }
-
-    res.json(result);
   }
 
   async getBreadcrumb(req, res) {
