@@ -117,11 +117,11 @@ class Eixo1Controller {
         cad.id as cadeia_id,
         cad.cor as cor
       FROM eixo_4 as ex4
-        INNER JOIN uf uf ON uf.id = ex4.uf_id 
-          INNER JOIN parceiro prc ON prc.id = ex4.parceiro_id 
-          INNER JOIN consumo cns ON cns.id = ex4.consumo_id 
-          INNER JOIN tipo tpo ON tpo.id = ex4.tipo_id 
-          INNER JOIN cadeia cad ON cad.id = ex4.cadeia_id 
+        INNER JOIN uf uf ON uf.id = ex4.uf_id
+          INNER JOIN parceiro prc ON prc.id = ex4.parceiro_id
+          INNER JOIN consumo cns ON cns.id = ex4.consumo_id
+          INNER JOIN tipo tpo ON tpo.id = ex4.tipo_id
+          INNER JOIN cadeia cad ON cad.id = ex4.cadeia_id
           INNER JOIN eixo ex ON ex.id = ex4.eixo_id
       WHERE uf.id = $1
           and ex4.ano = $2
@@ -265,12 +265,12 @@ class Eixo1Controller {
         ano,
         prc.nome as parceiro,
         cns.nome as consumo,
-        tpo.nome as cadeia, 
+        tpo.nome as cadeia,
         tpo.id as tipo_id,
         cad.id as cadeia_id,
-        CASE 
+        CASE
           WHEN tpo.id = 1 THEN ex.cor_primaria
-          WHEN tpo.id = 2 THEN ex.cor_secundaria 
+          WHEN tpo.id = 2 THEN ex.cor_secundaria
         end cor,
         var.format as formato
       FROM eixo_4 as ex4
@@ -390,7 +390,7 @@ class Eixo1Controller {
     const ano = valueOrDefault(req.query.ano, 0, Number);
     const prc = valueOrDefault(req.query.prc, 0, Number);
     const cns = valueOrDefault(req.query.cns, 0, Number);
-    const tpo = valueOrDefault(req.query.tpo, 1, Number);
+    const tpo = valueOrDefault(req.query.tpo, 0, Number);
 
     const mainQuery = query(`SELECT
       ex.cor_primaria as cor,
@@ -404,11 +404,11 @@ class Eixo1Controller {
       cad.id as id_cad,
       cad.nome as nome_cad,
       prc.id as id_parceiro,
-      prc.nome as parceiro,
+      prc.nome as nome_parceiro,
       cns.id as id_consumo,
-      cns.nome as consumo,
+      cns.nome as nome_consumo,
       tpo.id as id_tipo,
-      tpo.nome as tipo
+      tpo.nome as nome_tipo
     FROM eixo_4 ex4
       INNER JOIN eixo ex ON ex.id = ex4.eixo_id
       INNER JOIN variavel var on var.variavel = ex4.variavel_id and var.eixo = ex.id
@@ -419,7 +419,7 @@ class Eixo1Controller {
       INNER JOIN tipo tpo ON tpo.id = ex4.tipo_id
     WHERE (uf.id = $1 or uf.id = 0)
       and (cad.id = $2 or cad.id = 0)
-      and (tpo.id = $3 or tpo.id = 1)
+      and (tpo.id = $3 or tpo.id = 0)
       and (prc.id = $4 or prc.id = 0)
       and (cns.id = $5 or cns.id = 0)
       and ex.id = 4
@@ -435,7 +435,6 @@ class Eixo1Controller {
     ]);
 
     const rows = (await mainQuery).rows
-    console.log(rows)
 
     res.json(rows);
   }
