@@ -9,9 +9,9 @@ export class PageDownloadController {
             args: [
                 '--no-sandbox',
                 '--disable-dev-shm-usage',
-                '--disable-gpu',
-                '--single-process',
-                '--no-zygote',
+                // '--disable-gpu',
+                // '--single-process',
+                // '--no-zygote',
             ],
         });
 
@@ -35,7 +35,7 @@ export class PageDownloadController {
             width,
             height,
         });
-        await page.goto('http://localhost:3000/resultado?' + qs.stringify(req.query));
+        await page.goto('http://atlas-frontend-dev:3000/resultado?' + qs.stringify(req.query));
         const buffer = await page.screenshot({
             clip: {
                 width,
