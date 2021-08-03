@@ -394,14 +394,14 @@ class Eixo1Controller {
         ex1.taxa as taxa,
         ano,
         ${variable >= 10 ? `
-        CASE 
+        CASE
           WHEN concentracao = 0 THEN 'Por UF'
           WHEN concentracao = 1 THEN 'Por SCC'
         end` : 'cad.nome as'} grupo,
         ${variable >= 10 ? `
-        CASE 
+        CASE
           WHEN concentracao = 0 THEN ex.cor_primaria
-          WHEN concentracao = 1 THEN ex.cor_secundaria 
+          WHEN concentracao = 1 THEN ex.cor_secundaria
         end ` : 'cad.cor as'} cor,
         var.format as formato
       FROM EIXO_1 as ex1
@@ -453,8 +453,8 @@ class Eixo1Controller {
         ex1.percentual as percentual,
         ex1.taxa as taxa,
         ano,
-        cad.nome as cadeia,
-        cad.id as cadeia_id,
+        cad.nome as item_nome,
+        cad.id as item_id,
         cad.cor as cor,
         var.format as formato
       FROM EIXO_1 as ex1

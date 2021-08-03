@@ -309,12 +309,11 @@ class Eixo2Controller {
         ex2.percentual as percentual,
         ex2.taxa as taxa,
         ano,
-        cad.nome as cadeia,
-        cad.id as cadeia_id,
+        cad.nome as item_nome,
+        cad.id as item_id,
         cad.cor as cor
       FROM EIXO_2 as ex2
         INNER JOIN uf uf ON uf.id = ex2.uf_id
-        INNER JOIN atuacao atc ON atc.id = ex2.atuacao_id
         INNER JOIN cadeia cad ON cad.id = ex2.cadeia_id
         INNER JOIN eixo ex ON ex.id = ex2.eixo_id
         INNER JOIN subdesagregacao subdesag ON subdesag.id = ex2.subdesagregacao_id

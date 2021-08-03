@@ -256,18 +256,16 @@ class Eixo1Controller {
     var prc = valueOrDefault(req.query.prc, 0, Number);
     var cns = valueOrDefault(req.query.cns, 0, Number);
     var cad = valueOrDefault(req.query.cad, 0, Number);
+    var tpo = valueOrDefault(req.query.tpo, 0, Number);
 
     const sql = `
       SELECT
-        ex4.valor as valor,
-        ex4.percentual as percentual,
-        ex4.taxa as taxa,
+        ex4.valor,
+        ex4.percentual,
+        ex4.taxa,
         ano,
-        prc.nome as parceiro,
-        cns.nome as consumo,
-        tpo.nome as cadeia,
-        tpo.id as tipo_id,
-        cad.id as cadeia_id,
+        tpo.id as item_id,
+        tpo.nome as item_nome,
         CASE
           WHEN tpo.id = 1 THEN ex.cor_primaria
           WHEN tpo.id = 2 THEN ex.cor_secundaria
