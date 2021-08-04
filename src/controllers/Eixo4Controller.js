@@ -97,42 +97,41 @@ class Eixo1Controller {
   }
 
   async getTreemap(req, res) {
-    var uf = valueOrDefault(req.query.uf, 0, Number);
-    var ano = valueOrDefault(req.query.ano, 0, Number);
-    var tpo = valueOrDefault(req.query.tpo, 0, Number);
-    var cns = valueOrDefault(req.query.cns, 2015, Number);
-    var prc = valueOrDefault(req.query.prc, 2015, Number);
-    var variable = valueOrDefault(req.query.var, 0, Number);
+    const uf = valueOrDefault(req.query.uf, 0, Number);
+    const ano = valueOrDefault(req.query.ano, 0, Number);
+    const tpo = valueOrDefault(req.query.tpo, 0, Number);
+    const cns = valueOrDefault(req.query.cns, 2015, Number);
+    const prc = valueOrDefault(req.query.prc, 2015, Number);
+    const variable = valueOrDefault(req.query.var, 0, Number);
 
     const result = await query(`
       SELECT
-        SUM(valor) as valor,
-        SUM(taxa) as taxa,
-        SUM(percentual) as percentual,
-        ex4.ano as ano,
-        cns.nome as consumo,
-        prc.nome as parceiro,
-        tpo.nome as tipo,
-        cad.nome as cadeia,
-        cad.id as cadeia_id,
-        cad.cor as cor
+        valor,
+        taxa,
+        percentual,
+        ex4.ano,
+        cad.id as grupo_id,
+        cad.id as item_id,
+        cad.nome as grupo_nome,
+        cad.nome as item_nome,
+        cad.cor as cor,
+        var.format as formato
       FROM eixo_4 as ex4
         INNER JOIN uf uf ON uf.id = ex4.uf_id
-          INNER JOIN parceiro prc ON prc.id = ex4.parceiro_id
-          INNER JOIN consumo cns ON cns.id = ex4.consumo_id
-          INNER JOIN tipo tpo ON tpo.id = ex4.tipo_id
-          INNER JOIN cadeia cad ON cad.id = ex4.cadeia_id
-          INNER JOIN eixo ex ON ex.id = ex4.eixo_id
-      WHERE uf.id = $1
-          and ex4.ano = $2
-          and tpo.id = $3
-          and cns.id = $4
-          and prc.id = $5
-          and cad.id != 0
-          and ex4.eixo_id = 4
-          and ex4.variavel_id = $6
-      GROUP BY cad.id, cad.nome, cad.cor, ex4.ano, cns.nome, prc.nome, tpo.nome
-      order by cadeia_id ASC;
+        INNER JOIN parceiro prc ON prc.id = ex4.parceiro_id
+        INNER JOIN consumo cns ON cns.id = ex4.consumo_id
+        INNER JOIN tipo tpo ON tpo.id = ex4.tipo_id
+        INNER JOIN cadeia cad ON cad.id = ex4.cadeia_id
+        INNER JOIN eixo ex ON ex.id = ex4.eixo_id
+        INNER JOIN variavel var ON var.variavel = ex4.variavel_id and var.eixo = ex.id
+      WHERE cad.id != 0
+        and uf.id = $1
+        and ex4.ano = $2
+        and tpo.id = $3
+        and cns.id = $4
+        and prc.id = $5
+        and ex4.variavel_id = $6
+      ORDER BY grupo_id, item_id ASC;
     `, [
       uf,
       ano,
@@ -140,7 +139,56 @@ class Eixo1Controller {
       cns,
       prc,
       variable,
-    ])
+    ]);
+
+    res.json(result.rows);
+  }
+
+  async getTreemapUF(req, res) {
+    const ano = valueOrDefault(req.query.ano, 0, Number);
+    const tpo = valueOrDefault(req.query.tpo, 1, Number);
+    const cns = valueOrDefault(req.query.cns, 0, Number);
+    const prc = valueOrDefault(req.query.prc, 0, Number);
+    const cad = valueOrDefault(req.query.cad, 0, Number);
+    const variable = valueOrDefault(req.query.var, 0, Number);
+
+    const result = await query(`
+      SELECT
+        valor,
+        taxa,
+        percentual,
+        ex4.ano as ano,
+        regiao.id as grupo_id,
+        regiao.nome as grupo_nome,
+        uf.nome as item_nome,
+        uf.id as item_id,
+        regiao.cor as cor,
+        var.format as formato
+      FROM eixo_4 as ex4
+        INNER JOIN uf ON uf.id = ex4.uf_id
+        INNER JOIN regiao ON regiao.id = uf.regiao_id
+        INNER JOIN parceiro prc ON prc.id = ex4.parceiro_id
+        INNER JOIN consumo cns ON cns.id = ex4.consumo_id
+        INNER JOIN tipo tpo ON tpo.id = ex4.tipo_id
+        INNER JOIN cadeia cad ON cad.id = ex4.cadeia_id
+        INNER JOIN eixo ex ON ex.id = ex4.eixo_id
+        INNER JOIN variavel var on var.variavel = ex4.variavel_id and var.eixo = ex.id
+      WHERE regiao.id != 0
+        and ex4.ano = $1
+        and tpo.id = $2
+        and cns.id = $3
+        and prc.id = $4
+        and cad.id = $6
+        and ex4.variavel_id = $5
+      order by grupo_id, item_id ASC;
+    `, [
+      ano,
+      tpo,
+      cns,
+      prc,
+      variable,
+      cad,
+    ]);
 
     res.json(result.rows);
   }

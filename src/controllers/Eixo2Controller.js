@@ -187,31 +187,31 @@ class Eixo2Controller {
 
     const result = await query(`
       SELECT
-        SUM(valor) as valor,
-        SUM(taxa) as taxa,
-        SUM(percentual) as percentual,
-        ex2.ano as ano,
-        cad.nome as cadeia,
-        cad.id as cadeia_id,
+        valor,
+        taxa,
+        percentual,
+        ex2.ano,
+        cad.id as grupo_id,
+        cad.id as item_id,
+        cad.nome as grupo_nome,
+        cad.nome as item_nome,
         cad.cor as cor,
         var.format as formato
       FROM eixo_2 as ex2
         INNER JOIN uf uf ON uf.id = ex2.uf_id
-          INNER JOIN ocupacao ocp ON ocp.id = ex2.ocupacao_id
-          INNER JOIN cadeia cad ON cad.id = ex2.cadeia_id
-          INNER JOIN eixo ex ON ex.id = ex2.eixo_id
-          INNER JOIN subdesagregacao subdesag ON subdesag.id = ex2.subdesagregacao_id
-          INNER JOIN variavel var ON var.variavel = ex2.variavel_id and var.eixo = ex2.eixo_id
-        WHERE uf.id = $1
-          and ex2.ano = $2
-          and ocp.id = $3
-          and cad.id != 0
-          and ex2.eixo_id = 2
-          and ex2.variavel_id = $4
-          and ex2.subdesagregacao_id = $5
-      GROUP BY cad.id, cad.nome, cad.cor, ex2.ano,var.format
-      order by cadeia_id ASC;
-    `, [
+        INNER JOIN ocupacao ocp ON ocp.id = ex2.ocupacao_id
+        INNER JOIN cadeia cad ON cad.id = ex2.cadeia_id
+        INNER JOIN eixo ex ON ex.id = ex2.eixo_id
+        INNER JOIN subdesagregacao subdesag ON subdesag.id = ex2.subdesagregacao_id
+        INNER JOIN variavel var ON var.variavel = ex2.variavel_id and var.eixo = ex2.eixo_id
+      WHERE uf.id = $1
+        and ex2.ano = $2
+        and ocp.id = $3
+        and cad.id != 0
+        and ex2.eixo_id = 2
+        and ex2.variavel_id = $4
+        and ex2.subdesagregacao_id = $5
+      order by cadeia_id ASC;`, [
       uf,
       ano,
       ocp,
@@ -223,73 +223,53 @@ class Eixo2Controller {
   }
 
   /**
-   * Retorna os dados necessários para a montagem de um treemap
-   * @param {import('express').Request} req
-   * @param {import('express').Response} res
-   */
-  async getTreemapRegion(req, res) {
+  * Busca dados necessários para mostrar um treemap de estados agrupados
+  * por região
+  * @param {import('express').Request} req
+  * @param {import('express').Response} res
+  */
+   async getTreemapUF(req, res) {
     const variable = valueOrDefault(req.query.var, 0, Number);
-    const cad = valueOrDefault(req.query.cad, 0, Number);
-    const ocp = valueOrDefault(req.query.ocp, 0, Number);
-    const ano = valueOrDefault(req.query.ano, 0, Number);
     const deg = valueOrDefault(req.query.deg, 0, Number);
-    const subdeg = valueOrDefault(req.query.subdeg, 0, Number);
+    const cad = valueOrDefault(req.query.cad, 0, Number);
+    const ano = valueOrDefault(req.query.ano, 2015, Number);
+    const ocp = valueOrDefault(req.query.ocp, 0, Number);
 
-    var sql = `SELECT
-        SUM(Valor) as Valor,
-        SUM(Percentual) as Percentual,
-        SUM(Taxa) as Taxa,
-        uf.UFRegiao as NomeGrupo
-      FROM Eixo_2 as ex
-        INNER JOIN UF AS uf ON uf.idUF = ex.idUF
-        INNER JOIN Cadeia AS cad ON cad.idCadeia = ex.idCadeia
-        INNER JOIN Porte AS prt ON prt.idPorte = ex.idPorte
-        INNER JOIN Ocupacao AS ocp ON ocp.idOcupacao = ex.idOcupacao
-        INNER JOIN Escolaridade AS esc ON esc.idEscolaridade = ex.idEscolaridade
-        INNER JOIN Etinia AS eti ON eti.idEtinia = ex.idEtinia
-        INNER JOIN Idade AS age ON age.idIdade = ex.idIdade
-      WHERE ex.Numero = ? AND
-        ocp.idOcupacao = ? AND
-        prt.idPorte = ? AND
-        esc.idEscolaridade = ? AND
-        eti.idEtinia = ? AND
-        age.idIdade = ? AND
-        ex.Formalidade = ? AND
-        ex.Previdencia = ? AND
-        ex.Sindical = ?
-    `;
-    var params = [
+    const result = await query(`
+      SELECT
+        valor,
+        taxa,
+        percentual,
+        ex2.ano as ano,
+        regiao.id as grupo_id,
+        regiao.nome as grupo_nome,
+        uf.nome as item_nome,
+        uf.id as item_id,
+        regiao.cor as cor,
+        var.format as formato
+      FROM eixo_2 as ex2
+        INNER JOIN eixo ex ON ex.id = ex2.eixo_id
+        INNER JOIN variavel var on var.variavel = ex2.variavel_id and var.eixo = ex.id
+        INNER JOIN uf ON uf.id = ex2.uf_id
+        INNER JOIN regiao ON regiao.id = uf.regiao_id
+        INNER JOIN cadeia cad ON cad.id = ex2.cadeia_id
+        INNER JOIN subdesagregacao subdeg ON subdeg.id = ex2.subdesagregacao_id
+        INNER JOIN ocupacao ocp ON ocp.id = ex2.ocupacao_id
+      WHERE regiao.id != 0
+        and ex2.ano = $1
+        and cad.id = $2
+        and var.variavel = $3
+        and subdeg.id = $4
+        and ocp.id = $5;
+    `, [
+      ano,
+      cad,
       variable,
-      ocp,
-      deg === 1 ? subdeg : 0,
-      deg === 3 ? subdeg : 0,
-      deg === 4 ? subdeg : 0,
-      deg === 5 ? subdeg : 0,
-      deg === 6 ? subdeg : 0,
-      deg === 7 ? subdeg : 0,
-      deg === 8 ? subdeg : 0,
-    ];
+      deg,
+      ocp
+    ])
 
-    if (deg === 2) {
-      sql += ' AND ex.Sexo = ?';
-      params.push(subdeg);
-    } else {
-      sql += ' AND ex.Sexo IS NULL';
-    }
-
-    if (ocp !== 0) {
-      sql += ' AND cad.idCadeia = ?';
-      params.push(cad);
-    }
-
-    if (ano > 0) {
-      sql += ' AND ex.Ano = ?';
-      params.push(ano);
-    }
-
-    sql += ' GROUP BY NomeGrupo';
-
-    res.json(await query(sql, params));
+    res.json(result.rows);
   }
 
   /**

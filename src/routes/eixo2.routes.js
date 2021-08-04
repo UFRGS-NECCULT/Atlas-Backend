@@ -10,7 +10,7 @@ router.get('/bars', asyncHandler(controller.getBars));
 router.get('/lines', asyncHandler(controller.getLines));
 router.get('/map', asyncHandler(controller.getMap));
 router.get('/treemap', asyncHandler(controller.getTreemapSCC));
-router.get('/treemap-region', asyncHandler(controller.getTreemapRegion));
+router.get('/treemap-uf', asyncHandler(controller.getTreemapUF));
 router.get('/donut', asyncHandler(controller.getterDonut));
 router.get('/breadcrumb', asyncHandler(controller.getBreadcrumb));
 router.get('/info', asyncHandler(controller.getInfo));

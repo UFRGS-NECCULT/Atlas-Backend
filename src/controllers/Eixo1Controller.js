@@ -120,9 +120,9 @@ class Eixo1Controller {
         percentual,
         ex1.ano as ano,
         cad.id as grupo_id,
+        cad.id as item_id,
         cad.nome as grupo_nome,
         cad.nome as item_nome,
-        cad.id as item_id,
         cad.cor as cor,
         var.format as formato
       FROM eixo_1 as ex1
@@ -156,7 +156,7 @@ class Eixo1Controller {
   * @param {import('express').Request} req
   * @param {import('express').Response} res
   */
-   async getTreemapUF(req, res) {
+  async getTreemapUF(req, res) {
     var variable = valueOrDefault(req.query.var, 0, Number);
     var deg = valueOrDefault(req.query.deg, 0, Number);
     var cad = valueOrDefault(req.query.cad, 0, Number);

@@ -7,10 +7,11 @@ const router = Router();
 const controller = new Eixo4Controller();
 
 router.get('/bars', asyncHandler(controller.getBars));
-// router.get('/lines', asyncHandler(controller.getLines));
+router.get('/lines', asyncHandler(controller.getLines));
 router.get('/map', asyncHandler(controller.getMap));
 router.get('/world', asyncHandler(controller.getWorld));
 router.get('/treemap', asyncHandler(controller.getTreemap));
+router.get('/treemap-uf', asyncHandler(controller.getTreemapUF));
 router.get('/donut', asyncHandler(controller.getDonut));
 router.get('/breadcrumb', asyncHandler(controller.getBreadcrumb));
 router.get('/info', asyncHandler(controller.getInfo));
