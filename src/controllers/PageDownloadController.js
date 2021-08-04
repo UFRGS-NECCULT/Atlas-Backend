@@ -16,6 +16,7 @@ export class PageDownloadController {
         });
 
         this.downloadPNG = this.downloadPNG.bind(this);
+        this.downloadPDF = this.downloadPDF.bind(this);
     }
 
     // TODO: this.browser.close()
@@ -29,7 +30,7 @@ export class PageDownloadController {
         const page = await (await this.browser).newPage();
 
         const width = 1366;
-        const height = 1210;
+        const height = 1340;
 
         await page.setViewport({
             width,
@@ -45,10 +46,32 @@ export class PageDownloadController {
             }
         });
 
-
-        res.header('Content-Type', 'image/png');
-        res.send(buffer);
-
         await page.close();
+
+        res.set({ 'Content-Type': 'image/png', 'Content-Length': buffer.length })
+        res.send(buffer);
+    }
+
+    async downloadPDF(req, res) {
+        const page = await (await this.browser).newPage();
+
+        const width = 1366;
+        const height = 1340;
+
+        await page.setViewport({
+            width,
+            height,
+        });
+        await page.goto('http://atlas-frontend-dev:3000/resultado?' + qs.stringify(req.query), { waitUntil: "networkidle0" });
+        const pdf = await page.pdf({
+            format: "A2"
+        });
+        await page.close();
+
+        //TODO: use this to display none FOOTER 
+        //await page.addStyleTag({ content: '.nav { display: none} .navbar { border: 0px} #print-button {display: none}' })
+
+        res.set({ 'Content-Type': 'application/pdf', 'Content-Length': pdf.length })
+        res.send(pdf);
     }
 }
