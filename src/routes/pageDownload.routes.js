@@ -7,5 +7,6 @@ export const router = Router();
 const controller = new PageDownloadController();
 
 router.get('/png', asyncHandler(controller.downloadPNG));
+router.get('/pdf', asyncHandler(controller.downloadPDF));
 
 export default router;
