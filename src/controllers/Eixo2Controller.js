@@ -170,7 +170,10 @@ class Eixo2Controller {
           and ex2.subdesagregacao_id = $5`;
 
     const params = [ano, ocp, cad, variable, deg];
-    res.json(await query(sql, params));
+
+    const response = await query(sql, params)
+
+    res.json(response.rows);
   }
 
   /**
@@ -228,7 +231,7 @@ class Eixo2Controller {
   * @param {import('express').Request} req
   * @param {import('express').Response} res
   */
-   async getTreemapUF(req, res) {
+  async getTreemapUF(req, res) {
     const variable = valueOrDefault(req.query.var, 0, Number);
     const deg = valueOrDefault(req.query.deg, 0, Number);
     const cad = valueOrDefault(req.query.cad, 0, Number);
