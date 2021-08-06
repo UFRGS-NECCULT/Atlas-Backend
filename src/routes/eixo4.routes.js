@@ -13,7 +13,7 @@ router.get('/world', asyncHandler(controller.getWorld));
 router.get('/treemap', asyncHandler(controller.getTreemap));
 router.get('/treemap-uf', asyncHandler(controller.getTreemapUF));
 router.get('/donut', asyncHandler(controller.getDonut));
-router.get('/breadcrumb', asyncHandler(controller.getBreadcrumb));
+router.get('/config', asyncHandler(controller.getConfig));
 router.get('/info', asyncHandler(controller.getInfo));
 router.get('/visualization', asyncHandler(controller.getVisualization));
 router.get('/variable', asyncHandler(controller.getVariable));

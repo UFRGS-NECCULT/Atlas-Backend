@@ -23,7 +23,7 @@ export const initialize = () => {
  * @param {[String|Number]} inserts The values to be inserted into the query
  * @example query('SELECT * FROM USERS WHERE age = ? AND name = ?', [28, 'john'])
  * @example query('SELECT * FROM ?? WHERE id = ? AND name = ?', ['items', 28141])
- * @returns {Promise<[*]>} The query results
+ * @returns {Promise<pg.QueryResult<any>>} The query results
  */
 export const query = (text, values = []) => {
     return new Promise((ok, fail) => {

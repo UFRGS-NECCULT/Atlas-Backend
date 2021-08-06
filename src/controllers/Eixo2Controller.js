@@ -378,10 +378,10 @@ class Eixo2Controller {
     res.json((await mainQuery).rows);
   }
 
-  async getBreadcrumb(req, res) {
+  async getConfig(req, res) {
     const variable = valueOrDefault(req.query.var, 1, Number);
 
-
+    const { cor_primaria: primaryColor } = (await query('SELECT cor_primaria FROM eixo WHERE id = 2')).rows[0];
 
     const sql_eixo = `select id, nome from eixo ex;`
     const sql_var = `select variavel as id, titulo as nome from variavel v where eixo = 2;`
@@ -449,10 +449,11 @@ class Eixo2Controller {
       }
     ]
 
-    await Promise.all(breadcrumbs.map(b => b.options))
-
     breadcrumbs = breadcrumbs.map(b => { return { ...b, options: b.options.rows } })
-    res.json(breadcrumbs);
+    res.json({
+      primaryColor,
+      breadcrumbs,
+    });
   }
 
 }
