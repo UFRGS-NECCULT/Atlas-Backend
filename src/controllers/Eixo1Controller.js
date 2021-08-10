@@ -386,9 +386,9 @@ class Eixo1Controller {
     var uf = valueOrDefault(req.query.uf, 0, Number);
     var cad = valueOrDefault(req.query.cad, 0, Number);
     var deg = valueOrDefault(req.query.deg, 0, Number);
+    var cad = valueOrDefault(req.query.cad, 0, Number);
 
-    const sql = `
-      SELECT
+    const result = await query(`SELECT
         ex1.valor as valor,
         ex1.percentual as percentual,
         ex1.taxa as taxa,
@@ -397,12 +397,17 @@ class Eixo1Controller {
         CASE
           WHEN concentracao = 0 THEN 'Por UF'
           WHEN concentracao = 1 THEN 'Por SCC'
-        end` : 'cad.nome as'} grupo,
+        end` : 'subdesag.subdesagregacao_nome as'} grupo,
         ${variable >= 10 ? `
         CASE
           WHEN concentracao = 0 THEN ex.cor_primaria
           WHEN concentracao = 1 THEN ex.cor_secundaria
-        end ` : 'cad.cor as'} cor,
+        end ` : `
+        CASE
+          WHEN subdesag.desagregacao_id = 0 THEN ex.cor_primaria
+          ELSE subdesag.subdesagregacao_cor
+        END
+        `} cor,
         var.format as formato
       FROM EIXO_1 as ex1
         INNER JOIN uf uf ON uf.id = ex1.uf_id
@@ -410,29 +415,25 @@ class Eixo1Controller {
         INNER JOIN cadeia cad ON cad.id = ex1.cadeia_id
         INNER JOIN eixo ex ON ex.id = ex1.eixo_id
         INNER JOIN subdesagregacao subdesag ON subdesag.id = ex1.subdesagregacao_id
-        INNER JOIN variavel var ON var.variavel = ex1.variavel_id and var.eixo = ex1.eixo_id
+        INNER JOIN (
+          SELECT
+            d2.id as desagregacao_id
+          FROM
+            subdesagregacao s2
+            INNER JOIN desagregacao d2 on s2.desagregacao_id = d2.id
+          WHERE s2.id = $3
+        ) as desag on desag.desagregacao_id = subdesag.desagregacao_id
+      INNER JOIN variavel var ON var.variavel = ex1.variavel_id and var.eixo = ex1.eixo_id
       WHERE var.variavel = $1
         AND ex1.uf_id = $2
-        and ex1.subdesagregacao_id = $3
-        ${variable >= 10 ? 'and ex1.concentracao IS NOT NULL' : 'and ex1.cadeia_id != 0'}
-        order by cad.id, ano, concentracao asc;
-    `;
-
-
-    const params = [variable, uf, deg];
-
-    /* Esse if precisa ser tratado de um jeito diferente... talvez fazer um outro endpoint para as variaveis 10, 11, 12 e 13?
-    if (variable >= 10) {
-      sql += ' AND cad.idCadeia = ?';
-      params.push(cad);
-    } else {
-      sql += ' AND cad.idCadeia > 0 AND prt.idPorte = ?';
-      params.push(prt);
-    }
-    */
-
-    const result = await query(sql, params);
-
+        and ex1.cadeia_id = $4
+        ${variable >= 10 ? 'and ex1.concentracao IS NOT NULL' : ''}
+      ORDER BY cad.id, ano, concentracao ASC;`, [
+      variable,
+      uf,
+      deg,
+      cad
+    ]);
     res.json(result.rows);
   }
 

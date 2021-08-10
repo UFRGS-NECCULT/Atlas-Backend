@@ -103,30 +103,49 @@ class Eixo2Controller {
     const ocp = valueOrDefault(req.query.ocp, 0, Number);
     const deg = valueOrDefault(req.query.deg, 0, Number);
 
-    var sql = `
-      SELECT
+    const result = await query(`SELECT
         ex2.valor as valor,
         ex2.percentual as percentual,
         ex2.taxa as taxa,
         ano,
-        cad.nome as cadeia,
-        cad.cor as cor,
+        ${variable >= 12 ? `
+        CASE
+          WHEN concentracao = 0 THEN 'Por UF'
+          WHEN concentracao = 1 THEN 'Por SCC'
+        end` : 'subdesag.subdesagregacao_nome as'} grupo,
+        ${variable >= 10 ? `
+        CASE
+          WHEN concentracao = 0 THEN ex.cor_primaria
+          WHEN concentracao = 1 THEN ex.cor_secundaria
+        END` : `
+        CASE
+          WHEN subdesag.desagregacao_id = 0 THEN ex.cor_primaria
+          ELSE subdesag.subdesagregacao_cor
+        END
+        `} cor,
         var.format as formato
       FROM eixo_2 as ex2
+        INNER JOIN variavel var ON var.variavel = ex2.variavel_id and var.eixo = ex2.eixo_id
         INNER JOIN uf uf ON uf.id = ex2.uf_id
-        INNER JOIN ocupacao atc ON atc.id = ex2.ocupacao_id
+        INNER JOIN ocupacao ocp ON ocp.id = ex2.ocupacao_id
         INNER JOIN cadeia cad ON cad.id = ex2.cadeia_id
         INNER JOIN eixo ex ON ex.id = ex2.eixo_id
         INNER JOIN subdesagregacao subdesag ON subdesag.id = ex2.subdesagregacao_id
-        INNER JOIN variavel var ON var.variavel = ex2.variavel_id and var.eixo = ex2.eixo_id
       WHERE var.variavel = $1
         AND ex2.uf_id = $2
-        and ex2.subdesagregacao_id = $3
-        ${variable >= 12 ? '' : 'and ex2.cadeia_id != 0'}
-      order by cad.id, ano asc;
-    `
+        AND ex2.subdesagregacao_id = $3
+        AND ocp.id = $4
+        AND ex2.cadeia_id = $5
+        ${variable >= 12 ? 'and ex2.concentracao IS NOT NULL' : ''}
+      ORDER BY cad.id, ano asc;`, [
+        variable,
+        uf,
+        deg,
+        ocp,
+        cad
+      ]);
 
-    res.json(await query(sql, params));
+      res.json(result.rows);
   }
 
   /**
