@@ -322,10 +322,11 @@ class Eixo4Controller {
         and ex4.consumo_id = $4
         and ex4.cadeia_id = $5
         and ex4.ano = $6
+        and tpo.id = $7
       order by tpo.id, ano asc;
     `;
 
-    const params = [variable, uf, prc, cns, cad, ano];
+    const params = [variable, uf, prc, cns, cad, ano, tpo];
 
     const result = await query(sql, params);
 
