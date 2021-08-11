@@ -119,9 +119,16 @@ class Eixo2Controller {
         INNER JOIN cadeia cad ON cad.id = ex2.cadeia_id
         INNER JOIN eixo ex ON ex.id = ex2.eixo_id
         INNER JOIN subdesagregacao subdesag ON subdesag.id = ex2.subdesagregacao_id
+        INNER JOIN (
+          SELECT
+            d2.id as desagregacao_id
+          FROM
+            subdesagregacao s2
+            INNER JOIN desagregacao d2 on s2.desagregacao_id = d2.id
+          WHERE s2.id = $3
+        ) as desag on desag.desagregacao_id = subdesag.desagregacao_id
       WHERE var.variavel = $1
         AND ex2.uf_id = $2
-        AND ex2.subdesagregacao_id = $3
         AND ocp.id = $4
         AND ex2.cadeia_id = $5
         ${variable >= 12 ? 'and ex2.concentracao IS NOT NULL' : ''}
