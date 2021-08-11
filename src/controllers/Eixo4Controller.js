@@ -292,7 +292,6 @@ class Eixo4Controller {
     var prc = valueOrDefault(req.query.prc, 0, Number);
     var cns = valueOrDefault(req.query.cns, 0, Number);
     var cad = valueOrDefault(req.query.cad, 0, Number);
-    var tpo = valueOrDefault(req.query.tpo, 0, Number);
 
     const sql = `
       SELECT
@@ -322,7 +321,6 @@ class Eixo4Controller {
         and ex4.consumo_id = $4
         and ex4.cadeia_id = $5
         and ex4.ano = $6
-        and tpo.id = $7
       order by tpo.id, ano asc;
     `;
 
