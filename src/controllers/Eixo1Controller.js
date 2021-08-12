@@ -6,19 +6,6 @@ import views from '../json/Eixo1Views.js'
 
 class Eixo1Controller {
 
-  async getVariable(req, res) {
-    const variable = valueOrDefault(req.query.var, 1, Number);
-    try {
-      const result = await query(`select format as formato, titulo, descricao, fonte from variavel v where v.eixo = 1 and v.variavel = $1;`, [variable]);
-      const [data] = result.rows;
-      return res.json(data)
-    } catch (e) {
-      fail(res, String(e));
-      return;
-    }
-  }
-
-
   async getVisualization(req, res) {
     const variable = valueOrDefault(req.query.var, 1, Number);
     const box = valueOrDefault(req.query.box, 1, Number);
@@ -397,7 +384,10 @@ class Eixo1Controller {
         CASE
           WHEN concentracao = 0 THEN 'Por UF'
           WHEN concentracao = 1 THEN 'Por SCC'
-        end` : 'subdesag.subdesagregacao_nome as'} grupo,
+        end` : `
+        subdesag.subdesagregacao_nome as
+        `} grupo,
+        ${variable >= 10 ? 'NULL' : 'subdesag.id'} as grupo_id,
         ${variable >= 10 ? `
         CASE
           WHEN concentracao = 0 THEN ex.cor_primaria
@@ -491,7 +481,9 @@ class Eixo1Controller {
   }
 
   async getConfig(req, res) {
-    const variable = valueOrDefault(req.query.var, 1, Number);
+    const varID = valueOrDefault(req.query.var, 1, Number);
+
+    const [variable] = (await query(`select format as formato, titulo, descricao, fonte from variavel v where v.eixo = 1 and v.variavel = $1;`, [varID])).rows;
 
     const { cor_primaria: primaryColor } = (await query('SELECT cor_primaria FROM eixo WHERE id = 1')).rows[0];
 
@@ -500,12 +492,12 @@ class Eixo1Controller {
     const sql_uf = `select distinct(uf_id) as id, uf.nome as nome
                     from eixo_1 ex1
                       inner join uf on uf.id = ex1.uf_id
-                    where variavel_id = ${variable}
+                    where variavel_id = ${varID}
                     order by uf_id asc;`
 
     const sql_ano = `select distinct(ano) as id, ano as nome
                       from eixo_1 e1
-                      where variavel_id = ${variable}
+                      where variavel_id = ${varID}
                       order by ano ASC;`;
 
 
@@ -513,12 +505,12 @@ class Eixo1Controller {
     const sql_cad = `select distinct(cadeia_id) as id, c.nome as nome
                       from eixo_1 ex1
                       inner join cadeia c on c.id = ex1.cadeia_id
-                      where variavel_id = ${variable}
+                      where variavel_id = ${varID}
                       order by cadeia_id asc;`;
 
     const sql_deg = `select distinct(ex1.subdesagregacao_id) as id, s.subdesagregacao_nome as nome from eixo_1 ex1
                       inner join subdesagregacao s on s.id = ex1.subdesagregacao_id
-                    where ex1.variavel_id = ${variable}
+                    where ex1.variavel_id = ${varID}
                     order by ex1.subdesagregacao_id asc;`;
 
     let breadcrumbs = [
@@ -557,6 +549,7 @@ class Eixo1Controller {
     breadcrumbs = breadcrumbs.map(b => ({ ...b, options: b.options.rows }));
     res.json({
       primaryColor,
+      variable,
       breadcrumbs,
     });
   }

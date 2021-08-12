@@ -5,18 +5,6 @@ import views from '../json/Eixo2Views.js'
 
 class Eixo2Controller {
 
-  async getVariable(req, res) {
-    const variable = valueOrDefault(req.query.var, 1, Number);
-    try {
-      const result = await query(`select format as formato, titulo, descricao, fonte from variavel v where v.eixo = 2 and v.variavel = $1;`, [variable]);
-      const [data] = result.rows;
-      return res.json(data)
-    } catch (e) {
-      fail(res, String(e));
-      return;
-    }
-  }
-
   async getVisualization(req, res) {
     const variable = valueOrDefault(req.query.var, 1, Number);
     const box = valueOrDefault(req.query.box, 1, Number);
@@ -112,7 +100,8 @@ class Eixo2Controller {
           WHEN concentracao = 0 THEN 'Por UF'
           WHEN concentracao = 1 THEN 'Por SCC'
         end` : 'subdesag.subdesagregacao_nome as'} grupo,
-        ${variable >= 10 ? `
+        ${variable >= 12 ? 'NULL' : 'subdesag.id'} as grupo_id,
+        ${variable >= 12 ? `
         CASE
           WHEN concentracao = 0 THEN ex.cor_primaria
           WHEN concentracao = 1 THEN ex.cor_secundaria
@@ -130,9 +119,16 @@ class Eixo2Controller {
         INNER JOIN cadeia cad ON cad.id = ex2.cadeia_id
         INNER JOIN eixo ex ON ex.id = ex2.eixo_id
         INNER JOIN subdesagregacao subdesag ON subdesag.id = ex2.subdesagregacao_id
+        INNER JOIN (
+          SELECT
+            d2.id as desagregacao_id
+          FROM
+            subdesagregacao s2
+            INNER JOIN desagregacao d2 on s2.desagregacao_id = d2.id
+          WHERE s2.id = $3
+        ) as desag on desag.desagregacao_id = subdesag.desagregacao_id
       WHERE var.variavel = $1
         AND ex2.uf_id = $2
-        AND ex2.subdesagregacao_id = $3
         AND ocp.id = $4
         AND ex2.cadeia_id = $5
         ${variable >= 12 ? 'and ex2.concentracao IS NOT NULL' : ''}
@@ -400,7 +396,9 @@ class Eixo2Controller {
   }
 
   async getConfig(req, res) {
-    const variable = valueOrDefault(req.query.var, 1, Number);
+    const varID = valueOrDefault(req.query.var, 1, Number);
+
+    const [variable] = (await query(`select format as formato, titulo, descricao, fonte from variavel v where v.eixo = 2 and v.variavel = $1;`, [varID])).rows;
 
     const { cor_primaria: primaryColor } = (await query('SELECT cor_primaria FROM eixo WHERE id = 2')).rows[0];
 
@@ -409,27 +407,27 @@ class Eixo2Controller {
     const sql_uf = `select distinct(uf_id) as id, uf.nome as nome
                       from eixo_2 ex2
                       inner join uf on uf.id = ex2.uf_id
-                      where variavel_id = ${variable}
+                      where variavel_id = ${varID}
                       order by uf_id asc;`
 
-    const sql_ano = `select distinct(ano) as id, ano as nome from eixo_2 where variavel_id = ${variable} order by ano ASC;`
+    const sql_ano = `select distinct(ano) as id, ano as nome from eixo_2 where variavel_id = ${varID} order by ano ASC;`
 
     const sql_cad = `select distinct(cadeia_id) as id, c.nome as nome
                       from eixo_2 ex2
                       inner join cadeia c on c.id = ex2.cadeia_id
-                      where variavel_id = ${variable}
+                      where variavel_id = ${varID}
                       order by cadeia_id asc;`
 
     const sql_ocp = `select distinct(ocupacao_id) as id, ocp.nome as nome
                       from eixo_2 ex2
                       inner join ocupacao ocp on ocp.id = ex2.ocupacao_id
-                      where variavel_id = ${variable}
+                      where variavel_id = ${varID}
                       order by ocupacao_id asc;`
 
     const sql_deg = `select distinct(ex2.subdesagregacao_id) as id, d.nome as grupo, s.subdesagregacao_nome as nome from eixo_2 ex2
                       inner join subdesagregacao s on s.id = ex2.subdesagregacao_id
                       inner join desagregacao d on d.id = s.desagregacao_id
-                    where ex2.variavel_id = ${variable}
+                    where ex2.variavel_id = ${varID}
                     order by ex2.subdesagregacao_id asc;`
 
     let breadcrumbs = [
@@ -473,6 +471,7 @@ class Eixo2Controller {
     breadcrumbs = breadcrumbs.map(b => { return { ...b, options: b.options.rows } })
     res.json({
       primaryColor,
+      variable,
       breadcrumbs,
     });
   }

@@ -4,19 +4,7 @@ import { query } from '../database.js';
 
 import views from '../json/Eixo4Views.js'
 
-class Eixo1Controller {
-
-  async getVariable(req, res) {
-    const variable = valueOrDefault(req.query.var, 1, Number);
-    try {
-      const result = await query(`select format as formato, titulo, descricao, fonte from variavel v where v.eixo = 4 and v.variavel = $1;`, [variable]);
-      const [data] = result.rows;
-      return res.json(data)
-    } catch (e) {
-      fail(res, String(e));
-      return;
-    }
-  }
+class Eixo4Controller {
 
   async getVisualization(req, res) {
     const variable = valueOrDefault(req.query.var, 1, Number);
@@ -303,7 +291,6 @@ class Eixo1Controller {
     var prc = valueOrDefault(req.query.prc, 0, Number);
     var cns = valueOrDefault(req.query.cns, 0, Number);
     var cad = valueOrDefault(req.query.cad, 0, Number);
-    var tpo = valueOrDefault(req.query.tpo, 0, Number);
 
     const sql = `
       SELECT
@@ -336,7 +323,7 @@ class Eixo1Controller {
       order by tpo.id, ano asc;
     `;
 
-    const params = [variable, uf, prc, cns, cad, ano];
+    const params = [variable, uf, prc, cns, cad, ano, tpo];
 
     const result = await query(sql, params);
 
@@ -344,42 +331,45 @@ class Eixo1Controller {
   }
 
   async getConfig(req, res) {
-    const variable = valueOrDefault(req.query.var, 1, Number);
+    const varID = valueOrDefault(req.query.var, 1, Number);
+
+    const [variable] = (await query(`select format as formato, titulo, descricao, fonte from variavel v where v.eixo = 4 and v.variavel = $1;`, [varID])).rows;
 
     const { cor_primaria: primaryColor } = (await query('SELECT cor_primaria FROM eixo WHERE id = 4')).rows[0];
+
 
     const sql_eixo = `select id, nome from eixo ex;`
     const sql_var = `select variavel as id, titulo as nome from variavel v where eixo = 4;`
     const sql_uf = `select distinct(uf_id) as id, uf.nome as nome
                       from eixo_4 ex4
                       inner join uf on uf.id = ex4.uf_id
-                      where variavel_id = ${variable}
+                      where variavel_id = ${varID}
                       order by uf_id asc;`
 
-    const sql_ano = `select distinct(ano) as id, ano as nome from eixo_4 e1 where variavel_id = ${variable} order by ano ASC;`
+    const sql_ano = `select distinct(ano) as id, ano as nome from eixo_4 e1 where variavel_id = ${varID} order by ano ASC;`
 
     const sql_cad = `select distinct(cadeia_id) as id, c.nome as nome
                       from eixo_4 ex4
                       inner join cadeia c on c.id = ex4.cadeia_id
-                      where variavel_id = ${variable}
+                      where variavel_id = ${varID}
                       order by cadeia_id asc;`
 
     const sql_tpo = `select distinct(tipo_id) as id, t.nome as nome
                       from eixo_4 ex4
                       inner join tipo t on t.id = ex4.tipo_id
-                      where variavel_id = ${variable}
+                      where variavel_id = ${varID}
                       order by tipo_id asc;`
 
     const sql_cns = `select distinct(consumo_id) as id, c.nome as nome
                       from eixo_4 ex4
                       inner join consumo c on c.id = ex4.consumo_id
-                      where variavel_id = ${variable}
+                      where variavel_id = ${varID}
                       order by consumo_id asc;`
 
     const sql_prc = `select distinct(parceiro_id) as id, p.nome as nome
                       from eixo_4 ex4
                       inner join parceiro p on p.id = ex4.parceiro_id
-                      where variavel_id = ${variable}
+                      where variavel_id = ${varID}
                       order by parceiro_id asc;`
 
     let breadcrumbs = [
@@ -430,6 +420,7 @@ class Eixo1Controller {
     breadcrumbs = breadcrumbs.map(b => { return { ...b, options: b.options.rows } })
     res.json({
       primaryColor,
+      variable,
       breadcrumbs,
     });
   }
@@ -491,4 +482,4 @@ class Eixo1Controller {
   }
 }
 
-export default Eixo1Controller;
+export default Eixo4Controller;

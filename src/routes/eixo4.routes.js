@@ -15,7 +15,6 @@ router.get('/donut', asyncHandler(controller.getDonut));
 router.get('/config', asyncHandler(controller.getConfig));
 router.get('/info', asyncHandler(controller.getInfo));
 router.get('/visualization', asyncHandler(controller.getVisualization));
-router.get('/variable', asyncHandler(controller.getVariable));
 
 
 export default router;
