@@ -23,13 +23,13 @@ class Eixo1Controller {
     const variable = valueOrDefault(req.query.var, 1, Number);
     const box = valueOrDefault(req.query.box, 1, Number);
 
-    const variableData = views.find(visualization => visualization.variable === variable)
-
-    if (!variableData) res.sendStatus(404);
-
-    const boxData = variableData.boxes.find(variable_box => variable_box.box === box);
-    if (!boxData) res.sendStatus(404);
-
+    try {
+      const variableData = views.find(visualization => visualization.variable === variable)
+      const boxData = variableData.boxes.find(variable_box => variable_box.box === box);
+      return res.json(boxData.data)
+    } catch (e) {
+      res.sendStatus(404);
+    }
     return res.json(boxData.data)
   }
 
@@ -106,7 +106,7 @@ class Eixo1Controller {
   * @param {import('express').Request} req
   * @param {import('express').Response} res
   */
-   async getTreemapCad(req, res) {
+  async getTreemapCad(req, res) {
     var variable = valueOrDefault(req.query.var, 0, Number);
     var uf = valueOrDefault(req.query.uf, 0, Number);
     var deg = valueOrDefault(req.query.deg, 0, Number);

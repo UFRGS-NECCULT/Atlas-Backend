@@ -21,14 +21,13 @@ class Eixo2Controller {
     const variable = valueOrDefault(req.query.var, 1, Number);
     const box = valueOrDefault(req.query.box, 1, Number);
 
-    const variableData = views.find(visualization => visualization.variable === variable)
-
-    if (!variableData) res.sendStatus(404);
-
-    const boxData = variableData.boxes.find(variable_box => variable_box.box === box);
-    if (!boxData) res.sendStatus(404);
-
-    return res.json(boxData.data)
+    try {
+      const variableData = views.find(visualization => visualization.variable === variable)
+      const boxData = variableData.boxes.find(variable_box => variable_box.box === box);
+      return res.json(boxData.data)
+    } catch (e) {
+      res.sendStatus(404);
+    }
   }
 
 
@@ -138,14 +137,14 @@ class Eixo2Controller {
         AND ex2.cadeia_id = $5
         ${variable >= 12 ? 'and ex2.concentracao IS NOT NULL' : ''}
       ORDER BY cad.id, ano asc;`, [
-        variable,
-        uf,
-        deg,
-        ocp,
-        cad
-      ]);
+      variable,
+      uf,
+      deg,
+      ocp,
+      cad
+    ]);
 
-      res.json(result.rows);
+    res.json(result.rows);
   }
 
   /**
