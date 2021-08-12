@@ -384,7 +384,10 @@ class Eixo1Controller {
         CASE
           WHEN concentracao = 0 THEN 'Por UF'
           WHEN concentracao = 1 THEN 'Por SCC'
-        end` : 'subdesag.subdesagregacao_nome as'} grupo,
+        end` : `
+        subdesag.subdesagregacao_nome as
+        `} grupo,
+        ${variable >= 10 ? 'NULL' : 'subdesag.id'} as grupo_id,
         ${variable >= 10 ? `
         CASE
           WHEN concentracao = 0 THEN ex.cor_primaria
