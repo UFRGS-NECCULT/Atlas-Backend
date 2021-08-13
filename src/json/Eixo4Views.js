@@ -1,6 +1,6 @@
 export default [
   {
-    variable: 1, //TODO
+    variable: 1,
     boxes: [
       {
         box: 1,
@@ -9,10 +9,12 @@ export default [
             {
               id: "world",
               label: "Mundo",
+              title: "Mapa Mundi",
             },
             {
               id: "map",
-              label: "Brasil"
+              label: "Brasil",
+              title: "Mapa do Brasil",
             }
           ]
         }
@@ -24,6 +26,7 @@ export default [
             {
               id: "donut",
               label: "Donut",
+              title: "Proporção Exportação-Importação",
             }
           ]
         }
@@ -35,6 +38,7 @@ export default [
             {
               id: "bars",
               label: "Barras",
+              title: "Série Histórica [uf] [cad]",
             }
           ]
         }
@@ -51,10 +55,12 @@ export default [
             {
               id: "world",
               label: "Mundo",
+              title: "Mapa Mundi",
             },
             {
               id: "map",
-              label: "Brasil"
+              label: "Brasil",
+              title: "Mapa do Brasil",
             }
           ]
         }
@@ -66,6 +72,7 @@ export default [
             {
               id: "donut",
               label: "Donut",
+              title: "Proporção Exportação-Importação",
             }
           ]
         }
@@ -77,6 +84,7 @@ export default [
             {
               id: "bars",
               label: "Barras",
+              title: "Série Histórica [uf] [cad]",
             }
           ]
         }
@@ -93,10 +101,12 @@ export default [
             {
               id: "world",
               label: "Mundo",
+              title: "Mapa Mundi",
             },
             {
               id: "map",
-              label: "Brasil"
+              label: "Brasil",
+              title: "Mapa do Brasil",
             }
           ]
         }
@@ -108,6 +118,7 @@ export default [
             {
               id: "donut",
               label: "Donut",
+              title: "Proporção Exportação-Importação",
             }
           ]
         }
@@ -119,6 +130,7 @@ export default [
             {
               id: "bars",
               label: "Barras",
+              title: "Série Histórica [uf] [cad]",
             }
           ]
         }
@@ -128,6 +140,7 @@ export default [
   {
     variable: 5,
     boxes: [
+      // TODO: Ver quais constantes precisam ser definidas nessas queries
       {
         box: 1,
         data: {
@@ -135,6 +148,7 @@ export default [
             {
               id: "bars",
               label: "Barras",
+              title: "C4 Valor Absoluto Por Setores",
             }
           ]
         }
@@ -146,6 +160,7 @@ export default [
             {
               id: "bars",
               label: "Barras",
+              title: "C2 Valor Absoluto Por Parceiros",
             }
           ]
         }
@@ -157,6 +172,7 @@ export default [
             {
               id: "bars",
               label: "Barras",
+              title: "C4 Valor Absoluto Por UF",
             }
           ]
         }
@@ -166,6 +182,7 @@ export default [
   {
     variable: 8,
     boxes: [
+      // TODO: Ver quais constantes são necessárias para essas queries
       {
         box: 1,
         data: {
@@ -173,6 +190,7 @@ export default [
             {
               id: "bars",
               label: "Barras",
+              title: "IHH Valor Absoluto Por Setores",
             }
           ]
         }
@@ -184,6 +202,7 @@ export default [
             {
               id: "bars",
               label: "Barras",
+              title: "IHH Valor Absoluto Por Setores",
             }
           ]
         }
@@ -195,6 +214,7 @@ export default [
             {
               id: "bars",
               label: "Barras",
+              title: "IHH Valor Absoluto Por UF",
             }
           ]
         }
@@ -205,23 +225,13 @@ export default [
     variable: 11,
     boxes: [
       {
-        box: 1,
-        data: {
-          charts: [
-            {
-              id: "treemap_uf",
-              label: "Treemap",
-            }
-          ]
-        }
-      },
-      {
         box: 2,
         data: {
           charts: [
             {
               id: "bars",
               label: "Barras",
+              title: "Série Histórica do Brasil [cad]",
             }
           ]
         }
@@ -233,6 +243,7 @@ export default [
             {
               id: "treemap_scc",
               label: "Treemap",
+              title: "Treemap - Setores Culturais e Criativos do Brasil",
             }
           ]
         }
@@ -243,23 +254,13 @@ export default [
     variable: 12,
     boxes: [
       {
-        box: 1,
-        data: {
-          charts: [
-            {
-              id: "treemap_uf",
-              label: "Treemap",
-            }
-          ]
-        }
-      },
-      {
         box: 2,
         data: {
           charts: [
             {
               id: "donut",
-              label: "Barras",
+              label: "Donut",
+              title: "Proporção Exportação-Importação",
             }
           ]
         }
@@ -271,6 +272,7 @@ export default [
             {
               id: "bars",
               label: "Barras",
+              title: "Série Histórica do Brasil [cad]",
             }
           ]
         }
@@ -287,10 +289,12 @@ export default [
             {
               id: "world",
               label: "Mundo",
+              title: "Mapa Mundi",
             },
             {
               id: "map",
-              label: "Brasil"
+              label: "Brasil",
+              title: "Mapa do Brasil",
             }
           ]
         }
@@ -302,6 +306,7 @@ export default [
             {
               id: "donut",
               label: "Donut",
+              title: "Proporção Exportação-Importação",
             }
           ]
         }
@@ -313,6 +318,7 @@ export default [
             {
               id: "bars",
               label: "Barras",
+              title: "Série Histórica [uf] [cad]",
             }
           ]
         }
@@ -329,6 +335,7 @@ export default [
             {
               id: "bars",
               label: "Barras",
+              title: "Série Histórica [uf] [cad]",
             }
           ]
         }

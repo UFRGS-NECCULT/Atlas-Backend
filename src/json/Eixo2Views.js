@@ -10,10 +10,12 @@ export default
               {
                 id: "map",
                 label: "Mapa",
+                title: "Mapa do Brasil",
               },
               {
                 id: "treemap_uf",
-                label: "Treemap UF"
+                label: "Treemap",
+                title: "Treemap UFs",
               }
             ]
           }
@@ -25,6 +27,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica [uf] [cad]",
               }
             ]
           }
@@ -36,6 +39,7 @@ export default
               {
                 id: "treemap_scc",
                 label: "Treemap",
+                title: "Treemap - Setores Culturais e Criativos [uf]",
               }
             ]
           }
@@ -52,6 +56,7 @@ export default
               {
                 id: "map",
                 label: "Mapa",
+                title: "Mapa do Brasil",
               }
             ]
           }
@@ -63,6 +68,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica [uf] [cad]",
               }
             ]
           }
@@ -74,6 +80,7 @@ export default
               {
                 id: "treemap_scc",
                 label: "Treemap",
+                title: "Treemap - Setores Culturais e Criativos [uf]",
               }
             ]
           }
@@ -90,6 +97,7 @@ export default
               {
                 id: "map",
                 label: "Mapa",
+                title: "Mapa do Brasil",
               }
             ]
           }
@@ -101,6 +109,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica [uf] [cad]",
               }
             ]
           }
@@ -110,8 +119,9 @@ export default
           data: {
             charts: [
               {
-                id: "treemap_scc",
-                label: "Treemap",
+                id: "lines",
+                label: "Linhas",
+                title: "Gráfico de Linhas",
               }
             ]
           }
@@ -128,6 +138,7 @@ export default
               {
                 id: "map",
                 label: "Mapa",
+                title: "Mapa do Brasil",
               }
             ]
           }
@@ -139,6 +150,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica [uf] [cad]",
               }
             ]
           }
@@ -148,8 +160,9 @@ export default
           data: {
             charts: [
               {
-                id: "treemap_scc",
-                label: "Treemap",
+                id: "lines",
+                label: "Linhas",
+                title: "Gráfico de Linhas",
               }
             ]
           }
@@ -166,6 +179,7 @@ export default
               {
                 id: "map",
                 label: "Mapa",
+                title: "Mapa do Brasil",
               }
             ]
           }
@@ -177,6 +191,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica [uf] [cad]",
               }
             ]
           }
@@ -186,8 +201,12 @@ export default
           data: {
             charts: [
               {
-                id: "treemap_scc",
-                label: "Treemap",
+                id: "bars",
+                label: "Barras",
+                title: "Série Por Setor",
+                constants: {
+                  concentracao: '1'
+                },
               }
             ]
           }
@@ -204,6 +223,7 @@ export default
               {
                 id: "map",
                 label: "Mapa",
+                title: "Mapa do Brasil",
               }
             ]
           }
@@ -215,6 +235,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica [uf] [cad]",
               }
             ]
           }
@@ -226,44 +247,7 @@ export default
               {
                 id: "treemap_scc",
                 label: "Treemap",
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
-      variable: 8,
-      boxes: [
-        {
-          box: 1,
-          data: {
-            charts: [
-              {
-                id: "map",
-                label: "Mapa",
-              }
-            ]
-          }
-        },
-        {
-          box: 2,
-          data: {
-            charts: [
-              {
-                id: "bars",
-                label: "Barras",
-              }
-            ]
-          }
-        },
-        {
-          box: 3,
-          data: {
-            charts: [
-              {
-                id: "treemap_scc",
-                label: "Treemap",
+                title: "Treemap - Setores Culturais e Criativos [uf]",
               }
             ]
           }
@@ -280,6 +264,7 @@ export default
               {
                 id: "map",
                 label: "Mapa",
+                title: "Mapa do Brasil",
               }
             ]
           }
@@ -291,6 +276,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica [uf] [cad]",
               }
             ]
           }
@@ -300,8 +286,9 @@ export default
           data: {
             charts: [
               {
-                id: "treemap_scc",
-                label: "Treemap",
+                id: "lines",
+                label: "Linhas",
+                title: "Gráfico de Linhas",
               }
             ]
           }
@@ -318,6 +305,7 @@ export default
               {
                 id: "map",
                 label: "Mapa",
+                title: "Mapa do Brasil",
               }
             ]
           }
@@ -329,6 +317,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica [uf] [cad]",
               }
             ]
           }
@@ -338,8 +327,9 @@ export default
           data: {
             charts: [
               {
-                id: "treemap_scc",
-                label: "Treemap",
+                id: "lines",
+                label: "Linhas",
+                title: "Gráfico de Linhas",
               }
             ]
           }
@@ -356,7 +346,9 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica Por UF",
                 constants: {
+                  // TODO: Aqui não seria concentracao: 0?
                   cad: 0
                 }
               }
@@ -370,7 +362,9 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica Por Setor",
                 constants: {
+                  // TODO: Aqui não seria concentracao: 1?
                   cad: 1
                 }
               }
@@ -384,6 +378,7 @@ export default
               {
                 id: "lines",
                 label: "Linhas",
+                title: "Gráfico de Linhas",
               }
             ]
           }
@@ -400,7 +395,9 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica Por UF",
                 constants: {
+                  // TODO: Aqui não seria concentracao: 0?
                   cad: 0
                 }
               }
@@ -414,7 +411,9 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica Por Setor",
                 constants: {
+                  // TODO: Aqui não seria concentracao: 1?
                   cad: 1
                 }
               }
@@ -428,6 +427,7 @@ export default
               {
                 id: "lines",
                 label: "Linhas",
+                title: "Gráfico de Linhas",
               }
             ]
           }
@@ -444,7 +444,9 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica Por UF",
                 constants: {
+                  // TODO: Aqui não seria concentracao: 0?
                   cad: 0
                 }
               }
@@ -458,7 +460,9 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica Por Setor",
                 constants: {
+                  // TODO: Aqui não seria concentracao: 1?
                   cad: 1
                 }
               }
@@ -472,6 +476,7 @@ export default
               {
                 id: "lines",
                 label: "Linhas",
+                title: "Gráfico de Linhas",
               }
             ]
           }
@@ -488,6 +493,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica [uf] [cad]",
                 constants: {
                   cad: 0
                 }
@@ -502,6 +508,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica [uf] [cad]",
                 constants: {
                   cad: 1
                 }
@@ -516,6 +523,7 @@ export default
               {
                 id: "lines",
                 label: "Linhas",
+                title: "Gráfico de Linhas",
               }
             ]
           }

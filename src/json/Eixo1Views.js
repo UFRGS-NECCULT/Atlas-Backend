@@ -1,7 +1,7 @@
 export default
   [
     {
-      variable: 1, //TODO
+      variable: 1,
       boxes: [
         {
           box: 1,
@@ -10,10 +10,12 @@ export default
               {
                 id: "map",
                 label: "Mapa",
+                title: "Mapa do Brasil",
               },
               {
                 id: "treemap_uf",
-                label: "Treemap UF"
+                label: "Treemap",
+                title: "Treemap UFs",
               }
             ]
           }
@@ -25,6 +27,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica [uf] [cad]",
               }
             ]
           }
@@ -36,6 +39,7 @@ export default
               {
                 id: "treemap_scc",
                 label: "Treemap",
+                title: "Treemap - Setores Culturais e Criativos [uf]",
               }
             ]
           }
@@ -52,10 +56,12 @@ export default
               {
                 id: "map",
                 label: "Mapa",
+                title: "Mapa do Brasil",
               },
               {
                 id: "treemap_uf",
-                label: "Treemap UF"
+                label: "Treemap",
+                title: "Treemap UFs",
               }
             ]
           }
@@ -67,6 +73,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica [uf] [cad]",
               }
             ]
           }
@@ -78,6 +85,7 @@ export default
               {
                 id: "treemap_scc",
                 label: "Treemap",
+                title: "Treemap - Setores Culturais e Criativos [uf]",
               }
             ]
           }
@@ -94,6 +102,7 @@ export default
               {
                 id: "map",
                 label: "Mapa",
+                title: "Mapa do Brasil",
               }
             ]
           }
@@ -105,6 +114,7 @@ export default
               {
                 id: "lines",
                 label: "Linhas",
+                title: "Gráfico de Linhas - Setores Culturais e Criativos [uf]",
               }
             ]
           }
@@ -116,6 +126,7 @@ export default
               {
                 id: "treemap_scc",
                 label: "Treemap",
+                title: "Treemap - Setores Culturais e Criativos [uf]",
               }
             ]
           }
@@ -132,10 +143,12 @@ export default
               {
                 id: "map",
                 label: "Mapa",
+                title: "Mapa do Brasil",
               },
               {
                 id: "treemap_uf",
-                label: "Treemap UF"
+                label: "Treemap",
+                title: "Treemap UFs",
               }
             ]
           }
@@ -147,6 +160,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica [uf] [cad]",
               }
             ]
           }
@@ -158,6 +172,7 @@ export default
               {
                 id: "treemap_scc",
                 label: "Treemap",
+                title: "Treemap - Setores Culturais e Criativos [uf]",
               }
             ]
           }
@@ -174,10 +189,12 @@ export default
               {
                 id: "map",
                 label: "Mapa",
+                title: "Mapa do Brasil",
               },
               {
                 id: "treemap_uf",
-                label: "Treemap UF"
+                label: "Treemap",
+                title: "Treemap UFs",
               }
             ]
           }
@@ -189,6 +206,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica [uf] [cad]",
               }
             ]
           }
@@ -200,6 +218,7 @@ export default
               {
                 id: "treemap_scc",
                 label: "Treemap",
+                title: "Treemap - Setores Culturais e Criativos [uf]",
               }
             ]
           }
@@ -216,10 +235,12 @@ export default
               {
                 id: "map",
                 label: "Mapa",
+                title: "Mapa do Brasil",
               },
               {
                 id: "treemap_uf",
-                label: "Treemap UF"
+                label: "Treemap",
+                title: "Treemap UFs",
               }
             ]
           }
@@ -231,6 +252,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica [uf] [cad]",
               }
             ]
           }
@@ -242,6 +264,7 @@ export default
               {
                 id: "treemap_scc",
                 label: "Treemap",
+                title: "Treemap - Setores Culturais e Criativos [uf]",
               }
             ]
           }
@@ -258,10 +281,12 @@ export default
               {
                 id: "map",
                 label: "Mapa",
+                title: "Mapa do Brasil",
               },
               {
                 id: "treemap_uf",
-                label: "Treemap UF"
+                label: "Treemap",
+                title: "Treemap UFs",
               }
             ]
           }
@@ -273,6 +298,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica [uf] [cad]",
               }
             ]
           }
@@ -284,6 +310,7 @@ export default
               {
                 id: "treemap_scc",
                 label: "Treemap",
+                title: "Treemap - Setores Culturais e Criativos [uf]",
               }
             ]
           }
@@ -300,10 +327,12 @@ export default
               {
                 id: "map",
                 label: "Mapa",
+                title: "Mapa do Brasil",
               },
               {
                 id: "treemap_uf",
-                label: "Treemap UF"
+                label: "Treemap",
+                title: "Treemap UFs",
               }
             ]
           }
@@ -315,6 +344,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica [uf] [cad]",
               }
             ]
           }
@@ -326,6 +356,7 @@ export default
               {
                 id: "treemap_scc",
                 label: "Treemap",
+                title: "Treemap - Setores Culturais e Criativos [uf]",
               }
             ]
           }
@@ -342,10 +373,12 @@ export default
               {
                 id: "map",
                 label: "Mapa",
+                title: "Mapa do Brasil",
               },
               {
                 id: "treemap_uf",
-                label: "Treemap UF"
+                label: "Treemap",
+                title: "Treemap UFs",
               }
             ]
           }
@@ -357,6 +390,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica [uf] [cad]",
               }
             ]
           }
@@ -368,6 +402,7 @@ export default
               {
                 id: "treemap_scc",
                 label: "Treemap",
+                title: "Treemap - Setores Culturais e Criativos [uf]",
               }
             ]
           }
@@ -384,6 +419,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica Por Setor",
                 constants: {
                   concentracao: '1'
                 }
@@ -398,6 +434,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica Por UF",
                 constants: {
                   concentracao: '0'
                 }
@@ -412,6 +449,7 @@ export default
               {
                 id: "lines",
                 label: "Linhas",
+                title: "Gráfico de Linhas",
               }
             ]
           }
@@ -428,6 +466,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica Por UF",
                 constants: {
                   concentracao: '0'
                 }
@@ -442,6 +481,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica Por Setor",
                 constants: {
                   concentracao: '1'
                 }
@@ -456,6 +496,7 @@ export default
               {
                 id: "lines",
                 label: "Linhas",
+                title: "Gráfico de Linhas",
               }
             ]
           }
@@ -472,6 +513,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica Por UF",
                 constants: {
                   concentracao: '0'
                 }
@@ -486,6 +528,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica Por Setor",
                 constants: {
                   concentracao: '1'
                 }
@@ -500,6 +543,7 @@ export default
               {
                 id: "lines",
                 label: "Linhas",
+                title: "Gráfico de Linhas",
               }
             ]
           }
@@ -516,6 +560,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica Por UF",
                 constants: {
                   concentracao: '0'
                 }
@@ -530,6 +575,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
+                title: "Série Histórica Por Setor",
                 constants: {
                   concentracao: '1'
                 }
@@ -544,6 +590,7 @@ export default
               {
                 id: "lines",
                 label: "Linhas",
+                title: "Gráfico de Linhas",
               }
             ]
           }
