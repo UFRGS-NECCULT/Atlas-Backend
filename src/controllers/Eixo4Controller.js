@@ -284,13 +284,12 @@ class Eixo4Controller {
   }
 
   async getDonut(req, res) {
-    var variable = valueOrDefault(req.query.var, 0, Number);
-    var uf = valueOrDefault(req.query.uf, 0, Number);
-    var ano = valueOrDefault(req.query.ano, 2015, Number);
-    var prc = valueOrDefault(req.query.prc, 0, Number);
-    var prc = valueOrDefault(req.query.prc, 0, Number);
-    var cns = valueOrDefault(req.query.cns, 0, Number);
-    var cad = valueOrDefault(req.query.cad, 0, Number);
+    const variable = valueOrDefault(req.query.var, 0, Number);
+    const uf = valueOrDefault(req.query.uf, 0, Number);
+    const ano = valueOrDefault(req.query.ano, 2015, Number);
+    const prc = valueOrDefault(req.query.prc, 0, Number);
+    const cns = valueOrDefault(req.query.cns, 0, Number);
+    const cad = valueOrDefault(req.query.cad, 0, Number);
 
     const sql = `
       SELECT
@@ -323,7 +322,7 @@ class Eixo4Controller {
       order by tpo.id, ano asc;
     `;
 
-    const params = [variable, uf, prc, cns, cad, ano, tpo];
+    const params = [variable, uf, prc, cns, cad, ano];
 
     const result = await query(sql, params);
 
