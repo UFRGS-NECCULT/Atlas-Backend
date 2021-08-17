@@ -140,7 +140,6 @@ export default [
   {
     variable: 5,
     boxes: [
-      // TODO: Ver quais constantes precisam ser definidas nessas queries
       {
         box: 1,
         data: {
@@ -182,7 +181,6 @@ export default [
   {
     variable: 8,
     boxes: [
-      // TODO: Ver quais constantes são necessárias para essas queries
       {
         box: 1,
         data: {

@@ -489,7 +489,7 @@ class Eixo1Controller {
 
     const sql_eixo = `select id, nome from eixo ex;`
     const sql_var = `select variavel as id, titulo as nome from variavel v where eixo = 1;`
-    const sql_uf = `select distinct(uf_id) as id, uf.nome as nome
+    const sql_uf = `select distinct(uf_id) as id, uf.nome as nome, uf.preposicao || ' ' || uf.nome as display
                     from eixo_1 ex1
                       inner join uf on uf.id = ex1.uf_id
                     where variavel_id = ${varID}
@@ -508,7 +508,7 @@ class Eixo1Controller {
                       where variavel_id = ${varID}
                       order by cadeia_id asc;`;
 
-    const sql_deg = `select distinct(ex1.subdesagregacao_id) as id, s.subdesagregacao_nome as nome from eixo_1 ex1
+    const sql_deg = `select distinct(ex1.subdesagregacao_id) as id, s.subdesagregacao_nome as nome, s.display from eixo_1 ex1
                       inner join subdesagregacao s on s.id = ex1.subdesagregacao_id
                     where ex1.variavel_id = ${varID}
                     order by ex1.subdesagregacao_id asc;`;
