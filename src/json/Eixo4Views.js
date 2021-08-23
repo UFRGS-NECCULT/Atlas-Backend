@@ -1,3 +1,5 @@
+const barsTitle = "Série Histórica [uf] [cad]"
+
 export default [
   {
     variable: 1,
@@ -38,7 +40,7 @@ export default [
             {
               id: "bars",
               label: "Barras",
-              title: "Série Histórica [uf] [cad]",
+              title: barsTitle,
             }
           ]
         }
@@ -84,7 +86,7 @@ export default [
             {
               id: "bars",
               label: "Barras",
-              title: "Série Histórica [uf] [cad]",
+              title: barsTitle,
             }
           ]
         }
@@ -130,7 +132,7 @@ export default [
             {
               id: "bars",
               label: "Barras",
-              title: "Série Histórica [uf] [cad]",
+              title: barsTitle,
             }
           ]
         }
@@ -316,7 +318,7 @@ export default [
             {
               id: "bars",
               label: "Barras",
-              title: "Série Histórica [uf] [cad]",
+              title: barsTitle,
             }
           ]
         }
@@ -333,7 +335,7 @@ export default [
             {
               id: "bars",
               label: "Barras",
-              title: "Série Histórica [uf] [cad]",
+              title: barsTitle,
             }
           ]
         }

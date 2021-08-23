@@ -1,3 +1,6 @@
+const barsTitle = "Série Histórica {{ uf if uf }} {{ 'no setor ' + cad if cad }}";
+const treemapSccTitle = "Treemap - Setores Culturais e Criativos {{ uf if uf }}";
+
 export default
   [
     {
@@ -27,7 +30,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
-                title: "Série Histórica [uf] [cad]",
+                title: barsTitle,
               }
             ]
           }
@@ -39,7 +42,7 @@ export default
               {
                 id: "treemap_scc",
                 label: "Treemap",
-                title: "Treemap - Setores Culturais e Criativos [uf]",
+                title: treemapSccTitle,
               }
             ]
           }
@@ -68,7 +71,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
-                title: "Série Histórica [uf] [cad]",
+                title: barsTitle,
               }
             ]
           }
@@ -80,7 +83,7 @@ export default
               {
                 id: "treemap_scc",
                 label: "Treemap",
-                title: "Treemap - Setores Culturais e Criativos [uf]",
+                title: treemapSccTitle,
               }
             ]
           }
@@ -109,7 +112,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
-                title: "Série Histórica [uf] [cad]",
+                title: barsTitle,
               }
             ]
           }
@@ -150,7 +153,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
-                title: "Série Histórica [uf] [cad]",
+                title: barsTitle,
               }
             ]
           }
@@ -191,7 +194,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
-                title: "Série Histórica [uf] [cad]",
+                title: barsTitle,
               }
             ]
           }
@@ -235,7 +238,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
-                title: "Série Histórica [uf] [cad]",
+                title: barsTitle,
               }
             ]
           }
@@ -247,7 +250,7 @@ export default
               {
                 id: "treemap_scc",
                 label: "Treemap",
-                title: "Treemap - Setores Culturais e Criativos [uf]",
+                title: treemapSccTitle,
               }
             ]
           }
@@ -276,7 +279,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
-                title: "Série Histórica [uf] [cad]",
+                title: barsTitle,
               }
             ]
           }
@@ -317,7 +320,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
-                title: "Série Histórica [uf] [cad]",
+                title: barsTitle,
               }
             ]
           }
@@ -493,7 +496,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
-                title: "Série Histórica [uf] [cad]",
+                title: barsTitle,
                 constants: {
                   cad: 0
                 }
@@ -508,7 +511,7 @@ export default
               {
                 id: "bars",
                 label: "Barras",
-                title: "Série Histórica [uf] [cad]",
+                title: barsTitle,
                 constants: {
                   cad: 1
                 }
