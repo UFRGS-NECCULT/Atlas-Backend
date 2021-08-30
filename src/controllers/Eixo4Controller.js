@@ -202,6 +202,8 @@ class Eixo4Controller {
         cad.nome as cadeia,
         cad.id as cadeia_id,
         cad.cor as cor,
+        cad.gradiente_inferior as cor_inferior,
+        cad.gradiente_superior as cor_superior,
         ex.cor_primaria as cor_eixo,
         var.format as formato
       FROM eixo_4 as ex4

@@ -47,6 +47,8 @@ class Eixo2Controller {
         uf.id as uf_id,
         cad.nome as cadeia,
         cad.cor as cor,
+        cad.gradiente_inferior as cor_inferior,
+        cad.gradiente_superior as cor_superior,
         ex.cor_primaria as cor_eixo,
         sdg.id as sdg_id,
         sdg.subdesagregacao_nome as sdg_nome,
