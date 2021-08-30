@@ -1,14 +1,15 @@
 create table tipo (
 	id integer NOT null primary key,
-	nome varchar(64) unique not null
+	nome varchar(64) unique not null,
+	display varchar(64)
 );
 
-insert into tipo  (id, nome) values
-	(0, 'Todos'),
-	(1, 'Exportação'),
-	(2, 'Importação'),
-	(3, 'Saldo Comercial'),
-	(4, 'Valor Transacionado');
+insert into tipo  (id, nome, display) values
+	(0, 'Todos', null),
+	(1, 'Exportação', 'Exportações'),
+	(2, 'Importação', 'Importações'),
+	(3, 'Saldo Comercial', null),
+	(4, 'Valor Transacionado', null);
 
 
 create table consumo (
@@ -50,7 +51,7 @@ CREATE TABLE eixo_4 (
 	valor double precision null,
 	percentual double precision null,
 	taxa double precision null,
-	
+
 	FOREIGN KEY (eixo_id, variavel_id) REFERENCES variavel (eixo, variavel),
 
 	unique (variavel_id, uf_id, cadeia_id, parceiro_id, consumo_id, tipo_id, concentracao, ano)

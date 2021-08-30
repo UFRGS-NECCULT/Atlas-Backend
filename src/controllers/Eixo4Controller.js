@@ -353,7 +353,7 @@ class Eixo4Controller {
                       where variavel_id = ${varID}
                       order by cadeia_id asc;`
 
-    const sql_tpo = `select distinct(tipo_id) as id, t.nome as nome
+    const sql_tpo = `select distinct(tipo_id) as id, t.nome, t.display
                       from eixo_4 ex4
                       inner join tipo t on t.id = ex4.tipo_id
                       where variavel_id = ${varID}
