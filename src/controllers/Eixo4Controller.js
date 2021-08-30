@@ -365,7 +365,7 @@ class Eixo4Controller {
                       where variavel_id = ${varID}
                       order by consumo_id asc;`
 
-    const sql_prc = `select distinct(parceiro_id) as id, p.nome as nome
+    const sql_prc = `select distinct(parceiro_id) as id, p.nome as nome, p.preposicao
                       from eixo_4 ex4
                       inner join parceiro p on p.id = ex4.parceiro_id
                       where variavel_id = ${varID}
