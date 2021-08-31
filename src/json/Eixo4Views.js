@@ -1,4 +1,4 @@
-const barsTitle = "Série Histórica [uf] [cad]"
+const barsTitle = "Série Histórica {{ uf }} {{ 'DO SETOR ' + cad if cad }}"
 
 export default [
   {
