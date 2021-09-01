@@ -493,7 +493,7 @@ class Eixo1Controller {
 
     const sql_eixo = `select id, nome from eixo ex;`
     const sql_var = `select variavel as id, titulo as nome from variavel v where eixo = 1;`
-    const sql_uf = `select distinct(uf_id) as id, uf.nome as nome, uf.preposicao || ' ' || uf.nome as display
+    const sql_uf = `select distinct(uf_id) as id, uf.nome, uf.preposicao
                     from eixo_1 ex1
                       inner join uf on uf.id = ex1.uf_id
                     where variavel_id = ${varID}

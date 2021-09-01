@@ -341,7 +341,7 @@ class Eixo4Controller {
 
     const sql_eixo = `select id, nome from eixo ex;`
     const sql_var = `select variavel as id, titulo as nome from variavel v where eixo = 4;`
-    const sql_uf = `select distinct(uf_id) as id, uf.nome as nome, uf.preposicao || ' ' || uf.nome as display
+    const sql_uf = `select distinct(uf_id) as id, uf.nome, uf.preposicao
                       from eixo_4 ex4
                       inner join uf on uf.id = ex4.uf_id
                       where variavel_id = ${varID}
@@ -355,7 +355,7 @@ class Eixo4Controller {
                       where variavel_id = ${varID}
                       order by cadeia_id asc;`
 
-    const sql_tpo = `select distinct(tipo_id) as id, t.nome as nome
+    const sql_tpo = `select distinct(tipo_id) as id, t.nome, t.display
                       from eixo_4 ex4
                       inner join tipo t on t.id = ex4.tipo_id
                       where variavel_id = ${varID}
@@ -367,7 +367,7 @@ class Eixo4Controller {
                       where variavel_id = ${varID}
                       order by consumo_id asc;`
 
-    const sql_prc = `select distinct(parceiro_id) as id, p.nome as nome
+    const sql_prc = `select distinct(parceiro_id) as id, p.nome as nome, p.preposicao
                       from eixo_4 ex4
                       inner join parceiro p on p.id = ex4.parceiro_id
                       where variavel_id = ${varID}

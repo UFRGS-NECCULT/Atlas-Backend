@@ -1,14 +1,15 @@
 create table tipo (
 	id integer NOT null primary key,
-	nome varchar(64) unique not null
+	nome varchar(64) unique not null,
+	display varchar(64)
 );
 
-insert into tipo  (id, nome) values
-	(0, 'Todos'),
-	(1, 'Exportação'),
-	(2, 'Importação'),
-	(3, 'Saldo Comercial'),
-	(4, 'Valor Transacionado');
+insert into tipo (id, nome, display) values
+	(0, 'Todos', null),
+	(1, 'Exportação', 'Exportações'),
+	(2, 'Importação', 'Importações'),
+	(3, 'Saldo Comercial', null),
+	(4, 'Valor Transacionado', null);
 
 
 create table consumo (
@@ -24,17 +25,18 @@ create table parceiro (
 	id integer NOT null primary key,
 	nome varchar(64) unique not null,
 	sigla varchar(2) unique not null,
+	preposicao varchar(1) not null,
 	cor varchar(7) unique not null
 );
 
-insert into parceiro  (id, sigla, cor, nome) values
-	(0, 'MD', '#2F484F','Mundo'),
-	(1, 'AF', '#657F7B','África'),
-	(2,	'NA', '#8D8E69','América do Norte'),
-	(3, 'SA', '#656F70','América do Sul'),
-	(4, 'AS', '#FAEECF','Ásia'),
-	(5, 'EU', '#D8D1AE','Europa'),
-	(6, 'OC', '#EFD1AE','Oceania');
+insert into parceiro (id, sigla, cor, preposicao, nome) values
+	(0, 'MD', '#2F484F', 'o', 'Mundo'),
+	(1, 'AF', '#657F7B', 'a', 'África'),
+	(2,	'NA', '#8D8E69', 'a', 'América do Norte'),
+	(3, 'SA', '#656F70', 'a', 'América do Sul'),
+	(4, 'AS', '#FAEECF', 'a', 'Ásia'),
+	(5, 'EU', '#D8D1AE', 'a', 'Europa'),
+	(6, 'OC', '#EFD1AE', 'a', 'Oceania');
 
 CREATE TABLE eixo_4 (
 	id integer GENERATED ALWAYS AS IDENTITY,
@@ -50,7 +52,7 @@ CREATE TABLE eixo_4 (
 	valor double precision null,
 	percentual double precision null,
 	taxa double precision null,
-	
+
 	FOREIGN KEY (eixo_id, variavel_id) REFERENCES variavel (eixo, variavel),
 
 	unique (variavel_id, uf_id, cadeia_id, parceiro_id, consumo_id, tipo_id, concentracao, ano)
