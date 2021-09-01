@@ -63,13 +63,11 @@ export class PageDownloadController {
             height,
         });
         await page.goto('http://atlas-frontend-dev:3000/resultado?' + qs.stringify(req.query), { waitUntil: "networkidle0" });
+        await page.addStyleTag({ content: '#footer{display: none} #mobileButton{display: none} #mobileBar{display: none} .viewButton{display: none}' })
         const pdf = await page.pdf({
             format: "A2"
         });
         await page.close();
-
-        //TODO: use this to display none FOOTER 
-        //await page.addStyleTag({ content: '.nav { display: none} .navbar { border: 0px} #print-button {display: none}' })
 
         res.set({ 'Content-Type': 'application/pdf', 'Content-Length': pdf.length })
         res.send(pdf);
