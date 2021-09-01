@@ -36,7 +36,7 @@ export class PageDownloadController {
             width,
             height,
         });
-        await page.goto('http://atlas-frontend-dev:3000/resultado?' + qs.stringify(req.query));
+        await page.goto('http://atlas-frontend-dev:3000/resultado?' + qs.stringify(req.query), { waitUntil: "networkidle0" });
         const buffer = await page.screenshot({
             clip: {
                 width,
