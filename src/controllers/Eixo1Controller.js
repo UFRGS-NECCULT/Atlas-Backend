@@ -559,7 +559,7 @@ class Eixo1Controller {
   }
 
   /**
-   * Gets the values of a variable in each Region
+   * Pesquisa e retorna dados para serem usados pelo DataInfo no front
    * @param {import('express').Request} req
    * @param {import('express').Response} res
    */
@@ -570,7 +570,7 @@ class Eixo1Controller {
     const ano = valueOrDefault(req.query.ano, 0, Number);
     const deg = valueOrDefault(req.query.deg, 0, Number);
 
-    const mainQuery = query(`SELECT
+    const mainQuery = await query(`SELECT
         ex.cor_primaria as cor,
         ex1.valor,
         ex1.ano,
@@ -583,7 +583,8 @@ class Eixo1Controller {
         cad.nome as nome_cad,
         subdeg.id as id_subdeg,
         subdeg.subdesagregacao_nome as nome_subdeg,
-        subdeg.display as display_subdeg
+        subdeg.display as display_subdeg,
+        concentracao as conc
       FROM eixo_1 ex1
         INNER JOIN eixo ex ON ex.id = ex1.eixo_id
         INNER JOIN variavel var on var.variavel = ex1.variavel_id and var.eixo = ex.id
@@ -606,7 +607,20 @@ class Eixo1Controller {
       ano
     ]);
 
-    res.json((await mainQuery).rows);
+    let rows = mainQuery.rows;
+
+    // Essas variáveis seguem uma lógica diferente de exibição:
+    // Os valores são sempre mostrados de maneira absoluta (e não como porcentagem),
+    // o primeiro valor é referente às UFs e o segundo aos setores.
+    if ([10, 11, 12, 13].includes(variable)) {
+      rows = rows.map(r => ({
+        ...r,
+        display_absolute: true,
+        display_at: r.conc === 0 ? 1 : 2
+      }));
+    }
+
+    res.json(rows);
   }
 }
 

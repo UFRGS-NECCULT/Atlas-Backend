@@ -435,7 +435,7 @@ class Eixo4Controller {
     const cns = valueOrDefault(req.query.cns, 0, Number);
     const tpo = valueOrDefault(req.query.tpo, 0, Number);
 
-    const mainQuery = query(`SELECT
+    const mainQuery = await query(`SELECT
       ex.cor_primaria as cor,
       ex4.valor,
       ex4.ano,
@@ -451,7 +451,8 @@ class Eixo4Controller {
       cns.id as id_consumo,
       cns.nome as nome_consumo,
       tpo.id as id_tipo,
-      tpo.nome as nome_tipo
+      tpo.nome as nome_tipo,
+      ex4.concentracao as conc
     FROM eixo_4 ex4
       INNER JOIN eixo ex ON ex.id = ex4.eixo_id
       INNER JOIN variavel var on var.variavel = ex4.variavel_id and var.eixo = ex.id
@@ -477,7 +478,24 @@ class Eixo4Controller {
       ano
     ]);
 
-    const rows = (await mainQuery).rows
+    let rows = mainQuery.rows
+
+    // Essas variáveis seguem uma lógica diferente de exibição:
+    // Os valores são sempre mostrados de maneira absoluta (e não como porcentagem),
+    // o primeiro valor é referente aos parceiros, o segundo às UFs e o terceiro
+    // aos setores
+    const concentracaoToDisplay = {
+      0: 2,
+      1: 3,
+      2: 1
+    };
+    if ([5, 6, 7, 8, 9, 10].includes(variable)) {
+      rows = rows.map(r => ({
+        ...r,
+        display_absolute: true,
+        display_at: concentracaoToDisplay[r.conc]
+      }));
+    }
 
     res.json(rows);
   }

@@ -355,7 +355,7 @@ class Eixo2Controller {
     const deg = valueOrDefault(req.query.deg, 0, Number);
     const ocp = valueOrDefault(req.query.ocp, 0, Number);
 
-    const mainQuery = query(`SELECT
+    const mainQuery = await query(`SELECT
         ex.cor_primaria as cor,
         ex2.valor,
         ex2.ano,
@@ -370,7 +370,8 @@ class Eixo2Controller {
         subdeg.subdesagregacao_nome as nome_subdeg,
         subdeg.display as display_subdeg,
         ocp.id as id_ocupacao,
-        ocp.nome as nome_ocupacao
+        ocp.nome as nome_ocupacao,
+        ex2.concentracao as conc
       FROM eixo_2 ex2
         INNER JOIN eixo ex ON ex.id = ex2.eixo_id
         INNER JOIN variavel var on var.variavel = ex2.variavel_id and var.eixo = ex.id
@@ -396,7 +397,20 @@ class Eixo2Controller {
       ocp
     ]);
 
-    res.json((await mainQuery).rows);
+    let rows = mainQuery.rows;
+
+    // Essas variáveis seguem uma lógica diferente de exibição:
+    // Os valores são sempre mostrados de maneira absoluta (e não como porcentagem),
+    // o primeiro valor é referente às UFs e o segundo aos setores.
+    if ([12, 13, 14, 15].includes(variable)) {
+      rows = rows.map(r => ({
+        ...r,
+        display_absolute: true,
+        display_at: r.conc === 0 ? 1 : 2
+      }));
+    }
+
+    res.json(rows);
   }
 
   async getConfig(req, res) {
