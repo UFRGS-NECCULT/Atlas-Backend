@@ -351,8 +351,7 @@ export default
                 label: "Barras",
                 title: "Série Histórica Por UF",
                 constants: {
-                  // TODO: Aqui não seria concentracao: 0?
-                  cad: 0
+                  concentracao: 0
                 }
               }
             ]
@@ -367,8 +366,7 @@ export default
                 label: "Barras",
                 title: "Série Histórica Por Setor",
                 constants: {
-                  // TODO: Aqui não seria concentracao: 1?
-                  cad: 1
+                  concentracao: 1
                 }
               }
             ]
@@ -400,8 +398,7 @@ export default
                 label: "Barras",
                 title: "Série Histórica Por UF",
                 constants: {
-                  // TODO: Aqui não seria concentracao: 0?
-                  cad: 0
+                  concentracao: 0
                 }
               }
             ]
@@ -416,8 +413,7 @@ export default
                 label: "Barras",
                 title: "Série Histórica Por Setor",
                 constants: {
-                  // TODO: Aqui não seria concentracao: 1?
-                  cad: 1
+                  concentracao: 1
                 }
               }
             ]
@@ -449,8 +445,7 @@ export default
                 label: "Barras",
                 title: "Série Histórica Por UF",
                 constants: {
-                  // TODO: Aqui não seria concentracao: 0?
-                  cad: 0
+                  concentracao: 0
                 }
               }
             ]
@@ -465,8 +460,7 @@ export default
                 label: "Barras",
                 title: "Série Histórica Por Setor",
                 constants: {
-                  // TODO: Aqui não seria concentracao: 1?
-                  cad: 1
+                  concentracao: 1
                 }
               }
             ]

@@ -28,11 +28,13 @@ class Eixo2Controller {
     const variable = valueOrDefault(req.query.var, 0, Number);
     const uf = valueOrDefault(req.query.uf, 0, Number);
     const cad = valueOrDefault(req.query.cad, 0, Number);
-    const ocp = valueOrDefault(req.query.ocp, 0, Number);
-    const uos = valueOrDefault(req.query.uos, 0, Number);
     const deg = valueOrDefault(req.query.deg, 0, Number);
-    const subdeg = valueOrDefault(req.query.subdeg, 0, Number);
-    const ano = valueOrDefault(req.query.ano, 0, Number);
+    const concentracao = valueOrDefault(req.query.concentracao, -1, Number);
+
+    const params = [deg, uf, cad, variable];
+    if (concentracao >= 0) {
+      params.push(concentracao);
+    }
 
     var sql = `
       select
@@ -70,10 +72,9 @@ class Eixo2Controller {
           and cad.id = $3
           and ex2.eixo_id = 2
           and var.variavel = $4
+          ${concentracao >= 0 ? "and concentracao = $5" : ''}
       order by ano, sdg_id;
     `;
-
-    const params = [deg, uf, cad, variable,];
 
     const result = await query(sql, params);
 
