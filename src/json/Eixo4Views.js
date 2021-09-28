@@ -1,4 +1,5 @@
 const barsTitle = "Série Histórica {{ uf }} {{ 'DO SETOR ' + cad if cad }}"
+const barsAltTitle = "Série Histórica {{ uf }}"
 
 export default [
   {
@@ -231,7 +232,7 @@ export default [
             {
               id: "bars",
               label: "Barras",
-              title: "Série Histórica do Brasil [cad]",
+              title: barsAltTitle,
             }
           ]
         }
@@ -272,7 +273,7 @@ export default [
             {
               id: "bars",
               label: "Barras",
-              title: "Série Histórica do Brasil [cad]",
+              title: barsAltTitle,
             }
           ]
         }
