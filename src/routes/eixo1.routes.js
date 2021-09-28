@@ -16,10 +16,4 @@ router.get('/config', asyncHandler(controller.getConfig));
 router.get('/info', asyncHandler(controller.getInfo));
 router.get('/visualization', asyncHandler(controller.getVisualization));
 
-// FIXME: Esses endpoints sequer são usados pelo front?
-router.get('/uf', asyncHandler(controller.getTotalSumPrt));
-router.get('/year', asyncHandler(controller.getAnoDefault));
-router.get('/max-setor', asyncHandler(controller.getMaxValueSetor));
-router.get('/max-brasil', asyncHandler(controller.getTotalBrasil));
-
 export default router;
