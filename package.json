@@ -26,6 +26,8 @@
     "pg": "^8.6.0",
     "puppeteer": "6.0.0",
     "query-string": "^7.0.1",
+    "swagger-jsdoc": "^6.1.0",
+    "swagger-ui-express": "^4.1.6",
     "xlsx": "^0.17.0"
   },
   "devDependencies": {

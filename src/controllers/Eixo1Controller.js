@@ -236,7 +236,6 @@ class Eixo1Controller {
 
     const result = await query(sql, params);
 
-
     res.json(result.rows);
   }
 
@@ -250,7 +249,6 @@ class Eixo1Controller {
     var uf = valueOrDefault(req.query.uf, 0, Number);
     var cad = valueOrDefault(req.query.cad, 0, Number);
     var deg = valueOrDefault(req.query.deg, 0, Number);
-    var cad = valueOrDefault(req.query.cad, 0, Number);
 
     const result = await query(`SELECT
         ex1.valor as valor,
