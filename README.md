@@ -13,3 +13,11 @@ Os dados serão gravados no diretório Volumes, e *não serão versionados*.
 Lembre-se que em ambiente docker para o container do servidor poder conectar o endereço do host é **atlas_db** e não **localhost**.
 
 
+### Adicionando Novos Pacotes ao Projeto
+
+Os pacotes do frontend são instalados dentro da própria imagem docker, o que requer alguns passos extras na hora de adicionar bibliotecas ao projeto:
+
+Instale os pacotes desejados, desenvolva e teste a aplicação fora do docker (usando `npm start`). Depois, rode os seguintes comandos:
+
+1. `docker-compose rm server` Remove a imagem antiga, sem os novos pacotes
+2. `docker-compose up --build` Reconstrói a imagem com os novos pacotes
