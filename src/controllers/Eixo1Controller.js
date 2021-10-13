@@ -3,6 +3,7 @@ import { fail, valueOrDefault } from '../utils.js';
 import { query } from '../database.js';
 
 import views from '../json/Eixo1Views.js'
+import path from 'path';
 
 class Eixo1Controller {
 
@@ -492,6 +493,39 @@ class Eixo1Controller {
     }
 
     res.json(rows);
+  }
+
+  async getCsv(req, res) {
+    const variable = valueOrDefault(req.query.var, 1, Number);
+
+    try {
+      const csvDir = path.resolve('src', 'data', 'sheets');
+
+      const sheets = {
+        1: 'E01V01 - NUMERO TOTAL DE EMPRESAS',
+        2: 'E01V02 - PARTICIPACAO',
+        3: 'E01V03 - VARIACAO TOTAL',
+        4: 'E01V04 - RECEITA TOTAL BRUTA',
+        5: 'E01V05 - RECEITA OPERACIONAL LIQUIDA',
+        6: 'E01V06 - CUSTO',
+        7: 'E01V07 - LUCRO',
+        8: 'E01V08 - VALOR ADICIONADO',
+        9: 'E01V09 - VALOR ADICIONADO PIB',
+        10: 'E01V10 - IHH EMPRESAS',
+        11: 'E01V11 - IHH VALOR ADICIONADO',
+        12: 'E01V12 - C4 EMPRESAS',
+        13: 'E01V13 - VALOR ADICIONADO'
+      }
+
+      const filename = sheets[variable] + '.xlsx';
+      const filepath = path.join(csvDir, filename)
+
+      return res.download(filepath, filename), (err) => console.log(err);
+    } catch (e) {
+      console.log(e)
+      res.sendStatus(404);
+    }
+
   }
 }
 

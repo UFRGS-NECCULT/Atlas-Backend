@@ -583,5 +583,6 @@ router.get('/info', asyncHandler(controller.getInfo));
  */
 router.get('/visualization', asyncHandler(controller.getVisualization));
 
+router.get('/csv', asyncHandler(controller.getCsv));
 
 export default router;

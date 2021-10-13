@@ -2,6 +2,7 @@ import { query } from '../database.js';
 import { valueOrDefault } from '../utils.js';
 
 import views from '../json/Eixo2Views.js'
+import path from 'path';
 
 class Eixo2Controller {
 
@@ -494,6 +495,37 @@ class Eixo2Controller {
       variable,
       breadcrumbs,
     });
+  }
+
+  async getCsv(req, res) {
+    const variable = valueOrDefault(req.query.var, 1, Number);
+
+    try {
+      const csvDir = path.resolve('src', 'data', 'sheets');
+
+      const sheets = {
+        1: 'E02V01 - TOTAL DE OCUPADOS',
+        2: 'E02V02 - PARTICIPACAO DA CULTURA',
+        4: 'E02V04 - REMUNERACAO MENSAL MEDIA',
+        5: 'E02V05 - REMUNERACAO POR HORA TRABALHADA',
+        6: 'E02V06 - JORNADA MEDIA',
+        7: 'E02V07 - MASSA SALARIAL',
+        9: 'E02V09 - RAZAO MASSA SALARIAL',
+        11: 'E02V11 - RAZAO MASSA SALARIAL CUSTOS',
+        12: 'E02V12 - C4 do Total de Ocupados',
+        13: 'E02V13 - C4 da Massa Salarial',
+        14: 'E02V14 - IHH do Total de Ocupados',
+        15: 'E02V15 - IHH do Total da Massa Salarial',
+      }
+
+      const filename = sheets[variable] + '.xlsx';
+      const filepath = path.join(csvDir, filename)
+
+      return res.download(filepath, filename), (err) => console.log(err);
+    } catch (e) {
+      res.sendStatus(404);
+    }
+
   }
 
 }

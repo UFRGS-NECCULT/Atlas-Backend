@@ -6,6 +6,9 @@ export const router = Router();
 
 const controller = new Eixo1Controller();
 
+
+router.get('/csv', asyncHandler(controller.getCsv));
+
 /**
  * @swagger
  * paths:
@@ -568,5 +571,7 @@ router.get('/info', asyncHandler(controller.getInfo));
  *          description: Lista de valores dos anos disponíveis para os parâmetros selecionados.
  */
 router.get('/visualization', asyncHandler(controller.getVisualization));
+
+
 
 export default router;
