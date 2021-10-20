@@ -1,8 +1,50 @@
 
 import { fail, valueOrDefault } from '../utils.js';
 import { query } from '../database.js';
+import path from 'path';
 
 import views from '../json/Eixo4Views.js'
+
+const sheets = [
+  { id: 40101, variable: 1, label: 'Mundo', file: 'E04V01 - MUNDO' },
+  { id: 40102, variable: 1, label: 'África', file: 'E04V01 - AFRICA' },
+  { id: 40103, variable: 1, label: 'América do Norte', file: 'E04V01 - AMERICA NORTE' },
+  { id: 40104, variable: 1, label: 'América do Sul e Central', file: 'E04V01 - AMERICA SUL CENTRAL' },
+  { id: 40105, variable: 1, label: 'Ásia', file: 'E04V01 - ASIA' },
+  { id: 40106, variable: 1, label: 'Europa', file: 'E04V01 - EUROPA' },
+  { id: 40107, variable: 1, label: 'Oceania', file: 'E04V01 - OCEANIA' },
+
+  { id: 40201, variable: 2, label: 'Mundo', file: 'E04V02 - MUNDO' },
+  { id: 40202, variable: 2, label: 'África', file: 'E04V02 - AFRICA' },
+  { id: 40203, variable: 2, label: 'América do Norte', file: 'E04V02 - AMERICA NORTE' },
+  { id: 40204, variable: 2, label: 'América do Sul e Central', file: 'E04V02 - AMERICA SUL CENTRAL' },
+  { id: 40205, variable: 2, label: 'Ásia', file: 'E04V02 - ASIA' },
+  { id: 40206, variable: 2, label: 'Europa', file: 'E04V02 - EUROPA' },
+  { id: 40207, variable: 2, label: 'Oceania', file: 'E04V02 - OCEANIA' },
+
+  { id: 40301, variable: 3, label: 'Mundo', file: 'E04V03 - MUNDO' },
+  { id: 40302, variable: 3, label: 'África', file: 'E04V03 - AFRICA' },
+  { id: 40303, variable: 3, label: 'América do Norte', file: 'E04V03 - AMERICA NORTE' },
+  { id: 40304, variable: 3, label: 'América do Sul e Central', file: 'E04V03 - AMERICA SUL CENTRAL' },
+  { id: 40305, variable: 3, label: 'Ásia', file: 'E04V03 - ASIA' },
+  { id: 40306, variable: 3, label: 'Europa', file: 'E04V03 - EUROPA' },
+  { id: 40307, variable: 3, label: 'Oceania', file: 'E04V03 - OCEANIA' },
+
+  { id: 40501, variable: 5, label: 'C2 Parceiros', file: 'E04V05 - C2 PARCEIROS' },
+  { id: 40601, variable: 6, label: 'C4 SETORES', file: 'E04V06 - C4 SETORES' },
+  { id: 40701, variable: 7, label: 'C4 UFS', file: 'E04V07 - C4 UFS' },
+  { id: 40801, variable: 8, label: 'IHH PARCEIROS', file: 'E04V08 - IHH PARCEIROS' },
+  { id: 40901, variable: 9, label: 'IHH SETORES', file: 'E04V09 - IHH SETORES' },
+  { id: 41001, variable: 10, label: 'IHH UFs', file: 'E04V10 - IHH UFs' },
+
+  { id: 41401, variable: 14, label: 'Mundo', file: 'E04V14 - MUNDO' },
+  { id: 41402, variable: 14, label: 'África', file: 'E04V14 - AFRICA' },
+  { id: 41403, variable: 14, label: 'América do Norte', file: 'E04V14 - AMERICA NORTE' },
+  { id: 41404, variable: 14, label: 'América do Sul e Central', file: 'E04V14 - AMERICA SUL CENTRAL' },
+  { id: 41405, variable: 14, label: 'Ásia', file: 'E04V14 - ASIA' },
+  { id: 41406, variable: 14, label: 'Europa', file: 'E04V14 - EUROPA' },
+  { id: 41407, variable: 14, label: 'Oceania', file: 'E04V14 - OCEANIA' },
+]
 
 class Eixo4Controller {
 

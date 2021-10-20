@@ -54,12 +54,10 @@ const eixo_4_sheets = [
 
   'E04V05 - C2 PARCEIROS',
   'E04V06 - C4 SETORES',
-  'E04V07 - UFS',
+  'E04V07 - C4 UFS',
   'E04V08 - IHH PARCEIROS',
   'E04V09 - IHH SETORES',
   'E04V10 - IHH UFs',
-
-
 ]
 
 const eixo_4_results = [
@@ -97,7 +95,7 @@ const eixo_4_results = [
 
   'E04V05 - C2 PARCEIROS',
   'E04V06 - C4 SETORES',
-  'E04V07 - UFS',
+  'E04V07 - C4 UFS',
   'E04V08 - IHH PARCEIROS',
   'E04V09 - IHH SETORES',
   'E04V10 - IHH UFs',

@@ -448,5 +448,4 @@ router.get('/info', asyncHandler(controller.getInfo));
  */
 router.get('/visualization', asyncHandler(controller.getVisualization));
 
-
 export default router;
