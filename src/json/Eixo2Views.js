@@ -204,12 +204,9 @@ export default
           data: {
             charts: [
               {
-                id: "bars",
-                label: "Barras",
-                title: "Série Por Setor",
-                constants: {
-                  concentracao: '1'
-                },
+                id: "treemap_scc",
+                label: "Treemap",
+                title: treemapSccTitle,
               }
             ]
           }
