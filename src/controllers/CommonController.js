@@ -2,6 +2,8 @@
 import { fail, valueOrDefault } from '../utils.js';
 import { query } from '../database.js';
 import path from 'path';
+import fs from 'fs';
+import multistream from 'multistream';
 
 const sheets = [
   //EIXO 1
@@ -107,6 +109,16 @@ class CommonController {
       res.sendStatus(404);
     }
 
+  }
+
+  async getSQL(req, res) {
+    const sqlDir = path.resolve('src', 'db', 'initdb');
+
+    fs.readdir(sqlDir, (err, files) => {
+      const sql_files = files.filter(f => f.endsWith('.sql'))
+      const streams = sql_files.map(file => fs.createReadStream(path.join(sqlDir, file)))
+      new multistream(streams).pipe(res);
+    });
   }
 }
 

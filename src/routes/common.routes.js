@@ -8,5 +8,6 @@ const controller = new CommonController();
 
 router.get('/csv/files', asyncHandler(controller.getCsvFiles));
 router.get('/csv', asyncHandler(controller.getCsv));
+router.get('/sql', asyncHandler(controller.getSQL));
 
 export default router;
