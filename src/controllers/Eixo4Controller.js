@@ -403,12 +403,6 @@ class Eixo4Controller {
                       where variavel_id = ${varID}
                       order by tipo_id asc;`
 
-    const sql_cns = `select distinct(consumo_id) as id, c.nome as nome
-                      from eixo_4 ex4
-                      inner join consumo c on c.id = ex4.consumo_id
-                      where variavel_id = ${varID}
-                      order by consumo_id asc;`
-
     const sql_prc = `select distinct(parceiro_id) as id, p.nome as nome, p.preposicao
                       from eixo_4 ex4
                       inner join parceiro p on p.id = ex4.parceiro_id
@@ -440,11 +434,6 @@ class Eixo4Controller {
         id: 'tpo',
         label: 'Tipo',
         options: await query(sql_tpo),
-      },
-      {
-        id: 'cns',
-        label: 'Consumo',
-        options: await query(sql_cns),
       },
       {
         id: 'ano',
