@@ -5,16 +5,30 @@ let client = null;
 /**
  * Initializes the database connection
  */
-export const initialize = () => {
+export const initialize = async () => {
+    while (true) {
+        try {
+            client = new pg.Client({
+                host: process.env.DB_HOST,
+                user: process.env.DB_USER,
+                database: process.env.DB_DATABASE,
+                password: process.env.DB_PASSWORD
+            });
 
-    client = new pg.Client({
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        database: process.env.DB_DATABASE,
-        password: process.env.DB_PASSWORD
+            await client.connect();
+        } catch (e) {
+            console.log('Conexão com o db rejeitada. Tentando novamente em 5 segundos...');
+            await sleep(5000);
+            continue;
+        }
+        return;
+    }
+}
+
+const sleep = (millis) => {
+    return new Promise(r => {
+        setTimeout(r, millis);
     });
-
-    client.connect();
 }
 
 /**
