@@ -393,6 +393,11 @@ export default
           box: 3,
           data: {
             charts: [
+              {
+                id: "lines",
+                label: "Linhas",
+                title: "Gráfico de Linhas",
+              }
             ]
           }
         }
