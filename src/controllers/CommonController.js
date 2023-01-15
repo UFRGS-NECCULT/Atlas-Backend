@@ -35,6 +35,26 @@ const sheets = [
   { id: 20114, eixo: 2, variable: 14, label: 'IHH do Total de Ocupados', file: 'E02V14 - IHH do Total de Ocupados' },
   { id: 20115, eixo: 2, variable: 15, label: 'xxxIHH do Total da Massa Salarialx', file: 'E02V15 - IHH do Total da Massa Salarial' },
 
+  //EIXO 3
+  { id: 30101, eixo: 3, variable: 1, label: 'Financiamento público total', file: 'E03V01 - FINANCIAMENTO PUBLICO TOTAL' },
+  { id: 30118, eixo: 3, variable: 18, label: 'Consumo via Vale Cultura (recebedora)', file: 'E03V18.1 - CONSUMO VIA VALECULTURA (RECEBEDORA)' },
+  { id: 30218, eixo: 3, variable: 18, label: 'Consumo via Vale Cultura (trabalhador)', file: 'E03V18.2 - CONSUMO VIA VALECULTURA (TRABALHADOR)' },
+  { id: 30119, eixo: 3, variable: 19, label: 'Agentes do Vale Cultura (recebedoras)', file: 'E03V19.1 - AGENTES DO VALECULTURA (RECEBEDORAS)' },
+  { id: 30219, eixo: 3, variable: 19, label: 'Agentes do Vale Cultura (trabalhadores)', file: 'E03V19.2 - AGENTES DO VALECULTURA (TRABALHADORES)' },
+  { id: 30103, eixo: 3, variable: 3, label: 'Financiamento pelo BNDES', file: 'E03V03 - FINANCIAMENTO BNDS' },
+  { id: 30104, eixo: 3, variable: 4, label: 'Valor total dos incentivos privados', file: 'E03V04 - INCENTIVOS PRIVADOS' },
+  { id: 30105, eixo: 3, variable: 5, label: 'Valor total dos incentivos das empresas estatais', file: 'E03V05 - INCENTIVOS PUBLICOS' },
+  { id: 30107, eixo: 3, variable: 7, label: 'Percentual de Recursos Privados no total financiado via Mecenato', file: 'E03V07 - RECURSOS PRIVADOS CONTRAPARTIDA RENUNCIA' },
+  { id: 30108, eixo: 3, variable: 8, label: 'Participação do financiamento público total no valor adicionado pelas atividades culturais', file: 'E01V08 - VALOR ADICIONADO' },
+  { id: 30109, eixo: 3, variable: 9, label: 'Participação do financiamento público total na massa salarial das atividades culturais', file: 'E03V09 - LIC POR MASSA SALARIAL' },
+  { id: 30111, eixo: 3, variable: 11, label: 'Total das propostas de projetos de financiamento cultural', file: 'E03V11 - TOTAL DE PROPOSTAS DE PROJETO' },
+  { id: 30112, eixo: 3, variable: 12, label: 'Total dos projetos de financiamento cultural efetivamente fomentados', file: 'E03V12 - TOTAL PROJETOS APROVADOS' },
+  { id: 30113, eixo: 3, variable: 13, label: 'Tempo médio de aprovação dos projetos de financiamento cultural', file: 'E03V13 - TEMPO MEDIO APROVACAO' },
+  { id: 30114, eixo: 3, variable: 14, label: 'Razão entre total solicitado pelos projetos e o valor efetivo aprovado', file: 'E03V14 - RAZAO ENTRE SOLICITADO APROVADO' },
+  { id: 30115, eixo: 3, variable: 15, label: 'Índice Razão para Concentração dos Incentivos Fiscais (C4)', file: 'E03V15 - C4' },
+  { id: 30116, eixo: 3, variable: 16, label: 'Índice Herfindahl-Hirschman para Concentração dos Projetos Fomentados', file: 'E03V16 - IHH' },
+
+
   //EIXO 4
   { id: 40101, eixo: 4, variable: 1, label: 'Mundo', file: 'E04V01 - MUNDO' },
   { id: 40102, eixo: 4, variable: 1, label: 'África', file: 'E04V01 - AFRICA' },
@@ -95,6 +115,8 @@ class CommonController {
     const id = valueOrDefault(req.query.id, 1, Number);
 
     const sheet = sheets.find(sheet => sheet.id === id)
+
+    console.log(id, sheet)
 
     if (!sheet) return res.sendStatus(404);
 

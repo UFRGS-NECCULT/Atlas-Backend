@@ -90,7 +90,6 @@ const getSheetsByVar = (variavel) => {
     return ['Total x Ano']
 
   return [];
-
 }
 
 const getDegByVar = (variavel) => {
@@ -132,9 +131,6 @@ const states = ["11", "12", "13", "14", "15", "16", "17", "21", "22", "23", "24"
 const cadeias = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 0]
 
 for (let variavel = 1; variavel <= 13; variavel++) {
-
-
-
   const years = getYearsByVar(variavel)
   const sheets = getSheetsByVar(variavel)
   const portes = getDegByVar(variavel)

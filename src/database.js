@@ -5,6 +5,9 @@ let client = null;
 /**
  * Initializes the database connection
  */
+
+
+
 export const initialize = async () => {
     while (true) {
         try {

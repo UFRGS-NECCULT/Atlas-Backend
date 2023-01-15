@@ -251,6 +251,8 @@ class Eixo1Controller {
     var cad = valueOrDefault(req.query.cad, 0, Number);
     var deg = valueOrDefault(req.query.deg, 0, Number);
 
+    // http://localhost:8080/api/eixo/1/lines?cad=0&deg=0&uf=0&var=10
+
     const result = await query(`SELECT
         ex1.valor as valor,
         ex1.percentual as percentual,
