@@ -139,22 +139,20 @@ insert into variavel (eixo, variavel, format, fonte, titulo, descricao) values
 
 insert into variavel (eixo, variavel, format, fonte, titulo, descricao) values
 	(3, 1, 'none', 'SALICnet.', 'Financiamento público total', 'Retrata o valor bruto total destinado ao fomento da produção artística e cultura por meio de políticas e seus mecanismos nos estratos referidos.'),
-	(3, 2, 'real', 'SEFIC-MINC', 'Consumo via Vale-Cultura', NULL),
-	(3, 3, 'none', 'SEFIC-MINC', 'Agentes do Vale-Cultura', NULL),
-	(3, 4, 'real', 'BNDES.', 'Financiamento pelo BNDES', 'Mostra o valor bruto total destinado ao fomento da produção artística e cultural por meio do Fundo Cultural do BNDES.'),
-	(3, 5, 'real', 'SALICnet.', 'Valor total dos incentivos privados', 'Demonstra o valor bruto total na forma de incentivos privados para o fomento da produção artística e cultural por estrato proposto.'),
-	(3, 6, 'real', 'SALICnet.', 'Valor total dos incentivos das empresas estatais', 'Demonstra o valor bruto total na forma de incentivos provenientes de empresas públicas para o fomento da produção artística e cultural por estrato proposto.'),
+	(3, 18, 'real', 'SEFIC-MINC', 'Consumo via Vale Cultura', 'Valor total se refere à soma de todos os registros, inclusive aqueles em que a UF da recebedora não estava identificada. Assim, a soma dos valores das UFs pode não se igualar ao valor total aqui indicado'),
+	(3, 19, 'none', 'SEFIC-MINC', 'Agentes do Vale Cultura', 'Quantidade de trabalhadores beneficiados e quantidade de empresas habilitadas a receber o cartão Vale-Cultura como forma de pagamento por produtos e serviços culturais'),
+	(3, 3, 'real', 'BNDES.', 'Financiamento pelo BNDES', 'Mostra o valor bruto total destinado ao fomento da produção artística e cultural por meio do Fundo Cultural do BNDES.'),
+	(3, 4, 'real', 'SALICnet.', 'Valor total dos incentivos privados', 'Demonstra o valor bruto total na forma de incentivos privados para o fomento da produção artística e cultural por estrato proposto.'),
+	(3, 5, 'real', 'SALICnet.', 'Valor total dos incentivos das empresas estatais', 'Demonstra o valor bruto total na forma de incentivos provenientes de empresas públicas para o fomento da produção artística e cultural por estrato proposto.'),
 	(3, 7, 'percent', 'Elaborado pelo NECCULT com base no SALICnet.', 'Percentual de Recursos Privados no total financiado via Mecenato', 'Retrata o percentual dos recursos privados em cultura e despesas em fomento da cultura nos estratos referidos.'),
 	(3, 8, 'none', 'Elaborado pelo NECCULT com base no SALICnet.', 'Participação do financiamento público total no valor adicionado pelas atividades culturais', 'Retrata a razão entre o total destinado na forma de fomento por meio de políticas e seus mecanismos e o valor adicionado pela cultura no PIB nacional.'),
 	(3, 9, 'none', 'Elaborado pelo NECCULT com base no SALICnet.', 'Participação do financiamento público total na massa salarial das atividades culturais', 'Retrata a razão entre a despesa total em cultura e a arrecadação total nos estratos referidos.'),
-	(3, 10, 'percent', 'Elaborado pelo NECCULT com base no Ministério do Planejamento (dados de orçamento) e SALICnet (financiamento por mecenato e FNC).', 'Participação da despesa com cultura nas contas públicas federais', 'Retrata a razão entre a despesa total em cultura e a massa salarial nos estratos referidos.'),
 	(3, 11, 'none', 'SALICnet.', 'Total das propostas de projetos de financiamento cultural', 'Retrata a soma de todas propostas para LIC nos estratos referidos.'),
 	(3, 12, 'none', 'SALICNET', 'Total dos projetos de financiamento cultural efetivamente fomentados', 'Retrata todos os projetos propostos que foram fomentados pela LIC nos estratos referidos.'),
 	(3, 13, 'none', 'SALICnet.', 'Tempo médio de aprovação dos projetos de financiamento cultural', 'Retrata o tempo médio entre a proposta de projeto e a efetiva aprovação do fomento.'),
 	(3, 14, 'none', 'Elaborado pelo NECCULT com base no SALICnet.', 'Razão entre total solicitado pelos projetos e o valor efetivo aprovado', 'Retrata o percentual relativo que relaciona o valor solicitados pelos projetos e o total efetivo do fomento.'),
 	(3, 15, 'none', 'Elaborado pelo NECCULT com base no SALICnet.', 'Índice Razão para Concentração dos Incentivos Fiscais (C4)', 'Retrata sobre o quão concentrado é os recursos apoiados nos estratos referidos.'),
-	(3, 16, 'none', 'Elaborado pelo NECCULT com base no SALICnet.', 'Índice Herfindahl-Hirschman para Concentração dos Projetos Fomentados', 'Retrata sobre o quão concentrado é o gasto em cultura pelos estratos referidos.'),
-	(3, 17, 'real', NULL, 'Fomento Público Estadual à Cultura', NULL);
+	(3, 16, 'none', 'Elaborado pelo NECCULT com base no SALICnet.', 'Índice Herfindahl-Hirschman para Concentração dos Projetos Fomentados', 'Retrata sobre o quão concentrado é o gasto em cultura pelos estratos referidos.');
 
 
 insert into variavel (eixo, variavel, format, fonte, titulo, descricao) values
